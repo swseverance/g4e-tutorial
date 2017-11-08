@@ -7,4 +7,5 @@ target/
 *.swp
 .DS_Store
 esdoc/
-app/*
+app/*.html
+app/*.js
