@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Clients</title>
+</head>
+
+<body>
+<input id="inputFileToLoad" type="file" onchange="encodeImageFileAsURL();"/>
+<div id="imgTest"></div>
+<textarea readonly="true" id="imgBase64" rows="10" cols="100"></textarea>
+<script type='text/javascript'>
+    function encodeImageFileAsURL() {
+
+        var filesSelected = document.getElementById("inputFileToLoad").files;
+        if (filesSelected.length > 0) {
+            var fileToLoad = filesSelected[0];
+
+            var fileReader = new FileReader();
+
+            fileReader.onload = function (fileLoadedEvent) {
+                var srcData = fileLoadedEvent.target.result; // <--- data: base64
+
+                var newImage = document.createElement('img');
+                newImage.src = srcData;
+
+                document.getElementById("imgTest").innerHTML = newImage.outerHTML;
+                var url = document.getElementById("imgTest").innerHTML
+                document.getElementById("imgBase64").innerHTML = url;
+            }
+            fileReader.readAsDataURL(fileToLoad);
+        }
+    }
+
+</script>
+</body>
+
+</html>

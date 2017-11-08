@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GSS Development Client</title>
+
+    <link rel="stylesheet" href="target/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="target/css/jquery.treegrid.css">
+    <link rel="stylesheet" href="target/css/style.css"/>
+
+    <script type="text/javascript" src="target/lib/jquery.js"></script>
+    <script type="text/javascript" src="target/lib/bootstrap.js"></script>
+    <script type="text/javascript" src="target/lib/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="target/lib/jquery.treegrid.bootstrap3.js"></script>
+
+    <script type="text/javascript" src="target/lib/tick42-glue-dev.js"></script>
+    <script type="text/javascript" src="target/lib/tick42-gss.js"></script>
+    <script type="text/javascript" src="target/lib/js-gss-global-search.js"></script>
+    <script type="text/javascript" src="target/js-gss-search.js"></script>
+</head>
+<body>
+<div class="container" id="header">
+    <a href="#" class="navbar-left"><img id="logo" src="target/images/logo.png"></a>
+    <div class="navbar-header">
+        <a id="title" class="navbar-brand" href="#">GSS Development Client</a>
+    </div>
+</div>
+<div id="container" class="container-fluid">
+    <label class="pull-right marginTop10px" id="connection-status">Connecting...</label>
+    <div class="row">
+        <label for="entities-list" id="entitiesLabel" class="padding pull-left">Entity:</label>
+        <div class="dropdown  pull-left" id="dropdown-options">
+            <a id="entities-label"
+               data-target="#"
+               href="javascript:void(0);"
+               data-toggle="dropdown"
+               role="button"
+               aria-haspopup="true"
+               aria-expanded="false">
+                <span id="selected-entity">Select Entity</span>
+                <span id="entities-dropdown-mark" class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="entitiesLabel" id="entities-list"></ul>
+        </div>
+    </div>
+    <ul id="tabs" class="nav nav-tabs" role="tablist" data-tabs="tabs">
+        <li id="entities-tab" class="nav active"><a href="#entities-container" data-toggle="tab">Entities</a></li>
+        <li id="search-tab" class="nav"><a href="#search-container" data-toggle="tab">Search</a></li>
+        <li id="incremental-search-tab" class="nav"><a href="#incremental-search-container" data-toggle="tab">Incremental Search</a></li>
+        <li id="client-search-tab" class="nav"><a href="#client-search-container" data-toggle="tab">Party Search</a></li>
+        <li id="account-search-tab" class="nav"><a href="#account-search-container" data-toggle="tab">Account Search</a></li>
+        <li id="account-hier-search-tab" class="nav"><a href="#account-hier-search-container" data-toggle="tab">Client Account Hierarchy Search</a></li>
+    </ul>
+    <div id="tabs-container" class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="entities-container">
+            <table class="table table-hover table-bordered align-left" id="entities-table">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane container-fluid" id="search-container">
+            <div class="container-fluid">
+                <div class="row marginTop10px" id="search-tab-labels-container">
+                    <button id="search-btn" class="notVisible btn pull-right" type="button" role="button" disabled>Search</button>
+                    <div class="pull-right notVisible padding" id="search-tab-limit-container">
+                        <label for="search-limit-list" id="search-tab-limit-label" class="pull-left">Limit:</label>
+                        <div class="dropdown pull-left" id="search-limit-container">
+                            <a id="search-limit-menu-item"
+                               data-target="#"
+                               href="javascript:void(0);"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+                                <span id="search-limit" class="limit">10</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="search-tab-limit-label"
+                                id="search-limit-list"></ul>
+                        </div>
+                    </div>
+                    <div class="pull-left notVisible">
+                        <label id="search-tab-query-status" class="pull-left"></label>
+                        <label id="search-tab-latency" class="pull-left clearFromBothSides"></label>
+                    </div>
+                </div>
+                <div class="row clearFromBothSides" id="search-tab-tables-container">
+                    <div class="row move-right col-sm-9 col-md-6 col-lg-6">
+                        <h3 class="notVisible" id="criteria-caption">Criteria</h3>
+                        <table id="criteria-table" class="table table-hover table-bordered align-left">
+                            <thead></thead>
+                            <tbody class="criteria"></tbody>
+                        </table>
+                    </div>
+                    <div class="row col-sm-3 col-md-6 col-lg-6">
+                        <h3 class="notVisible" id="properties-caption">Properties</h3>
+                        <table id="properties-table" class="table table-hover table-bordered align-left">
+                            <thead></thead>
+                            <tbody class="properties"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" id="result-table-container">
+                    <h3 class="notVisible" id="result-caption">Result</h3>
+                    <table class="table table-hover table-bordered align-left" id="result-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="incremental-search-container">
+            <div class="container-fluid">
+                <div class="row marginTop10px" id="party-tab-labels-container">
+                    <input type="text" id="full-search-input" class="notVisible pull-left">
+                    <label class=" pull-right notVisible" id="full-search-query-status"></label>
+                    <label class=" clearFromLeftSide pull-right" id="latency"></label>
+                    <div class="pull-left clearFromLeftSide marginTop10px notVisible" id="incremental-search-limit-container">
+                        <label for="incremental-search-limit-list" id="incremental-search-tab-limit-label"
+                               class="pull-left">Limit:</label>
+                        <div class="dropdown  pull-left" id="incremental-search-limit-menu">
+                            <a id="incremental-search-limit-menu-item"
+                               data-target="#"
+                               href="javascript:void(0);"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+                                <span class="limit" id="incremental-search-limit">10</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="search-tab-limit-label"
+                                id="incremental-search-limit-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="tables-container" >
+                    <div  class="row col-md-3 col-lg-2 col-sm-4 move-right">
+                        <h3 class="notVisible" id="full-search-tab-properties-caption">Properties</h3>
+                        <table class="table table-hover table-bordered align-left" id="full-search-properties-table">
+                            <thead></thead>
+                            <tbody class="properties"></tbody>
+                        </table>
+                    </div>
+                    <div  class="row col-md-9 col-lg-10 col-sm-8" id="full-search-result-table-container" >
+                        <h3 class="notVisible" id="full-search-result-caption">Result</h3>
+                        <table class="table table-hover table-bordered align-left" id="full-search-result-table">
+                            <thead></thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="client-search-container">
+            <div class="container-fluid">
+                <div id="client-input-status-container" class="row marginTop10px">
+                    <input type="text" id="client-search-input" class="pull-left">
+                    <label class="pull-right" id="client-search-query-status"></label>
+                    <label class="pull-right clearFromLeftSide" id="client-search-latency"></label>
+                    <div class="pull-left clearFromLeftSide marginTop10px" id="client-search-limit-container">
+                        <label for="client-search-limit-list" id="client-search-tab-limit-label" class="pull-left">Limit:</label>
+                        <div class="dropdown pull-left" id="client-search-limit-menu">
+                            <a id="client-search-limit-menu-item"
+                               data-target="#"
+                               href="javascript:void(0);"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+                                <span class="limit" id="client-search-limit">10</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="search-tab-limit-label"
+                                id="client-search-limit-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="client-search-result-table-container">
+                    <h3 class="notVisible" id="client-search-result-caption">Result</h3>
+                    <table class="table table-hover table-bordered align-left" id="client-search-result-table">
+                        <thead></thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="account-search-container">
+            <div class="container-fluid">
+                <div id="account-input-status-container" class="row marginTop10px">
+                    <input type="text" id="account-search-input" class="pull-left">
+                    <label class="pull-right" id="account-search-query-status"></label>
+                    <label class="pull-right clearFromLeftSide" id="account-search-latency"></label>
+                    <div class="pull-left clearFromLeftSide marginTop10px" id="account-search-limit-container">
+                        <label for="account-search-limit-list" id="account-search-tab-limit-label" class="pull-left">Limit:</label>
+                        <div class="dropdown pull-left" id="account-search-limit-menu">
+                            <a id="account-search-limit-menu-item"
+                               data-target="#"
+                               href="javascript:void(0);"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+                                <span class="limit" id="account-search-limit">10</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="account-search-tab-limit-label"
+                                id="account-search-limit-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="account-search-result-table-container">
+                    <h3 class="notVisible" id="account-search-result-caption">Result</h3>
+                    <table class="table table-hover table-bordered align-left" id="account-search-result-table">
+                        <thead></thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="account-hier-search-container">
+            <div class="container-fluid">
+                <div id="account-hier-input-status-container" class="row marginTop10px">
+                    <input type="text" id="account-hier-search-input" class="pull-left">
+                    <label class="pull-right" id="account-hier-search-query-status"></label>
+                    <label class="pull-right clearFromLeftSide" id="account-hier-search-latency"></label>
+                    <div class="pull-left clearFromLeftSide marginTop10px" id="account-hier-search-limit-container">
+                        <label for="account-hier-search-limit-list" id="account-hier-search-tab-limit-label" class="pull-left">Limit:</label>
+                        <div class="dropdown pull-left" id="account-hier-search-limit-menu">
+                            <a id="account-hier-search-limit-menu-item"
+                               data-target="#"
+                               href="javascript:void(0);"
+                               data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+                                <span class="limit" id="account-hier-search-limit">10</span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="account-hier-search-tab-limit-label"
+                                id="account-hier-search-limit-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="account-hier-search-result-table-container">
+                    <h3 class="notVisible" id="account-hier-search-result-caption">Result</h3>
+                    <table class="table table-hover table-bordered align-left" id="account-hier-search-result-table">
+                        <thead></thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="errorDialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header danger">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="align-text">Error</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <p id="error-msg-container"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger pull-right" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="splash-screen">
+        <img src="target/images/spinner.gif" alt="Connecting..."/>
+        <br/>
+        Connecting...
+    </div>
+</div>
+<div class="container-fluid fixed-bottom" id="warning-container"></div>
+</body>
+</html>

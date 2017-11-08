@@ -1,0 +1,30 @@
+#%RAML 0.8
+# Basic starter raml with two resources and corresponding methods.
+
+title: Clients Example 
+version: 1.0
+
+/clients:
+  displayName: Client List
+  description: Clients that are registered in the system.
+  
+  get:
+    description: Get a list of clients that are registered in the system.
+    responses:
+     200:
+      body:
+       application/json:
+        example: !include clients_new.json 
+
+  
+/instruments/{clientID}:
+ displayName: Instruments 
+ description: Instruments that are used by the client. 
+
+ get:
+  description: Get a list of instruments, associated with a particular client.
+  responses:
+   200:
+    body:
+     application/json:
+      example: !include portfolio_new.json 

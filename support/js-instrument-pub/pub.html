@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sample GSS Publisher</title>
+	<script>
+	
+	</script>
+	<script type="text/javascript" src="tick42-glue-dev.js"></script>
+	<script type="text/javascript" src="tick42-gss.js"></script>
+    <script type="text/javascript" src="entity-types.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+</head>
+<body>
+	Sample GSS Publisher
+	<script>
+        var entityType = gss.GssEntityType.fromJS(instrumentEntityType)
+        var parties = gss.convertGssEntitiesToJsObjects(instrumentData, entityType.properties)
+
+        function addPartyEntityType(provider) {
+            provider.addEntityType(instrumentEntityType, handlePartySearch)
+        }
+
+        function handlePartySearch(request) {
+            return handleSearch(parties, request)
+        }
+
+        function applyQuery(data, request) {
+        	//return [data[0]]
+        	var start = Date.now()
+
+            var entityType = request.entityType
+            var filters = combineFilters(createFilters(request.query.filter, entityType))
+            var result = data.filter(filters)
+            var props = request.query.properties
+            if (props && props.length > 0) {
+                result = result.map(function (original) {
+                    return props.reduce(function(obj, propName) {
+                        var value = original[propName]
+                        if (value) {
+                            obj[propName] = value
+                        }
+                        return obj
+                    }, {})
+                })
+            }
+
+            var limit = request.query.limit
+            if (limit) {
+                result = result.filter(function (e, index) {
+                    return index < limit
+                })
+            }
+
+            var elapsed = Date.now() - start
+            console.log(elapsed, ' -> ', result.length)
+            return result
+        }
+
+        function createFilters(gssFieldFilters, entityType) {
+            var first
+            if (gssFieldFilters.length === 1 && (first = gssFieldFilters[0]).name === 'ANY') {
+                return [createAnyFilter(first.value, entityType)]
+            }
+            return gssFieldFilters.map(function (gssFilter) {
+                return gssFilterToPredicate(gssFilter, entityType)
+            })
+        }
+
+        function handleSearch(data, request) {
+            var result = applyQuery(data, request)
+            request.push(result, true)
+        }
+
+        function gssFilterToPredicate(gssFilter, entityType) {
+            var field = gssFilter.name
+            var descriptor = entityType.properties.get(field)
+            var searchType = gssFilter.searchType || descriptor.searchType
+            return function(data) {
+                var val = data[field]
+                if (searchType === gss.GssSearchType.Exact) {
+                    return val === gssFilter.value
+                }
+                val = String(val)
+                return descriptor.type === gss.GssType.String ?
+                        val.indexOf(gssFilter.value) !== -1 :
+                        val.indexOf(gssFilter.value) === 0
+            }
+        }
+
+        function createAnyFilter(value, entityType) {
+            return function(data) {
+                if (!data) {
+                    return false
+                }
+                var props = Object.getOwnPropertyNames(data)
+                for (var i = 0; i < props.length; ++i) {
+                    var prop = props[i]
+                    var field = entityType.properties.get(prop)
+                    if (!field) {
+                        continue
+                    }
+					var searchType = field.searchType
+					if (!searchType || searchType == gss.GssSearchType.None)
+					{
+						continue
+					}
+                    var stringVal = String(data[prop])
+                    var matches
+                    if (field.type === gss.GssType.String) {
+						var pos = stringVal.indexOf(value)
+                        matches = pos !== -1 && (pos == 0 || stringVal[pos-1] == ' ') // matches "John" in "John Smith" and "Smith" in "John Smith"
+                    }
+                    else {
+                        matches = stringVal.indexOf(value) === 0 // startsWith
+                    }
+                    if (matches) {
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+
+        function combineFilters(filters) {
+            if (filters.length === 1) {
+                return filters[0]
+            }
+
+            return function(data) {
+                for (var i = 0; i < filters.length; ++i) {
+                    var filter = filters[i]
+                    if (!filter(data)) {
+                        return false
+                    }
+                }
+                return true
+            }
+        }
+
+        var p = new gss.GlueSearchProvider(glue.agm, { debug: true, measureLatency: false })
+        p.start()
+        .then(function () {
+            addPartyEntityType(p)
+        })
+        .catch(function (err) {
+            console.error(err)
+        })
+
+	</script>
+</body>
+</html>

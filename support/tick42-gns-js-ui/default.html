@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- resourced style-sheets -->
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/Bootstrap-3.3.5/css/bootstrap.min.css"/>
+
+    <link rel="stylesheet" href="resources/font-awesome/css/font-awesome.css">
+
+    <!-- custom style-sheets -->
+    <link rel="stylesheet" type="text/css" href="library/css/style.css">
+    <link rel="stylesheet" type="text/css" href="library/css/default.css">
+
+    <!-- jquery-ui -->
+    <script type="text/javascript" src="resources/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="resources/jquery-ui-no-tooltip.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Bootstrap-3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- tick42 glue -->
+    <script type="text/javascript" src="glueConfig.js"></script>
+    <script type="text/javascript" src="../../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <!-- resourced scripts -->
+    <script type="text/javascript" src="resources/handlebars-v4.0.5.js"></script>
+    <script type="text/javascript" src="resources/hilitor.js"></script>
+
+    <!-- template -->
+    <script id="tpl-details" type="text/x-handlebars-template">
+        <div class="content">
+
+            <div class="headerDefaultView">
+                <input type="search" id="search-box" class="search-box form-control input-sm" placeholder="Search">
+                <button id="dumperButton" type="button" class="btn btn-success">Get {JSON}</button>
+                <div class="creation-time-render">{{{renderDate notificationTime }}}</div>
+            </div>
+
+            <div class="info-row padding12">
+
+                <div class="title-bar">{{ title }}</div>
+
+            </div>
+            <div class="source-type-row padding12">
+                <span class="severity">Severity: {{{setIcon severity}}}</span>
+                <span class="state">State: {{{setIcon state}}}</span>
+                <span class="source">Source: {{ source }}</span>
+                <span class="type">Type: {{ type }}</span>
+            </div>
+
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#basic-info" role="tab" data-toggle="tab">Details</a>
+                </li>
+                {{#if glueRouting}}<li role="presentation">
+                <a href="#glue-routing" role="tab" data-toggle="tab">Glue Routing</a>
+            </li>{{/if}}
+                {{#if resources}}<li role="presentation">
+                <a href="#resources" role="tab" data-toggle="tab">Resources</a>
+            </li>{{/if}}
+                {{#if attributes}}<li role="presentation">
+                <a href="#attributes" role="tab" data-toggle="tab">Attributes</a>
+            </li>{{/if}}
+                {{#if target}}<li role="presentation">
+                <a href="#target-info" role="tab" data-toggle="tab">Target Info</a>
+            </li>{{/if}}
+                {{#if payload}}<li role="presentation">
+                <a href="#payload" role="tab" data-toggle="tab">Payload</a>
+            </li>{{/if}}
+                {{#if response}}<li role="presentation">
+                <a href="#response" role="tab" data-toggle="tab">Response</a>
+            </li>{{/if}}
+            </ul>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="basic-info">
+                    <div class="description-row padding12">
+                        <h5>ID: {{ id }}</h5>
+                        <h4>Description:</h4>
+                        <p>{{ description }}</p>
+                    </div>
+                    <table class="additional-details-row">
+                        {{#if category}}
+                        <tr class="category">
+                            <td>Category:</td>
+                            <td>{{ category }}</td>
+                        </tr>{{/if}}
+                        <tr class="reminder">
+                            <td>Reminder:</td>
+                            <td>{{ reminder.remindPeriod }}</td>
+                        </tr>
+                        <tr class="notification-time">
+                            <td>Notification Time:</td>
+                            <td>{{agmDate notificationTime }}</td>
+                        </tr>
+                        <tr class="creation-time">
+                            <td>Creation Time:</td>
+                            <td>{{agmDate creationTime }}</td>
+                        </tr>
+                        <tr class="source-notification-id">
+                            <td>Source Notification ID:</td>
+                            <td>{{ sourceNotificationId }}</td>
+                        </tr>
+                        <tr class="modification-time">
+                            <td>Modification Time:</td>
+                            <td>{{agmDate modificationTime }}</td>
+                        </tr>
+                        <tr class="correlation-id">
+                            <td>Correlation ID:</td>
+                            <td>{{ correlationId }}</td>
+                        </tr>
+                        <tr class="correlation-title">
+                            <td>Correlation Title:</td>
+                            <td>{{ correlationTitle }}</td>
+                        </tr>
+                        <tr class="is-read">
+                            <td>Is Read:</td>
+                            <td>{{{markBool isRead }}}</td>
+                        </tr>
+                        <tr class="sequence-id">
+                            <td>Sequence ID:</td>
+                            <td> {{ sequenceId }}</td>
+                        </tr>
+                        <tr class="lifetime">
+                            <td>Lifetime:</td>
+                            <td>{{#if lifetime.expiresAt}} expiresAt: {{agmDate lifetime.expiresAt }}{{/if}}
+                                {{#if lifetime.expiresIn}} expiresIn: {{ lifetime.expiresIn }}{{/if}} </td>
+                        </tr>
+
+                    </table>
+                </div>
+
+                {{#if glueRouting}}
+                <div role="tabpanel" class="tab-pane" id="glue-routing">
+                    {{#if glueRouting.handlerMethod}}
+                    <h4>handlerMethod:</h4>
+                    <div class="well">
+                        <p>Name: "{{glueRouting.handlerMethod.name}}" </p>
+                        <h6>Parameters: </h6>
+                        <table  class="additional-details-row"><tbody>
+                        {{#each glueRouting.handlerMethod.parameters}}
+                        <tr><td>{{this.name}}</td><td>{{displayGnsValue this.value}}</td></tr>
+                        {{/each}}
+                        </tbody></table>
+                    </div>
+                    {{/if}}
+
+                    {{#if glueRouting.popupMethod}}
+                    <h4>popupMethod: <button id="popupMethod" type="button" class="btn btn-primary">Invoke</button></h4>
+                    <div class="well">
+                        <p>Name: "{{glueRouting.popupMethod.name}}" </p>
+                        {{#if glueRouting.popupMethod.parameters}}
+                        <h6>Parameters:</h6>
+                        <table  class="additional-details-row"><tbody>
+                        {{#each glueRouting.popupMethod.parameters}}
+                        <tr><td>{{this.name}}</td><td>{{displayGnsValue this.value}}</td></tr>
+                        {{/each}}
+                        </tbody></table>
+                        {{/if}}
+                    </div>
+                    {{/if}}
+
+                    {{#if glueRouting.detailMethod}}
+                    <h4>detailMethod: <button id="detailMethod" type="button" class="btn btn-primary">Invoke</button></h4>
+                    <div class="well">
+                        <p>Name: "{{glueRouting.detailMethod.name}}"</p>
+                        {{#if glueRouting.detailMethod.parameters}}
+                        <h6>Parameters: </h6>
+                        <table  class="additional-details-row"><tbody>
+                        {{#each glueRouting.detailMethod.parameters}}
+                        <tr><td>{{this.name}}</td><td>{{displayGnsValue this.value}}</td></tr>
+                        {{/each}}
+                        </tbody></table>
+                        {{/if}}
+                    </div>
+                    {{/if}}
+
+                    {{#if glueRouting.actions}}
+                    <h4>actions:</h4>
+                    <div id="actions-list" class="well">
+                        {{#if glueRouting.actions.path}}path: {{glueRouting.actions.path}} <br><hr>{{/if}}
+
+                        {{#each glueRouting.actions.items}}
+                        <h5>Name: {{this.name}}
+                            <button type="button"
+                                    class="btn btn-primary action-invoker"
+                                    data-itemkey="{{@index}}"
+                            >
+                                Invoke
+                            </button>
+                        </h5>
+                        <table class="additional-details-row">
+                            <tbody>
+                            <tr>
+                                <td>_itemkey:</td>
+                                <td>{{@index}} </td>
+                            </tr>
+                            {{#if this.displayName}}
+                            <tr>
+                                <td>displayName:</td>
+                                <td>{{this.displayName}}</td>
+                            </tr>
+                            {{/if}}
+                            {{#if this.description}}
+                            <tr>
+                                <td>description:</td>
+                                <td>{{this.description}}</td>
+                            </tr>
+                            {{/if}}
+                            {{#if this.image}}
+                            <tr>
+                                <td>image:</td>
+                                <td>{{this.image}}  <img class="action-icon" src="{{getImgDataByName this.image @root}}"></td>
+                            </tr>
+                            {{/if}}
+                            </tbody>
+                        </table>
+
+                        {{#if this.parameters}}
+
+                        <h6> Parameters: </h6>
+                        <table class="additional-details-row">
+                            <tbody>
+                            {{#each this.parameters}}
+                            <tr><td>{{this.name}}</td><td>{{displayGnsValue this.value}}</td></tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                        {{/if}}
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+                {{/if}}
+
+                {{#if resources}}
+                <div role="tabpanel" class="tab-pane" id="resources"><h4>images:</h4>
+                    <div id="images-list" class="well">
+                        {{#each resources.images}}
+                        <h5>name: {{this.name}}</h5>
+                        <table class="additional-details-row">
+                            <tbody>
+                            <tr>
+                                <td>_itemkey:</td>
+                                <td>{{@index}}</td>
+                            </tr>
+                            <tr>
+                                <td>format:</td>
+                                <td>{{this.format}}</td>
+                            </tr>
+                            <tr>
+                                <td>data:</td>
+                                <td>{{this.data}}</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><img class="action-icon" src="{{getImgData this}}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+
+                {{#if attributes}}
+                <div role="tabpanel" class="tab-pane" id="attributes">
+                    <div class="well">
+                        <table  class="additional-details-row">
+                            <tbody>
+                            {{#each attributes}}
+                            <tr><td>{{this.key}}</td>
+                                <td>
+                                    {{displayGnsValue this.value}}
+                                </td>
+                            </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {{/if}}
+
+                {{#if target}}
+                <div role="tabpanel" class="tab-pane" id="target-info">
+                    {{#if target.users}}
+                    <h5>users</h5>
+                    <ul>
+                        {{#target.users}}
+                        <li>{{this}}</li>
+                        {{/target.users}}
+                    </ul>
+                    {{/if}}
+                    {{#if target.groups}}
+                    <h5>groups</h5>
+                    <ul>
+                        {{#target.groups}}
+                        <li>{{this}}</li>
+                        {{/target.groups}}
+                    </ul>
+                    {{/if}}
+                </div>
+                {{/if}}
+
+                {{#if payload}}
+                <div role="tabpanel" class="tab-pane" id="payload">
+                    <table class="additional-details-row">
+                        <tr>
+                            <td>Type:</td>
+                            <td>{{ payload.type }} </td>
+                        </tr>
+                        <tr>
+                            <td>Binary (boolean): </td>
+                            <td>{{ payload.binary }} </td>
+                        </tr>
+                        <tr>
+                            <td>Data:</td>
+                            <td>{{ payload.data }}</td>
+                        </tr>
+                    </table>
+                </div>
+                {{/if}}
+
+                {{#if response}}
+                <div role="tabpanel" class="tab-pane" id="response">
+                    required: {{ response.required }} <br><br>
+                    <h4>Definition</h4>
+                    <div class="well">
+                        name: {{ response.definition.name }} <br><br>
+                        description: {{ response.definition.description }} <br><br>
+                        <h4>Options</h4>
+                        <div class="well">
+                            {{#response.definition.options}}
+                            _option:<br>
+                            field: {{ this.field }} <br>
+                            type: {{ this.field }} <br>
+                            isArray: {{ this.isArray }} <br>
+                            name: {{ this.name }} <br>
+                            group: {{ this.group }} <br>
+                            description: {{ this.description }} <br>
+                            inputFormat: {{ this.inputFormat }} <br>
+                            displayFormat: {{ this.displayFormat }} <br>
+                            restrictions:
+                            <div class="well">
+                                enum: {{this.restrictions.enum}}
+                                min: {{ this.restrictions.min }} <br>
+                                max: {{ this.restrictions.max }} <br>
+                                pattern: {{ this.restrictions.pattern }} <br>
+                            </div>
+                            cardinality: {{ this.cardinality }} <br>
+                            default: {{ this.default }} <br>
+                            multiLine: {{ this.multiLine }} <br>
+                            ui: {{ this.ui }} <br>
+                            {{/response.definition.options}}
+                            <br>
+                        </div>
+                        default: {{ response.definition.default }} <br><br>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+
+        </div><!-- content -->
+    </script>
+    <!-- /templates -->
+
+    <script type="text/javascript" src="target/default/tick42-gns-js-ui-default.js"></script>
+
+</head>
+<body id="body">
+    <h3>
+
+    </h3>
+</body>
+</html>

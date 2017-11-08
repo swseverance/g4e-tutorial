@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>servers</title>
+
+    <!-- tick42 glue -->
+    <script type="text/javascript" src="glueConfig.js"></script>
+    <script type="text/javascript" src="../../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <!-- kill module + initGlue -->
+    <script type="text/javascript">
+        var module = false;
+    </script>
+    <script type="text/javascript" src="library/js/common/initGlue.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function(){
+            onGlueInit(function(){
+                window.dumpApi.getServers()
+
+                var refresherBtn = document.querySelector('#refresher')
+                refresherBtn.addEventListener('click', function(){
+                    window.dumpApi.getServers()
+                })
+
+                var clipBton = document.querySelector('#clip')
+                clipBton.addEventListener('click', function(){
+                    window.dumpApi.clip()
+                })
+
+                //TODO Style and position self
+            })
+        }
+
+        window.dumpApi =  {
+            getServers: function(){
+                glue.agm.invoke('T42.GNS.Admin.GetServers', {}, 'best', {},
+                        function(data){
+                            console.log('server data received', data)
+                            var resDiv = document.querySelector('#response')
+                            resDiv.innerText = ''
+                            var textNode = document.createTextNode(JSON.stringify(data.returned.servers, null, 2))
+                            var preTag = document.createElement('pre')
+                            preTag.appendChild(textNode)
+                            resDiv.appendChild(preTag)
+
+                            var timeDiv = document.querySelector('#timestamp')
+                            var ts = new Date()
+                            var timeText = 'Last updated at: ' + ts.toString()
+                            timeDiv.innerText = timeText
+                        },
+                        function(e){
+                            console.log('ERROR', e)
+                            var resDiv = document.querySelector('#response')
+                            resDiv.innerText = 'Failed. Is Desktop Manager working?'
+                        })
+            },
+            clip: function clip(){
+                var resp = document.querySelector('#response')
+
+                var s = window.getSelection()
+                if(s.rangeCount > 0) s.removeAllRanges()
+
+                var range = document.createRange()
+                range.selectNode(resp)
+
+                s.addRange(range)
+
+                console.log(s)
+
+                document.execCommand('copy')
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+    <div>
+        <button id="refresher">refresh</button>
+        <button id="clip">copy to clipboard</button>
+    </div>
+    <div id="timestamp"></div>
+    <div id="response">
+        <!--the JSON of the response goes here-->
+    </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Put GLUE configuration here -->
+    <script src="../lib/tick42-glue/tick42-glue-config.js"></script>
+
+    <!-- Put GLUE here -->
+    <script src="../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <h3> Select Theme</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <button id="darkButton" class="btn btn-primary" onclick="set('dark')">Dark</button>
+            <button id="lightButton" class="btn btn-primary" onclick="set('light')">Light</button>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+    Glue(glueConfig).then(function (glue) {
+        console.log(glue.version);
+        window.glue = glue;
+        glue.contexts.subscribe('theme', function (context) {
+            if (context.name === 'dark') {
+                document.getElementById('darkButton').classList.add('active');
+                document.getElementById('lightButton').classList.remove('active');
+            } else if (context.name === 'light') {
+                document.getElementById('darkButton').classList.remove('active');
+                document.getElementById('lightButton').classList.add('active');
+            } else {
+                // no theme specified, select light as default
+                set('light');
+            }
+        });
+    }).catch(function (errors) {
+        console.error(errors);
+    })
+
+    function set(name) {
+        glue.contexts.update('theme', {name: name});
+    }
+</script>
+
+</html>

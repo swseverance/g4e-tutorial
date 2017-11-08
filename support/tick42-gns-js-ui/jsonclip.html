@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>notification json</title>
+</head>
+<body>
+<div>
+    <button onclick="clip()">Copy to clipboard</button>
+</div>
+<script>
+    window.onload = function(){
+        document.body.appendChild(window.nifDiv)
+    }
+
+    function clip(){
+        var nif = document.querySelector('#notification')
+
+        var s = window.getSelection()
+        if(s.rangeCount > 0) s.removeAllRanges()
+
+        var range = document.createRange()
+        range.selectNode(nif)
+
+        s.addRange(range)
+
+        console.log(s)
+
+        document.execCommand('copy')
+    }
+</script>
+</body>
+</html>

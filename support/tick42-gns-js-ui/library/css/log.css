@@ -1,0 +1,12 @@
+body {
+    background:lightyellow;
+}
+
+tr:hover {
+    background-color: #d34d17;
+    color: white;
+}
+
+tr.app-start {
+    background-color: #97d323;
+}

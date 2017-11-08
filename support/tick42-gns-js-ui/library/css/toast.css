@@ -1,0 +1,89 @@
+body{
+    overflow: hidden;
+    font-family: 'RobotoLight', sans-serif;
+    font-size:12px;
+    font-weight:normal;
+    color: #F2F2F2;
+    margin:0;
+    padding:0;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-content: flex-end;
+    align-items: flex-start;
+    height:50px;
+}
+
+.flex-container button {
+    background-color:#D2DB27;
+    border: none;
+    color: #333333;
+    order: 0;
+    flex: 0 1 auto;
+    align-self:center;
+    cursor:pointer;
+    height: 50px;
+    width:20px;
+}
+
+.flex-container h4 {
+    order: 0;
+    flex: 0 1 auto;
+    align-self:center;
+    margin:0;
+    padding:0 10px 3px 20px;
+    line-height:16px;
+    font-weight:400;
+    cursor:pointer;
+    width:150px;
+
+    display: -webkit-box;
+    max-height: 48px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.flex-container div {
+    background-color:#58595B;
+    order: 0;
+    flex: 0 1 auto;
+    align-self:center;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 50px;
+    width:180px;
+}
+.flex-container div  ul {
+    list-style: none;
+    padding: 0;
+    margin:0;
+}
+
+.flex-container div  ul  li {
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+
+.flex-container div  ul  li:hover {
+    color:#D2DB27;
+}
+
+.flex-container div  ul  li img {
+    max-height: 10px;
+    padding-right: 3px;
+}
+
+.flex-container div  ul  li img.notfound {
+    height:10px;
+    width: 10px;
+    opacity: 0.3;
+}

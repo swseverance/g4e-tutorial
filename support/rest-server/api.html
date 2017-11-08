@@ -1,0 +1,430 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Clients Example API documentation</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="generator" content="https://github.com/kevinrenskers/raml2html 2.0.1">
+  <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="../../node_modules/highlight.js/styles/default.css">
+  <script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../node_modules/highlight.js/lib/highlight.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('.page-header pre code, .top-resource-description pre code').each(function (i, block) {
+        hljs.highlightBlock(block);
+      });
+
+      $('[data-toggle]').click(function () {
+        var selector = $(this).data('target') + ' pre code';
+        $(selector).each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      });
+
+      // open modal on hashes like #_action_get
+      $(window).bind('hashchange', function (e) {
+        var anchor_id = document.location.hash.substr(1); //strip #
+        var element = $('#' + anchor_id);
+
+        // do we have such element + is it a modal?  --> show it
+        if (element.length && element.hasClass('modal')) {
+          element.modal('show');
+        }
+      });
+
+      // execute hashchange on first page load
+      $(window).trigger('hashchange');
+
+      // remove url fragment on modal hide
+      $('.modal').on('hidden.bs.modal', function () {
+        if (history && history.replaceState) {
+          history.replaceState({}, '', '#');
+        }
+      });
+    });
+  </script>
+  <style>
+    .hljs {
+      background: transparent;
+    }
+
+    .parent {
+      color: #999;
+    }
+
+    .list-group-item>.badge {
+      float: none;
+      margin-right: 6px;
+    }
+
+    .panel-title>.methods {
+      float: right;
+    }
+
+    .badge {
+      border-radius: 0;
+      text-transform: uppercase;
+      width: 70px;
+      font-weight: normal;
+      color: #f3f3f6;
+      line-height: normal;
+    }
+
+    .badge_get {
+      background-color: #63a8e2;
+    }
+
+    .badge_post {
+      background-color: #6cbd7d;
+    }
+
+    .badge_put {
+      background-color: #22bac4;
+    }
+
+    .badge_delete {
+      background-color: #d26460;
+    }
+
+    .badge_patch {
+      background-color: #ccc444;
+    }
+
+    .list-group,
+    .panel-group {
+      margin-bottom: 0;
+    }
+
+    .panel-group .panel+.panel-white {
+      margin-top: 0;
+    }
+
+    .panel-group .panel-white {
+      border-bottom: 1px solid #F5F5F5;
+      border-radius: 0;
+    }
+
+    .panel-white:last-child {
+      border-bottom-color: white;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .panel-white .panel-heading {
+      background: white;
+    }
+
+    .tab-pane ul {
+      padding-left: 2em;
+    }
+
+    .tab-pane h2 {
+      font-size: 1.2em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab-pane h3 {
+      font-size: 1.1em;
+    }
+
+    .tab-content {
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    #sidebar {
+      margin-top: 30px;
+      padding-right: 5px;
+      overflow: auto;
+      height: 90%;
+    }
+
+    .top-resource-description {
+      border-bottom: 1px solid #ddd;
+      background: #fcfcfc;
+      padding: 15px 15px 0 15px;
+      margin: -15px -15px 10px -15px;
+    }
+
+    .resource-description {
+      border-bottom: 1px solid #fcfcfc;
+      background: #fcfcfc;
+      padding: 15px 15px 0 15px;
+      margin: -15px -15px 10px -15px;
+    }
+
+    .resource-description p:last-child {
+      margin: 0;
+    }
+
+    .list-group .badge {
+      float: left;
+    }
+
+    .method_description {
+      margin-left: 85px;
+    }
+
+    .method_description p:last-child {
+      margin: 0;
+    }
+
+    .list-group-item {
+      cursor: pointer;
+    }
+
+    .list-group-item:hover {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+
+<body data-spy="scroll" data-target="#sidebar">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9" role="main">
+        <div class="page-header">
+          <h1>Clients Example API documentation
+            <small>version 1.0</small>
+          </h1>
+          <p></p>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 id="clients" class="panel-title">Client List</h3>
+          </div>
+          <div class="panel-body">
+            <div class="top-resource-description">
+              <p>Clients that are registered in the system.</p>
+            </div>
+            <div class="panel-group">
+              <div class="panel panel-white">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" href="#panel_clients">
+                      <span class="parent"></span>/clients</a>
+                    <span class="methods">
+                      <a href="#clients_get">
+                        <span class="badge badge_get">get</span>
+                      </a>
+                    </span>
+                  </h4>
+                </div>
+                <div id="panel_clients" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <div class="list-group">
+                      <div onclick="window.location.href = '#clients_get'" class="list-group-item">
+                        <span class="badge badge_get">get</span>
+                        <div class="method_description">
+                          <p>Get a list of clients that are registered in the system.</p>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal fade" tabindex="0" id="clients_get">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">
+                          <span class="badge badge_get">get</span>
+                          <span class="parent"></span>/clients</h4>
+                      </div>
+                      <div class="modal-body">
+                        <div class="alert alert-info">
+                          <p>Get a list of clients that are registered in the system.</p>
+                        </div>
+                        <ul class="nav nav-tabs">
+                          <li>
+                            <a href="#clients_get_response" data-toggle="tab">Response</a>
+                          </li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane" id="clients_get_response">
+                            <h2>HTTP status code
+                              <a href="http://httpstatus.es/200" target="_blank">200</a>
+                            </h2>
+                            <h3>Body</h3>
+                            <p>
+                              <strong>Type: application/json</strong>
+                            </p>
+                            <p>
+                              <strong>Example</strong>:</p>
+                            <pre><code>[
+	{
+		"id": "1265",
+		"name": "Michael S. Donovan"
+	}, {
+		"id": "3243",
+		"name": "Karen K. Scott"
+	}, {
+		"id": "1452",
+		"name": "James L. Brown"
+	}, {
+		"id": "3453",
+		"name": "Vernon D. Mullen"
+	}, {
+		"id": "5473",
+		"name": "Steve M. Marsh"
+	}
+]</code></pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 id="instruments__clientID_" class="panel-title">Instruments</h3>
+          </div>
+          <div class="panel-body">
+            <div class="top-resource-description">
+              <p>Instruments that are used by the client.</p>
+            </div>
+            <div class="panel-group">
+              <div class="panel panel-white">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" href="#panel_instruments__clientID_">
+                      <span class="parent"></span>/instruments/{clientID}</a>
+                    <span class="methods">
+                      <a href="#instruments__clientID__get">
+                        <span class="badge badge_get">get</span>
+                      </a>
+                    </span>
+                  </h4>
+                </div>
+                <div id="panel_instruments__clientID_" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <div class="list-group">
+                      <div onclick="window.location.href = '#instruments__clientID__get'" class="list-group-item">
+                        <span class="badge badge_get">get</span>
+                        <div class="method_description">
+                          <p>Get a list of instruments, associated with a particular client.</p>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal fade" tabindex="0" id="instruments__clientID__get">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">
+                          <span class="badge badge_get">get</span>
+                          <span class="parent"></span>/instruments/{clientID}</h4>
+                      </div>
+                      <div class="modal-body">
+                        <div class="alert alert-info">
+                          <p>Get a list of instruments, associated with a particular client.</p>
+                        </div>
+                        <ul class="nav nav-tabs">
+                          <li class="active">
+                            <a href="#instruments__clientID__get_request" data-toggle="tab">Request</a>
+                          </li>
+                          <li>
+                            <a href="#instruments__clientID__get_response" data-toggle="tab">Response</a>
+                          </li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="instruments__clientID__get_request">
+                            <h3>URI Parameters</h3>
+                            <ul>
+                              <li>
+                                <strong>clientID</strong>:
+                                <em>required (string)</em>
+                              </li>
+                            </ul>
+                          </div>
+                          <div class="tab-pane" id="instruments__clientID__get_response">
+                            <h2>HTTP status code
+                              <a href="http://httpstatus.es/200" target="_blank">200</a>
+                            </h2>
+                            <h3>Body</h3>
+                            <p>
+                              <strong>Type: application/json</strong>
+                            </p>
+                            <p>
+                              <strong>Example</strong>:</p>
+                            <pre><code>[
+	{
+		"RIC": "VOD.sssssssssL",
+		"BPOD": "VOD.LN",
+		"Bloomberg": "VOD LN Equity",
+		"Description": "VODAFONE GROUP PLC",
+		"Exchange": "XLON",
+		"Venues": "LSE(VOD.L), BTE(VODl.BS), CIX(VODl.CHI), TRQ(VODl.TQ)"
+	}, {
+		"RIC": "TSCO.L",
+		"BPOD": "TSCO.LN",
+		"Bloomberg": "TSCO LN Equity",
+		"Description": "TESCO PLC",
+		"Exchange": "XLON",
+		"Venues": "LSE(TSCO.L), BTE(TSCOl.BS), CIX(TSCOl.CHI), TRQ(TSCOl.TQ)"
+	}, {
+		"RIC": "BARC.L",
+		"BPOD": "BARC.LN",
+		"Bloomberg": "BARC LN Equity",
+		"Description": "BARCLAYS PLC",
+		"Exchange": "XLON",
+		"Venues": "LSE(BARC.L), BTE(BARCl.BS), CIX(BARCl.CHI), TRQ(BARCl.TQ)"
+	}, {
+		"RIC": "BMWG.DE",
+		"BPOD": "BMW.GY",
+		"Bloomberg": "BMW GY Equity",
+		"Description": "BAYERISCHE MOTOREN WERKE AG",
+		"Exchange": "XETR",
+		"Venues": "GER(BMWG.DE), BTE(BMWd.BS), CIX(BMWd.CHI), TRQ(BMWd.TQ)"
+	}, {
+		"RIC": "AAL.L",
+		"BPOD": "AAL.LN",
+		"Bloomberg": "AAL LN Equity",
+		"Description": "ANGLO AMERICAN PLC",
+		"Exchange": "XLON",
+		"Venues": "LSE(AAL.L), BTE(AALl.BS), CIX(AALl.CHI), TRQ(AALl.TQ)"
+	}
+]
+</code></pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div id="sidebar" class="hidden-print affix" role="complementary">
+          <ul class="nav nav-pills nav-stacked">
+            <li>
+              <a href="#clients">Client List</a>
+            </li>
+            <li>
+              <a href="#instruments__clientID_">Instruments</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

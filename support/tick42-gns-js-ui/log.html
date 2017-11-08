@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Viewer</title>
+
+    <!-- custom style-sheets -->
+    <link rel="stylesheet" type="text/css" href="library/css/style.css">
+    <link rel="stylesheet" type="text/css" href="library/css/log.css">
+
+    <!-- resourced scripts -->
+    <script type="text/javascript" src="resources/handlebars-v4.0.5.js"></script>
+
+    <!-- tick42 glue -->
+    <script type="text/javascript" src="glueConfig.js"></script>
+    <script type="text/javascript" src="../../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <!-- templates -->
+    <script id="tpl-entries" type="text/x-handlebars-template">
+
+            {{#each entries}}
+                <tr class="{{rowClass this.context.name}}">
+                    <td class="time-col">&lt;{{this.time}}&gt;</td>
+                    <td class="module-name-col">[{{this.context.name}}]</td>
+                    <td class="severity-level-col">[{{this.context.level.name}}]</td>
+                    <td class="message-body-col">
+                        {{#each this.messages}}
+                            {{expand this}} &nbsp;
+                        {{/each}}
+                    </td>
+                </tr>
+            {{/each}}
+
+    </script>
+    <!-- /templates -->
+
+    <script type="text/javascript" src="target/log/tick42-gns-js-ui-log.js"></script>
+
+</head>
+<body>
+    <div>
+        <table>
+            <thead></thead>
+            <tbody id="list-container">
+
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

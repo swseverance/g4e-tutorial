@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- JQuery, Bootstrap, and Lodash -->
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/lodash/lodash.min.js"></script>
+    <script src="../node_modules/cuid/dist/browser-cuid.js"></script>
+
+    <!-- Put GLUE configuration here -->
+    <script src="../lib/tick42-glue/tick42-glue-config.js"></script>
+
+    <!-- Put GLUE here -->
+    <script>
+        // glue_ws_url = 'ws://192.168.1.10:22037'
+    </script>
+    <script src="../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <!-- Put the page-related source code here -->
+    <script src="market-data-monitor.js"></script>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <h1>Market Data Monitor</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <br/>
+            <input type="text" class="form-control" placeholder="Ticker" id="ticker"/>
+            <br/>
+            <button
+                class="btn btn-primary"
+                onclick="raiseNotification()">
+                Raise Notification
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function raiseNotification() {
+        var ticker = document.getElementById('ticker').value
+        raiseMarketDataMonitorNotification(ticker)
+    }
+</script>
+
+</body>
+
+</html>

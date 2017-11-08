@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test faulted state</title>
+
+    <!-- tick42 glue -->
+    <script type="text/javascript" src="../../../../../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function(){
+            console.log('Mocking the DM')
+
+            window.subLoc = window.location.href + 'subscriber.html';
+
+            window.notification = {
+                attributes:[
+                    {
+                        "key": "bool",
+                        "value": {
+                            "boolValue": true
+                        }
+                    },
+                    {
+                        "key": "int",
+                        "value": {
+                            "intValue": 7
+                        }
+                    },
+                    {
+                        "key": "long",
+                        "value": {
+                            "longValue": 95
+                        }
+                    },
+                    {
+                        "key": "double",
+                        "value": {
+                            "doubleValue": 55.689
+                        }
+                    },
+                    {
+                        "key": "dateTime",
+                        "value": {
+                            "dateTimeValue": "2015-11-07T14:28:25.107Z"
+                        }
+                    },
+                    {
+                        "key": "string",
+                        "value": {
+                            "stringValue": "lorem ipsum"
+                        }
+                    },
+                    {
+                        "key": "arr bool",
+                        "value": {
+                            "boolValues": [
+                                true,
+                                false,
+                                false,
+                                true
+                            ]
+                        }
+                    },
+                    {
+                        "key": "arr int",
+                        "value": {
+                            "intValues": [
+                                88,
+                                90,
+                                4,
+                                -9,
+                                0
+                            ]
+                        }
+                    },
+                    {
+                        "key": "arr long",
+                        "value": {
+                            "longValues": [
+                                -8908,
+                                790,
+                                0,
+                                -53990,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "key": "arr double",
+                        "value": {
+                            "doubleValues": [
+                                123089.12809,
+                                -980123,
+                                8809.12,
+                                0
+                            ]
+                        }
+                    },
+                    {
+                        "key": "arr dateTime",
+                        "value": {
+                            "dateTimeValues": [
+                                new Date(),
+                                new Date(),
+                                new Date()
+                            ]
+                        }
+                    },
+                    {
+                        "key": "arr string",
+                        "value": {
+                            "stringValues": [
+                                "will",
+                                "learn more",
+                                "about powerful search",
+                                "values",
+                                "in",
+                                "the"
+                            ]
+                        }
+                    }
+                ]
+            }
+
+            var allMessages = [
+                {
+                    messages:['The following number is happy: ', 15],
+                    notes: ['Just a word ', 'BigWord'],
+                    numbers: [77, 42],
+                    reverseMessages: [908, 'Essay by famous tweeteur']
+                }
+            ]
+
+            window.args = {allMessages: allMessages}
+
+            glue.agm.createStream('MockNif')
+                    .then(function(stream){
+                        // see The Stream Object for info what you can do with stream object
+                        window.stream = stream
+                    })
+                    .catch(function(error){
+                        console.error(error)
+                    });
+
+        }
+
+    </script>
+</head>
+<body style="background-color: rosybrown;">
+<h1>Mock DM</h1>
+</body>
+</html>

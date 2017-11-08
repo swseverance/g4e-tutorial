@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gns-js-ui</title>
+
+    <!-- dt-pckg -->
+    <link href='resources/font-awesome/css/roboto.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/Bootstrap-3.3.5/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/DataTables-1.10.10/css/dataTables.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/AutoFill-2.1.0/css/autoFill.bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/Buttons-1.1.0/css/buttons.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/ColReorder-1.3.0/css/colReorder.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/FixedColumns-3.2.0/css/fixedColumns.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/FixedHeader-3.1.0/css/fixedHeader.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/Responsive-2.0.0/css/responsive.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/Scroller-1.4.0/css/scroller.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/dt-pckg/Select-1.1.0/css/select.bootstrap.min.css"/>
+
+    <script type="text/javascript" src="resources/dt-pckg/jQuery-2.1.4/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/DataTables-1.10.10/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/DataTables-1.10.10/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/AutoFill-2.1.0/js/dataTables.autoFill.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/AutoFill-2.1.0/js/autoFill.bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Buttons-1.1.0/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Buttons-1.1.0/js/buttons.bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Buttons-1.1.0/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/ColReorder-1.3.0/js/dataTables.colReorder.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/FixedColumns-3.2.0/js/dataTables.fixedColumns.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/FixedHeader-3.1.0/js/dataTables.fixedHeader.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Responsive-2.0.0/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Responsive-2.0.0/js/responsive.bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Scroller-1.4.0/js/dataTables.scroller.min.js"></script>
+    <script type="text/javascript" src="resources/dt-pckg/Select-1.1.0/js/dataTables.select.min.js"></script>
+    <!-- // -->
+
+    <!-- resourced style-sheets -->
+    <link rel="stylesheet" href="resources/font-awesome/css/font-awesome.css">
+
+    <!-- resourced scripts -->
+    <script type="text/javascript" src="resources/jquery-ui-no-tooltip.js"></script>
+    <script type="text/javascript" src="resources/handlebars-v4.0.5.js"></script>
+
+    <!-- tick42 glue -->
+    <script type="text/javascript" src="glueConfig.js"></script>
+    <script type="text/javascript" src="../../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <!-- target file -->
+    <script type="text/javascript" src="target/tick42-gns-js-ui.js"></script>
+    
+    <!-- custom style-sheets -->
+    <link rel="stylesheet" type="text/css" href="library/css/style.css">
+</head>
+
+
+<body id="body">
+    <!--<div id="for-the-button" style="padding: 50px; text-align: center">-->
+        <!--<button id="test-btn" class="btn btn-default">-Load Data-</button>-->
+        <!--<button id="get-one-btn" class="btn btn-default">-Get One-</button>-->
+    <!--</div>-->
+
+    <div class="container-fluid wrapper">
+        <div class="row">
+            <div id="main" class="col-md-12">
+                <div id="tabs-row">
+                    <div id="version">
+                        <button id="get-servers" class="btn btn-default" data-action="get-servers">
+                            <i class="fa fa-server" data-action="get-servers"></i>
+                        </button>
+                        GNS UI version 1.16.7 -- <i id="connection-square" class="fa fa-square"></i>
+
+                        <button id="wincon-minimize" class="btn btn-default wincon" data-action="wincon-minimize">
+                            <i class="fa fa-minus" data-action="wincon-minimize"></i>
+                        </button>
+
+                        <button id="wincon-maximize" class="btn btn-default wincon" data-action="wincon-maximize">
+                            <i class="fa fa-expand" data-action="wincon-maximize"></i>
+                        </button>
+
+                        <button id="wincon-close" class="btn btn-default wincon" data-action="wincon-close">
+                            <i class="fa fa-times" data-action="wincon-close"></i>
+                        </button>
+                    </div>
+                    <div id="tools">
+                        <!--<span id="nif-count">47</span>-->
+                        <!--<span id="unread-only"><i class="fa fa-envelope-square" title="Read/Unread"></i></span>-->
+                        <!--<span id="filter-wrench"><i class="fa fa-wrench" title="Filters"></i></span>-->
+                        <!--<span id="toggle-preview"><i class="fa fa-chevron-right" data-action="toggle-preview"></i></span>-->
+                    </div>
+                    <div style="clear:both"></div>
+                    <div class="buttons-top-left">
+                        <button id="buffer-toggle" class="btn btn-default" data-action="buffer-toggle">
+                            <span id="buffer-display" class="hidden" data-action="buffer-toggle">0</span>
+                            <i class="fa fa-pause" data-action="buffer-toggle"></i>
+                        </button>
+
+                        <button id="open-logger" style="display:none" class="btn btn-default" data-action="open-logger">
+                            <i class="fa fa-bug" data-action="open-logger"></i>
+                        </button>
+
+                        <button id="open-config-modal" class="btn btn-default" data-action="open-config-modal">
+                            <i class="fa fa-cogs" data-action="open-config-modal"></i>
+                        </button>
+
+                        <button id="clr-all-data" class="btn btn-default" data-action="clr-all-data">Clear All Notifications</button>
+
+                        <button id="close-all-toasts" class="btn btn-default" data-action="close-all-toasts">Close Toasts</button>
+
+
+
+                        <!--page-size controls-->
+                        <div class="dataTables_length" id="table_id_length">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="page-size-btn" data-toggle="dropdown">
+                                <span id="page-size-current">10</span> per page
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="page-size-option" data-action="page-size" data-value="10">10 per page</li>
+                                <li class="page-size-option" data-action="page-size" data-value="25">25 per page</li>
+                                <li class="page-size-option" data-action="page-size" data-value="50">50 per page</li>
+                            </ul>
+                        </div>
+
+                        <!--<button id="open-snippets" class="btn btn-danger" data-action="open-snippets">Open snippets</button>-->
+                    </div>
+                </div>
+
+                <table id="table_id" class="table table-bordered table-striped table-condensed table-hover GNS-icons"></table>
+
+            </div>
+            <div id="preview-pane-container" class="hidden">
+                        <div class="jumbotron">-- Preview Pane --</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="context-menu">
+        <button id="btn-open-default" class="btn btn-success btn-sm" data-action="open-default">Open in default view</button>
+    </div>
+
+    <div id="config-modal">
+        <div class="pad">
+
+            <input id="enable-toasts" type="checkbox" checked>
+            <label for="enable-toasts">Enable toasts</label>
+            <br>
+            <input id="hold-toasts" type="checkbox">
+            <label for="hold-toasts">Hold toasts</label>
+            <br>
+            <br>
+            <label for="toast-persist">Toast Persistence</label>
+            <input id="toast-persist-display" type="text" size="2" name="lname" disabled>seconds<br>
+            <input id="toast-persist" type="range" min="5" max="60" step="1">
+
+            <div class="btn-group modal-controls">
+                <button id="save-config-modal" class="btn btn-success" data-action="save-config-modal">Save</button>
+                <button id="close-config-modal" class="btn btn-danger" data-action="close-config-modal">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+<!--<div class=".hidden-utils">-->
+    <!--<div id="popup" title="-notification title-">-->
+        <!--<p>-description-</p>-->
+        <!--<p>-actions-</p>-->
+    <!--</div>-->
+<!--</div>-->
+</body>
+</html>

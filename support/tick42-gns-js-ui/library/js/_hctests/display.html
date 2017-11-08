@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test send nested objects</title>
+
+    <!-- tick42 glue -->
+    <script type="text/javascript" src="../../../../../lib/tick42-glue/tick42-glue-dev.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function(){
+
+            var methodName = 'GNSUI.TestDisplayArgs'
+
+            glue.agm.register(methodName, function displayLog(args){
+                console.log('Args received:')
+                console.log(args)
+            })
+
+        }
+
+    </script>
+</head>
+<body style="background-color: lightcoral;">
+<h1>TEST DISPLAY</h1>
+<p>This window registers an AGM method.</p>
+</body>
+</html>
