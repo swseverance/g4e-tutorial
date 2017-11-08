@@ -26,8 +26,8 @@ let logger;
 // // const glue4OfficeOptions = {
 // //     glue: glue,
 // //     outlook: true,
-//        // TUTOR_TODO Chapter 9 
-//        // excel: true
+// //        // TUTOR_TODO Chapter 9 
+// //        // excel: true
 // // };
 
 // // TUTOR_TODO Chapter 8 - Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible 
@@ -93,6 +93,7 @@ const setUpAppContent = () => {
     // TUTOR_TODO chapter 4.3 - Check whether the current window context contains the attribute 'party'
     // if doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object
     // and call loadPortfolio() passing in the eciId from the party object
+    // assign the received party object to partyObj, because we will need it later on.
 };
 
 const registerAgmMethod = () => {
@@ -101,6 +102,7 @@ const registerAgmMethod = () => {
 
     // TUTOR_TODO Chapter 2.1 - register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings eciId and ucn
     // in the callback - call loadPortfolio passing the eciId received as a parameter.
+    // assign the received party object to partyObj, because we will need it later on.
 
 };
 
