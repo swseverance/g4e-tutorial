@@ -1,7 +1,6 @@
 const RestServerUrl = 'http://localhost:22910/';
 const RestServerEndpoint = 'GetDemoPortfolio';
 const StreamName = 'T42.MarketStream.Subscribe';
-let inActivity;
 
 let detachedTabs = [];
 let streams = [];
@@ -30,53 +29,50 @@ Glue(glueConfig)
         window.outlook = g4o.outlook;
         window.excel = g4o.excel;
 
-        inActivity = glue.activities.inActivity;
         instrumentService();
         onInitializeApp();
         initInstrumentSearch();
         trackTheme();
 
     })
-    .catch((error) => {
-        console.error(error);
-    })
+    .catch((err) => {
+        console.log(err);
+    });
+
 
 const instrumentService = () => {
+
     logger = glue.logger.subLogger('PortfolioWindow');
 
-    const metrics = glue.metrics;
-
-    serviceMetricsSystem = metrics.subSystem('PortfolioService', 'Portfolio REST Service');
+    serviceMetricsSystem = glue.metrics.subSystem('PortfolioSystem', 'Portfolio REST Service');
 
     serviceMetricsSystem.setState(0, 'OK');
 
     const errorCountOptions = {
-        name: 'errorCount',
-        description: 'number of times AJAX requests have failed'
+        name: 'ErrorCount',
+        description: 'Records the number of failed requests'
     };
 
     serviceErrorCount = serviceMetricsSystem.countMetric(errorCountOptions, 0);
 
-    const serviceErrorOptions = {
+    const lastErrorOptions = {
         name: 'lastError',
-        description: 'Last recorded service error'
+        description: 'last recorded service error'
     };
 
-    const serviceErrorTemplate = {
-        // the first value defines
-        // the shape of the metric
+    const initialValue = {
         clientId: '',
-        message: '',
         time: new Date(),
+        message: '',
         stackTrace: ''
-    };
+    }
 
-    lastServiceError = serviceMetricsSystem.objectMetric(serviceErrorOptions, serviceErrorTemplate);
+    lastServiceError = serviceMetricsSystem.objectMetric(lastErrorOptions, initialValue);
 
     const latencyOptions = {
         name: 'latency',
-        description: 'Request latency'
-    };
+        description: 'request latency'
+    }
 
     serviceLatency = serviceMetricsSystem.timespanMetric(latencyOptions);
 };
@@ -92,45 +88,22 @@ const onInitializeApp = () => {
 
 const initInstrumentSearch = () => {
 
-    const initClientSearch = (agm) => {
-        const gssOptions = {
-            agm: agm,
-            defaultQueryLimit: 500,
-            measureLatency: false,
-            searchTimeoutInMillis: 10000,
-            debugGss: false,
-            debug: false
-        };
+    const gssOptions = {
+        agm: glue.agm,
+        defaultQueryLimit: 500,
+        measureLatency: false,
+        searchTimeoutInMillis: 10000,
+        debugGss: false,
+        debug: false
+    };
 
-        return new gssClientSearch.create(gssOptions);
-    }
+    const searchClient = new gssClientSearch.create(gssOptions);
 
+    _query = searchClient.createQuery('Instrument');
 
-    const createQuery = (clientSearch) => {
-        _query = clientSearch.createQuery('Instrument')
-
-        _query.onEntityTypeBound(function () {
-            console.log('onEntityTypeBound');
-        });
-        _query.onEntityTypeUnbound(function () {
-            console.log('onEntityTypeUnbound');
-        });
-
-        _query.onData(function (entities, isFromCache) {
-            console.log(entities);
-            displayResult(entities)
-        });
-
-        _query.onDone(function () {
-            console.log('query is done');
-        });
-
-        _query.onError(function (error) {
-            console.log(error);
-        });
-    }
-
-    createQuery(initClientSearch(glue.agm));
+    _query.onData((entities) => {
+        displayResult(entities);
+    });
 };
 
 const trackTheme = () => {
@@ -138,12 +111,12 @@ const trackTheme = () => {
         $('#themeLink').attr('href', '../lib/themes/css/' + name);
     }
 
-    glue.contexts.subscribe('theme', (context) => {
-        if (context.name === 'dark') {
+    glue.contexts.subscribe('theme', (theme) => {
+        if (theme.name == 'dark') {
             setTheme('bootstrap-dark.min.css');
-        } else if (context.name === 'light') {
-            setTheme('bootstrap.min.css');
+            return;
         }
+        setTheme('bootstrap.min.css');
     });
 };
 
@@ -151,42 +124,46 @@ const setUpAppContent = () => {
 
     const context = glue.windows.my().context;
 
-    if (!context.party) {
-        registerAgmMethod();
+    if (context.party) {
+        const preferredName = context.party.preferredName;
 
-    } else {
-        const title = 'Portfolio of ' + context.party.preferredName;
+        glue.windows.my().setTitle(preferredName);
 
-        glue.windows.my().setTitle(title)
+        document.getElementById('title').textContent = preferredName;
 
-        document.getElementById('title').textContent = title;
+        partyObj = context.party;
 
         loadPortfolio(context.party.eciId);
 
-        partyObj = context.party;
+        return;
     }
+
+    registerAgmMethod();
 };
 
 const registerAgmMethod = () => {
+
+    const inActivity = glue.activities.inActivity;
+
     if (inActivity) {
-        glue.activities.my.activity.onContextChanged((context) => {
-            partyObj = context.party
-
-            loadPortfolio(context.party.eciId)
-
+        glue.activities.my.onContextChanged((client) => {
+            loadPortfolio(client.party.eciId);
         });
-    } else {
-        glue.agm.register({
-            name: 'SetParty',
-            accepts: 'Composite: {string? eciId, string? ucn} party',
-            object_types: ['Party']
-        }, (args) => {
-            partyObj = args.party;
-
-            loadPortfolio(partyObj.eciId);
-
-        });
+        return;
     }
+
+    const methodOptions = {
+        name: 'SetParty',
+        display_name: 'Set Party',
+        description: 'Switches the application window to work with the specified party',
+        accepts: 'Composite: { String? eciId, String? ucn } party'
+    };
+
+    glue.agm.register(methodOptions, (args) => {
+        partyObj = args.party;
+        loadPortfolio(args.party.eciId);
+    });
+
 };
 
 const loadPortfolio = (eci) => {
@@ -213,11 +190,11 @@ const loadPortfolio = (eci) => {
             if (elapsedMillis >= 1000) {
                 const message = 'Service at ' + serviceUrl + ' is lagging';
 
-                logger.warn(message);
-
                 serviceMetricsSystem.setState(50, message);
 
+
             } else {
+
                 serviceMetricsSystem.setState(0, 'OK');
 
             }
@@ -256,8 +233,6 @@ const loadPortfolio = (eci) => {
             lastServiceError.update(errorOptions);
 
             serviceMetricsSystem.setState(100, errorMessage);
-
-            logger.error(errorMessage);
         })
 }
 
@@ -272,33 +247,30 @@ const subscribeSymbolPrices = () => {
 }
 
 const unsubscribeSymbolPrices = () => {
-    streams.forEach((stream) => {
-        console.log('Closing stream with', stream);
 
+    streams.forEach((stream) => {
         stream.close();
     });
+
 }
 
 const subscribeBySymbol = (symbol, callback) => {
 
-    glue.agm.subscribe('T42.MarketStream.Subscribe', {
+    const options = {
         arguments: {
-            'Symbol': symbol
-        },
-        waitTimeoutMs: 100000
-    })
+            Symbol: symbol
+        }
+    };
+
+    glue.agm.subscribe('T42.MarketStream.Subscribe', options)
         .then((stream) => {
             streams.push(stream);
 
             stream.onData((streamData) => {
-                if (typeof callback === 'function') {
-                    callback(streamData);
-                }
+                callback(streamData);
             })
         })
-        .catch(function (error) {
-            console.log(error)
-        })
+
 }
 
 const addRow = (table, rowData, emptyFlag) => {
@@ -315,11 +287,9 @@ const addRow = (table, rowData, emptyFlag) => {
             removeChildNodes('methodsList');
         }
 
-        const partyMethods = glue.agm
-            .methods()
-            .filter((method) => method.objectTypes !== undefined && method.objectTypes.indexOf('Instrument') !== -1);
+        const availableMethods = glue.agm.methods().filter(m => m.objectTypes.indexOf('Instrument') !== -1);
 
-        addAvailableMethods(partyMethods, rowData.RIC, rowData.BPOD);
+        addAvailableMethods(availableMethods, rowData.RIC, rowData.BPOD);
 
         row.setAttribute('data-toggle', 'modal');
         row.setAttribute('data-target', '#instruments');
@@ -339,10 +309,8 @@ const addRowCell = (row, cellData, cssClass) => {
 };
 
 const setupPortfolio = (portfolios) => {
-    // Updating table with the new portfolio
     const table = document.getElementById('portfolioTable').getElementsByTagName('tbody')[0];
 
-    // Removing all old data
     removeChildNodes('portfolioTableData');
 
     portfolios.forEach((item) => {
@@ -392,13 +360,17 @@ const addAvailableMethods = (methods, symbol, bpod) => {
         button.textContent = method.displayName || method.name;
 
         button.onclick = (event) => {
-            invokeAgMethodByName(method.name, {
+
+            const options = {
                 instrument: {
                     ric: symbol,
                     bpod: bpod
                 }
-            })
+            };
+
+            invokeAgMethodByName(method.name, options);
         }
+
         methodsList.appendChild(button);
     })
 
@@ -410,12 +382,7 @@ const addAvailableMethods = (methods, symbol, bpod) => {
 
 const invokeAgMethodByName = (methodName, params) => {
 
-    glue.agm.invoke(methodName, params, 'best', {}, () => {
-        console.log('Method was successfully invoked')
-    },
-        function (error) {
-            console.error(error)
-        })
+    glue.agm.invoke(methodName, params);
 };
 
 const displayResult = (result) => {
@@ -529,28 +496,21 @@ const setUpWindowEventsListeners = () => {
 
     glue.windows.onWindowRemoved((window) => {
 
-        const context = glue.windows.my().context;
+        const parentId = glue.windows.my().context.myWinId;
 
-        if (window.id === context.winId) {
+        if (window.id === parentId) {
             glue.windows.my().close();
         }
+
     });
+
 };
 
 const setUpTabControls = () => {
+
     if (glue.windows.my().mode !== 'Tab') {
         return;
     }
-
-    const showFrameButtons = (extractTab, gatherTab) => {
-        if (glue.windows.my().tabs.length >= 2) {
-            glue.windows.my().addFrameButton(extractTab);
-            glue.windows.my().removeFrameButton('gatherTabs');
-        } else {
-            glue.windows.my().addFrameButton(gatherTab);
-            glue.windows.my().removeFrameButton('extractTabs');
-        }
-    };
 
     const gatherTab = {
         buttonId: 'gatherTabs',
@@ -582,46 +542,68 @@ const setUpTabControls = () => {
     });
 
     glue.windows.my().onWindowDetached((win) => {
-        showFrameButtons(extractTab, gatherTab);
+        const tabsLen = glue.windows.my().tabs.length;
+        console.log(tabsLen);
+        if (tabsLen >= 2) {
+            glue.windows.my().addFrameButton(extractTab);
+            glue.windows.my().removeFrameButton('gatherTabs');
+        } else {
+            console.log('Alone');
+            glue.windows.my().addFrameButton(gatherTab);
+            glue.windows.my().removeFrameButton('extractTabs');
+        }
     });
 
     glue.windows.my().onFrameButtonClicked((buttonInfo) => {
-        const clientWindowId = glue.windows.my().context.winId;
-        const clientWindow = glue.windows.findById(clientWindowId);
+
+        const tabs = glue.windows.my().tabs;
+        const clientWindowId = glue.windows.my().context.myWinId;
+        const clientsWindow = glue.windows.findById(clientWindowId);
 
         if (buttonInfo.buttonId === 'extractTabs') {
 
-            glue.windows.my().tabs.forEach((w) => {
-                detachedTabs.push(w.id);
-                w.detachTab();
+            tabs.forEach((tab) => {
+
+                detachedTabs.push(tab.id);
+                tab.detachTab();
+
             });
 
-            clientWindow.updateContext({ detachedTabsArr: detachedTabs })
-        }
+            clientsWindow.updateContext({
+                detached: detachedTabs
+            });
 
-        if (buttonInfo.buttonId === 'gatherTabs') {
+        } else {
 
-            const firstWindow = glue.windows.findById(clientWindow.context.detachedTabsArr[0]);
-            firstWindow.snap(clientWindowId, 'right', () => {
-                clientWindow.context.detachedTabsArr.forEach((id) => {
-                    if (firstWindow.id === id) {
-                        return;
-                    }
-                    firstWindow.attachTab(id);
-                })
+            const firstDetachedId = clientsWindow.context.detached[0];
+            const firstTab = glue.windows.findById(firstDetachedId);
+            const allDetached = clientsWindow.context.detached;
+
+            firstTab.snap(clientsWindow, 'right', () => {
+
+                const remainingDetachedIds = allDetached.slice(1);
+
+                remainingDetachedIds.forEach((id) => {
+                    const tab = glue.windows.findById(id);
+                    firstTab.attachTab(tab);
+                });
+
             });
         }
     });
 
     if (glue.windows.my().tabs.length >= 2) {
         glue.windows.my().addFrameButton(extractTab);
+        glue.windows.my().removeFrameButton('gatherTabs');
     }
 };
 
 const search = (event) => {
     event.preventDefault();
+
     var searchValue = document.getElementById('ticker').value;
-    _query.search(searchValue)
+    _query.search(searchValue);
+
 };
 
 const sendPortfolioAsEmailClicked = (event) => {
@@ -638,8 +620,7 @@ const sendPortfolioAsEmailClicked = (event) => {
                     return props.map((prop, index) => {
                         let value = row[prop];
 
-                        if (index === 1) // description
-                        {
+                        if (index === 1) {
                             value = '"' + value + '"'
                         }
 
@@ -674,13 +655,7 @@ const sendPortfolioAsEmailClicked = (event) => {
 
         const content = getEmailContent(client, portfolio);
 
-        outlook.newEmail(content)
-            .then((arg) => {
-                console.log('send');
-            })
-            .catch(function (e) {
-                console.error(e)
-            });
+        outlook.newEmail(content);
     }
 
     var portfolio = getCurrentPortfolio();
@@ -733,14 +708,14 @@ const sendPortfolioToExcelClicked = (event) => {
         };
 
         excel.openSheet(config)
-            .then((sheet) => {
-                sheet.onChanged((newPortfolio) => {
-                    loadPortfolioFromExcel(newPortfolio);
-                })
+        .then((sheet) => {
+            sheet.onChanged((newPortfolio) => {
+                loadPortfolioFromExcel(newPortfolio);
             })
-            .catch((err) => {
-                console.log(err);
-            });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     };
 
     const portfolio = getCurrentPortfolio();

@@ -130,7 +130,7 @@ const loadPortfolio = (eci) => {
             if (elapsedMillis >= 1000) {
                 const message = 'Service at ' + serviceUrl + ' is lagging';
 
-                // TUTOR_TODO Chapter 12 - set system state to AMBER
+                // TUTOR_TODO Chapter 12 - set system state to AMBER and pass the created message
 
 
             } else {
@@ -144,7 +144,8 @@ const loadPortfolio = (eci) => {
                 parsedPortfolio = JSON.parse(portfolio);
             }
 
-            // TUTOR_TODO Chapter 12 - log to the console using the logger
+            const logMessage = { portfolioId: eci, portfolio: parsedPortfolio };
+            // TUTOR_TODO Chapter 12 - log to the console using the logger and the provided logMessage
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
                 console.warn('The client has no portfolio')
@@ -169,9 +170,9 @@ const loadPortfolio = (eci) => {
                 stackTrace: ''
             };
 
-            // TUTOR_TODO Chapter 12 - capture the error with the composite metric
+            // TUTOR_TODO Chapter 12 - capture the error with the composite metric and use the provided errorOptions object
 
-            // TUTOR_TODO Chapter 12 - set the system state to RED
+            // TUTOR_TODO Chapter 12 - set the system state to RED and pass the provided error message
         })
 }
 
