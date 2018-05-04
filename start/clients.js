@@ -87,8 +87,8 @@ const setupClients = () => {
     const addRow = (table, client) => {
         const row = document.createElement('tr');
         addRowCell(row, client.name || '');
-        addRowCell(row, client.eciId || '');
-        addRowCell(row, client.gwmId || '');
+        addRowCell(row, client.pId || '');
+        addRowCell(row, client.gId || '');
         addRowCell(row, client.accountManager || '');
 
         row.onclick = () => {
@@ -130,9 +130,9 @@ const setupClients = () => {
         // TUTOR_TODO chapter 4.2 - start the loader here
 
         $.ajax({
-            method: 'GET',
-            url: RestServerUrl + RestServerEndpoint
-        })
+                method: 'GET',
+                url: RestServerUrl + RestServerEndpoint
+            })
             .done((clients) => {
 
                 if (typeof clients !== 'undefined') {
@@ -159,7 +159,7 @@ const setupClients = () => {
 
 const registerGlueMethods = () => {
 
-    // TUTOR_TODO Chapter 7 - register an AGM method "GWM.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    // TUTOR_TODO Chapter 7 - register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
 };
 
 const trackTheme = () => {

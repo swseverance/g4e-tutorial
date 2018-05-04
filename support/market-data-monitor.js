@@ -2,11 +2,11 @@ var subscriptionCount = 0
 var firstPush = true
 var sequenceId = 1
 
-Glue(glueConfig).then(function (glue) {
+Glue(glueConfig).then(function(glue) {
     console.log(glue.version);
     window.glue = glue;
     registerAgmMethod();
-}).catch(function (error) {
+}).catch(function(error) {
     console.error(error);
 })
 
@@ -34,9 +34,8 @@ function raiseMarketDataMonitorNotification(symbol) {
         state: 'Active',
         glueRouting: {
             detailMethod: {
-                name: 'GWM.FindWhoToCall',
-                parameters: [
-                    {
+                name: 'g42.FindWhoToCall',
+                parameters: [{
                         name: 'notification',
                         value: {
                             //type: 'stringValue',
@@ -83,13 +82,12 @@ var sources = {
 // helper function to create an AGM Stream
 function createStream(streamName, options) {
     options = options || {}
-    return glue.agm.createStream(
-        {name: streamName}, // stream definition object (same as AGM method registration)
-        {   // streaming options
-            subscriptionRequestHandler: options.subscriptionRequestHandler,
-            subscriptionAddedHandler: options.subscriptionAddedHandler,
-            subscriptionRemovedHandler: options.subscriptionRemovedHandler
-        })
+    return glue.agm.createStream({ name: streamName }, // stream definition object (same as AGM method registration)
+            { // streaming options
+                subscriptionRequestHandler: options.subscriptionRequestHandler,
+                subscriptionAddedHandler: options.subscriptionAddedHandler,
+                subscriptionRemovedHandler: options.subscriptionRemovedHandler
+            })
         .then(function onStreamRegistered(stream) {
             console.log('Registered stream ' + streamName)
             return stream
@@ -101,8 +99,7 @@ function createStream(streamName, options) {
 
 function registerAgmMethod() {
     // this gets called first in order to determine the GNS server's capabilites
-    glue.agm.register(
-        {name: 'T42.GNS.Publish.GetCapabilities'},
+    glue.agm.register({ name: 'T42.GNS.Publish.GetCapabilities' },
         // canned response for the *.Capabilities call - nothing fancy is supported
         function handleCapabilitiesRequested() {
             return {
@@ -111,26 +108,23 @@ function registerAgmMethod() {
         })
 
     createStream(
-        'T42.GNS.Publish.Categories',
-        {
+        'T42.GNS.Publish.Categories', {
             subscriptionAddedHandler: handleCategorySubscriberAdded,
             subscriptionRemovedHandler: handleCategorySubscriberRemoved
         })
 
     createStream(
-        'T42.GNS.Publish.Sources',
-        {
+        'T42.GNS.Publish.Sources', {
             subscriptionAddedHandler: handleSourceSubscriberAdded,
             subscriptionRemovedHandler: handleSourceSubscriberRemoved
         })
 
     createStream(
-        'T42.GNS.Publish.Notifications',
-        {
-            subscriptionAddedHandler: handleNotificationSubscriberAdded,
-            subscriptionRemovedHandler: handleNotificationSubscriberRemoved
-        })
-        .then(function (stream) {
+            'T42.GNS.Publish.Notifications', {
+                subscriptionAddedHandler: handleNotificationSubscriberAdded,
+                subscriptionRemovedHandler: handleNotificationSubscriberRemoved
+            })
+        .then(function(stream) {
             notificationStream = stream
         })
 }

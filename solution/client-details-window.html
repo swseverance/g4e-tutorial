@@ -6,66 +6,60 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" id="themeLink" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
-
     <!-- JQuery, Bootstrap, and Lodash -->
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../node_modules/lodash/lodash.min.js"></script>
-
     <!-- Put GLUE configuration here -->
     <script src="../lib/tick42-glue/tick42-glue-config.js"></script>
-
     <!-- Put GLUE here -->
     <script src="../lib/tick42-glue/tick42-glue-dev.js"></script>
-
 </head>
 
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="text-center" id='symbol'></h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center" id='symbol'></h1>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Account Manager</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTable">
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="row">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Account Manager</th>
-            </tr>
-            </thead>
-            <tbody id="clientsTable">
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    Glue(glueConfig).then(function (glue) {
+    <script>
+    Glue(glueConfig).then(function(glue) {
         console.log(glue.version);
         window.glue = glue;
-        glue.activities.ready().then(function () {
+        glue.activities.ready().then(function() {
             initGlue();
-        }).catch(function (err) {
+        }).catch(function(err) {
             console.log(err);
         });
-    }).catch(function (errors) {
+    }).catch(function(errors) {
         console.error(errors);
     })
 
     function initGlue() {
         glue.agm.register({
                 name: 'SetParty',
-                accepts: 'Composite: {string? eciId, string? ucn} party',
-                object_types: ['Party'] // maybe GWM.Party
+                accepts: 'Composite: {string? pId, string? ucn} party',
+                object_types: ['Party'] // maybe g42.Party
             },
-            function (args) {
+            function(args) {
                 if (glue.activities.inActivity) {
                     return;
                 }
@@ -73,7 +67,7 @@
             })
 
         if (typeof glue.activities.my.activity !== 'undefined') {
-            glue.activities.my.activity.onContextChanged(function (context) {
+            glue.activities.my.activity.onContextChanged(function(context) {
                 if (context.party) {
                     handleClientDetails(context.party);
                 }
@@ -88,6 +82,7 @@
         createRow(table, party)
 
     }
+
     function createRow(table, party) {
         var row = document.createElement('tr');
 
@@ -112,7 +107,7 @@
     }
 
     function trackTheme() {
-        glue.contexts.subscribe('theme', function (context) {
+        glue.contexts.subscribe('theme', function(context) {
             if (context.name === 'dark') {
                 setTheme('bootstrap-dark.min.css');
             } else if (context.name === 'light') {
@@ -125,8 +120,7 @@
         $('#themeLink').attr('href', '../lib/themes/css/' + name);
     }
 
-</script>
-
+    </script>
 </body>
 
 </html>

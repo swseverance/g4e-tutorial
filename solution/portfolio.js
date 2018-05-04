@@ -133,7 +133,7 @@ const setUpAppContent = () => {
 
         partyObj = context.party;
 
-        loadPortfolio(context.party.eciId);
+        loadPortfolio(context.party.pId);
 
         return;
     }
@@ -147,7 +147,7 @@ const registerAgmMethod = () => {
 
     if (inActivity) {
         glue.activities.my.onContextChanged((client) => {
-            loadPortfolio(client.party.eciId);
+            loadPortfolio(client.party.pId);
         });
         return;
     }
@@ -156,20 +156,20 @@ const registerAgmMethod = () => {
         name: 'SetParty',
         display_name: 'Set Party',
         description: 'Switches the application window to work with the specified party',
-        accepts: 'Composite: { String? eciId, String? ucn } party'
+        accepts: 'Composite: { String? pId, String? ucn } party'
     };
 
     glue.agm.register(methodOptions, (args) => {
         partyObj = args.party;
-        loadPortfolio(args.party.eciId);
+        loadPortfolio(args.party.pId);
     });
 
 };
 
-const loadPortfolio = (eci) => {
+const loadPortfolio = (portf) => {
     const serviceUrl = RestServerUrl + RestServerEndpoint;
 
-    const serviceRequest = 'xpath=//Portfolios/Portfolio[id=' + eci + ']';
+    const serviceRequest = 'xpath=//Portfolios/Portfolio[id=' + portf + ']';
 
     const requestStart = Date.now();
 
@@ -204,7 +204,7 @@ const loadPortfolio = (eci) => {
                 parsedPortfolio = JSON.parse(portfolio);
             }
 
-            logger.info({ portfolioId: eci, portfolio: parsedPortfolio });
+            logger.info({ portfolioId: portf, portfolio: parsedPortfolio });
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
                 console.warn('The client has no portfolio')
@@ -215,7 +215,7 @@ const loadPortfolio = (eci) => {
             unsubscribeSymbolPrices();
             subscribeSymbolPrices();
         })
-        .fail(function (jqXHR, textStatus) {
+        .fail(function(jqXHR, textStatus) {
 
             serviceLatency.stop();
 
@@ -224,7 +224,7 @@ const loadPortfolio = (eci) => {
             const errorMessage = 'Service at ' + serviceUrl + ' failed at ' + serviceRequest + ' with ' + textStatus;
 
             const errorOptions = {
-                clientId: eci,
+                clientId: portf,
                 message: errorMessage,
                 time: new Date(),
                 stackTrace: ''
@@ -282,7 +282,7 @@ const addRow = (table, rowData, emptyFlag) => {
     addRowCell(row, rowData.bid || '', 'text-right');
     addRowCell(row, rowData.ask || '', 'text-right');
 
-    row.onclick = function () {
+    row.onclick = function() {
         if (emptyFlag) {
             removeChildNodes('methodsList');
         }
@@ -375,7 +375,7 @@ const addAvailableMethods = (methods, symbol, bpod) => {
     })
 
     // Enable tooltip
-    $(function () {
+    $(function() {
         $('[data-toggle="tooltip"]').tooltip()
     })
 };
@@ -636,7 +636,7 @@ const sendPortfolioAsEmailClicked = (event) => {
                     }).join("</td><td>") + "</td></tr>"
                 }).join("\n") + "\n</table>\n</body>\</html>\n";
 
-            const fileName = 'client-' + client.eciId + '-portfolio.csv';
+            const fileName = 'client-' + client.pId + '-portfolio.csv';
 
             const file = {
                 fileName: fileName,
@@ -708,14 +708,14 @@ const sendPortfolioToExcelClicked = (event) => {
         };
 
         excel.openSheet(config)
-        .then((sheet) => {
-            sheet.onChanged((newPortfolio) => {
-                loadPortfolioFromExcel(newPortfolio);
+            .then((sheet) => {
+                sheet.onChanged((newPortfolio) => {
+                    loadPortfolioFromExcel(newPortfolio);
+                })
             })
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const portfolio = getCurrentPortfolio();

@@ -92,7 +92,7 @@ const setUpAppContent = () => {
 
     // TUTOR_TODO chapter 4.3 - Check whether the current window context contains the attribute 'party'
     // if doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object
-    // and call loadPortfolio() passing in the eciId from the party object
+    // and call loadPortfolio() passing in the pId from the party object
     // assign the received party object to partyObj, because we will need it later on.
 };
 
@@ -100,16 +100,16 @@ const registerAgmMethod = () => {
 
     // TUTOR_TODO Chapter 11 - register the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
 
-    // TUTOR_TODO Chapter 2.1 - register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings eciId and ucn
-    // in the callback - call loadPortfolio passing the eciId received as a parameter.
+    // TUTOR_TODO Chapter 2.1 - register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings pId and ucn
+    // in the callback - call loadPortfolio passing the pId received as a parameter.
     // assign the received party object to partyObj, because we will need it later on.
 
 };
 
-const loadPortfolio = (eci) => {
+const loadPortfolio = (portf) => {
     const serviceUrl = RestServerUrl + RestServerEndpoint;
 
-    const serviceRequest = 'xpath=//Portfolios/Portfolio[id=' + eci + ']';
+    const serviceRequest = 'xpath=//Portfolios/Portfolio[id=' + portf + ']';
 
     const requestStart = Date.now();
 
@@ -144,7 +144,7 @@ const loadPortfolio = (eci) => {
                 parsedPortfolio = JSON.parse(portfolio);
             }
 
-            const logMessage = { portfolioId: eci, portfolio: parsedPortfolio };
+            const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
             // TUTOR_TODO Chapter 12 - log to the console using the logger and the provided logMessage
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
@@ -156,7 +156,7 @@ const loadPortfolio = (eci) => {
             unsubscribeSymbolPrices();
             subscribeSymbolPrices();
         })
-        .fail(function (jqXHR, textStatus) {
+        .fail(function(jqXHR, textStatus) {
             // TUTOR_TODO Chapter 12 - stop the latency metric
 
             // TUTOR_TODO Chapter 12 - increment the error count
@@ -164,7 +164,7 @@ const loadPortfolio = (eci) => {
             const errorMessage = 'Service at ' + serviceUrl + ' failed at ' + serviceRequest + ' with ' + textStatus;
 
             const errorOptions = {
-                clientId: eci,
+                clientId: portf,
                 message: errorMessage,
                 time: new Date(),
                 stackTrace: ''
@@ -211,7 +211,7 @@ const addRow = (table, rowData, emptyFlag) => {
     addRowCell(row, rowData.bid || '', 'text-right');
     addRowCell(row, rowData.ask || '', 'text-right');
 
-    row.onclick = function () {
+    row.onclick = function() {
         if (emptyFlag) {
             removeChildNodes('methodsList');
         }
@@ -307,7 +307,7 @@ const addAvailableMethods = (methods, symbol, bpod) => {
     })
 
     // Enable tooltip
-    $(function () {
+    $(function() {
         $('[data-toggle="tooltip"]').tooltip()
     })
 };
@@ -519,7 +519,7 @@ const sendPortfolioAsEmailClicked = (event) => {
                     }).join("</td><td>") + "</td></tr>"
                 }).join("\n") + "\n</table>\n</body>\</html>\n";
 
-            const fileName = 'client-' + client.eciId + '-portfolio.csv';
+            const fileName = 'client-' + client.pId + '-portfolio.csv';
 
             const file = {
                 fileName: fileName,

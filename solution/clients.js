@@ -100,8 +100,8 @@ const setupClients = () => {
     const addRow = (table, client) => {
         const row = document.createElement('tr');
         addRowCell(row, client.name || '');
-        addRowCell(row, client.eciId || '');
-        addRowCell(row, client.gwmId || '');
+        addRowCell(row, client.pId || '');
+        addRowCell(row, client.gId || '');
         addRowCell(row, client.accountManager || '');
 
         row.onclick = () => {
@@ -149,9 +149,9 @@ const setupClients = () => {
         glue.windows.my().showLoader();
 
         $.ajax({
-            method: 'GET',
-            url: RestServerUrl + RestServerEndpoint
-        })
+                method: 'GET',
+                url: RestServerUrl + RestServerEndpoint
+            })
             .done((clients) => {
 
                 if (typeof clients !== 'undefined') {
@@ -177,7 +177,7 @@ const setupClients = () => {
 
 const registerGlueMethods = () => {
 
-    glue.agm.register('GWM.FindWhoToCall', (args) => {
+    glue.agm.register('g42.FindWhoToCall', (args) => {
         glue.windows.open(`call_clients`, window.location.href.replace('clients.html', 'symbolPopup.html'));
     })
 };
@@ -280,7 +280,7 @@ const openTabWindow = (party, direction) => {
     //     options.relativeDirection = direction
     // }
 
-    // glue.windows.open(`PortfolioTabs_${party.eciId}`, window.location.href.replace('clients.html', 'portfolio.html'), options);
+    // glue.windows.open(`PortfolioTabs_${party.pId}`, window.location.href.replace('clients.html', 'portfolio.html'), options);
 
     const context = {
         party: party,

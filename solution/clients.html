@@ -7,54 +7,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Clients</title>
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" id="themeLink" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
-
     <!-- JQuery, Bootstrap, and Lodash -->
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../node_modules/lodash/lodash.min.js"></script>
-
     <!-- Put GLUE configuration here -->
     <script src="../lib/tick42-glue/tick42-glue-config.js"></script>
-
     <!-- Put GLUE here -->
     <script src="../lib/tick42-glue/tick42-glue-dev.js"></script>
-
     <!-- Put the page-related source code here -->
     <script src="clients.js"></script>
 </head>
 
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2">
-            <span id="glueSpan" class="label label-warning">Glue is disconnected</span>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <span id="glueSpan" class="label label-warning">Glue is disconnected</span>
+            </div>
+            <div class="col-md-10">
+                <h1 class="text-center">Clients</h1>
+            </div>
         </div>
-        <div class="col-md-10">
-            <h1 class="text-center">Clients</h1>
+        <div class="row">
+            <table id="clientsTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>PID</th>
+                        <th>GID</th>
+                        <th>Account Manager</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <!-- <button class="btn btn-primary" id="portfolioBtn">Portfolio</button> -->
         </div>
     </div>
-    <div class="row">
-        <table id="clientsTable" class="table table-hover">
-            <thead>
-            <tr>
-                <th>Full Name</th>
-                <th>ECI ID</th>
-                <th>GWM ID</th>
-                <th>Account Manager</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <div class="row">
-        <!-- <button class="btn btn-primary" id="portfolioBtn">Portfolio</button> -->
-    </div>
-</div>
 </body>
 
 </html>
