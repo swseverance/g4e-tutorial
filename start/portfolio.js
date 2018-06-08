@@ -49,6 +49,23 @@ const instrumentService = () => {
 };
 
 const onInitializeApp = () => {
+    if (glue.agm) {
+        glue.agm.register({
+                name: 'Alert symbol',
+                objectTypes: ['Instrument'],
+            },
+            (args) => {
+                alert(args.instrument.ric);
+            });
+        glue.agm.register({
+                name: 'Alert bpod',
+                objectTypes: ['Instrument'],
+            },
+            (args) => {
+                alert(args.instrument.bpod);
+            });
+
+    }
 
     setUpAppContent();
     setUpStreamIndicator();
