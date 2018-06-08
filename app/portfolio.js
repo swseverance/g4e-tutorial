@@ -27,6 +27,8 @@ let logger;
 //     // Don't forget to catch any errors.
 //     .catch((err) => console.log(err));
 
+
+// REVIEW: less code in try-catch
 (async () => {
     try {
         const glue = await Glue();
@@ -52,6 +54,7 @@ let logger;
     }
 })();
 
+// REVIEW: Why async?
 const instrumentService = async () => {
     // TUTOR_TODO Chapter 12 - create sub-logger
     logger = glue.logger.subLogger('portfolioLogger');
@@ -111,6 +114,7 @@ const trackTheme = () => {
     }
 
     // TUTOR_TODO 10 - subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+    // REVIEW: same as Moskov -> default?
     glue.contexts.subscribe("theme", (theme) => {
         if (theme.name === 'dark') {
             setTheme('bootstrap-dark.min.css');
@@ -126,6 +130,8 @@ const setUpAppContent = () => {
     // if doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object
     // and call loadPortfolio() passing in the pId from the party object
     // assign the received party object to partyObj, because we will need it later on.
+
+    // REVIEW: elses hurt my feelings, use return
 
     const party = glue.windows.my().context.party;
     partyObj = party;
@@ -143,6 +149,7 @@ const setUpAppContent = () => {
 
 const registerAgmMethod = () => {
 
+    // REVIEW: same as above
     // TUTOR_TODO Chapter 11 - register the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
     if (glue.activities.inActivity) {
         glue.activities.my.onContextChanged((context) => {
@@ -278,6 +285,7 @@ const subscribeBySymbol = async (symbol, callback) => {
         }
     });
     subscriptions.push(subscription);
+    // REVIEW: almost perfect, better expression
     subscription.onData((streamData) => callback(streamData));
 
     // .then((subscription) => {
@@ -392,6 +400,7 @@ const addAvailableMethods = (methods, symbol, bpod) => {
 
         methodsList.appendChild(button);
     })
+    // REVIEW: KABOOOM
     console.log(methodsList.children[0].title);
 
     // Enable tooltip

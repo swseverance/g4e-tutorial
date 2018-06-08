@@ -5,6 +5,9 @@ const MethodName = 'SetParty';
 
 // TUTOR_TODO Chapter 1.2 - Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
 // When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
+
+// REVIEW: why no IIFE and why mix arrow + function
+
 Glue(glueConfig)
     .then((glue) => {
         window.glue = glue;
@@ -186,6 +189,7 @@ const setupClients = () => {
 const registerGlueMethods = () => {
 
     // TUTOR_TODO Chapter 7 - register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    // REVIEW: better config arrangement
     glue.agm.register({
             name: 'g42.FindWhoToCall',
             displayName: 'Find Who To Call',
@@ -210,6 +214,7 @@ const trackTheme = () => {
 
     // TUTOR_TODO Chapter 10 - subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
 
+    // REVIEW: AGAINNN??
     glue.contexts.subscribe("theme", (theme) => {
         if (theme.name === 'dark') {
             setTheme('bootstrap-dark.min.css');
@@ -227,6 +232,8 @@ const invokeAgMethod = (client) => {
 };
 
 const getWindowDirection = () => {
+    // REVIEW: I sense a copyright infringement here
+
     const primaryMonitor = htmlContainer.monitors.find((monitor) => monitor.isPrimary);
     const workingAreaHeight = primaryMonitor.height;
 
@@ -294,6 +301,7 @@ const openTabWindow = (party, direction) => {
     }
 
     // glue.windows.open(party.name, window.location.href.replace('clients.html', 'portfolio.html'), windowSettings);
+    // REVIEW: do we know that this is a promise?
     glue.appManager.application('Portfolios').start(context, windowSettings)
 
 
