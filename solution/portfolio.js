@@ -3,7 +3,7 @@ const RestServerEndpoint = 'GetDemoPortfolio';
 const StreamName = 'T42.MarketStream.Subscribe';
 
 let detachedTabs = [];
-let streams = [];
+let subscriptions = [];
 let _query;
 let partyObj;
 
@@ -265,8 +265,8 @@ const subscribeSymbolPrices = () => {
 
 const unsubscribeSymbolPrices = () => {
 
-    streams.forEach((stream) => {
-        stream.close();
+    subscriptions.forEach((subscription) => {
+        subscription.close();
     });
 
 }
@@ -280,11 +280,11 @@ const subscribeBySymbol = (symbol, callback) => {
     };
 
     glue.agm.subscribe('T42.MarketStream.Subscribe', options)
-        .then((stream) => {
-            streams.push(stream);
+        .then((subscription) => {
+            subscriptions.push(subscription);
 
-            stream.onData((streamData) => {
-                callback(streamData);
+            subscription.onData((subscriptionData) => {
+                callback(subscriptionData);
             })
         })
 

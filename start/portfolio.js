@@ -3,7 +3,7 @@ const RestServerEndpoint = 'GetDemoPortfolio';
 const StreamName = 'T42.MarketStream.Subscribe';
 
 let detachedTabs = [];
-let streams = [];
+let subscriptions = [];
 let _query;
 let partyObj;
 
@@ -205,8 +205,8 @@ const subscribeSymbolPrices = () => {
 
 const unsubscribeSymbolPrices = () => {
 
-    // TUTOR_TODO Chapter 3 - Traverse the saved streams and close each one.
-    // We need to do this, because when the portfolio changes, we need to clear the existing streams and subscribe to the new symbol's streams
+    // TUTOR_TODO Chapter 3 - Traverse the saved subscriptions and close each one.
+    // We need to do this, because when the portfolio changes, we need to clear the existing subscriptions and subscribe to the new symbol's stream
 
 }
 
@@ -214,8 +214,8 @@ const subscribeBySymbol = (symbol, callback) => {
 
     // TUTOR_TODO Chapter 3 - Subscribe to a stream called 'T42.MarketStream.Subscribe'
     // as a second parameter pass an options object with an `arguments` property, which has a property 'Symbol' and assign to it the symbol variable passed to this function
-    // When the promise is resolved save the created stream so that you can later close it and subscribe to new streams (when the portfolio changes)
-    // Finally subscribe to the created stream's onData event and invoke the callback passed to this function with the received streamData
+    // When the promise is resolved save the created subscription so that you can later close it and subscribe to new streams (when the portfolio changes)
+    // Finally subscribe to the created subscription's onData event and invoke the callback passed to this function with the received streamData
 
 }
 
