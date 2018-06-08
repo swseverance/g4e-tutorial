@@ -17,6 +17,8 @@ let logger;
 // When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
 // Then add all of the following code, leave the code under TUTOR_TODO Chapter 8 commented as you will need it later on:
 
+// REVIEW: Async mess
+// Arrow and func mix
 Glue(glueConfig)
     .then(async (glue) => {
         window.glue = glue;
@@ -53,7 +55,7 @@ Glue(glueConfig)
 
 // Don't forget to catch any errors.
 
-
+// REVIEW: why async?
 const instrumentService = async () => {
 
     // TUTOR_TODO Chapter 12 - create sub-logger
@@ -99,6 +101,7 @@ const initInstrumentSearch = () => {
     const searchClient = gssClientSearch.create(gssOptions);
     _query = searchClient.createQuery('Instrument');
 
+    // REVIEW: better expression
     _query.onData(searchResult => {
         displayResult(searchResult);
     })
@@ -118,6 +121,8 @@ const trackTheme = () => {
 
     // TUTOR_TODO 10 - subscribe for context changes and 
     //call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+
+    // REVIEW: why function, default, unused variables
     glue.contexts.subscribe('theme',
         function(context, delta, removed) {
             if(context.name === 'dark') {
@@ -156,6 +161,7 @@ const registerAgmMethod = () => {
     // TUTOR_TODO Chapter 11 - register the AGM method only if you are not in activity, 
     //otherwise listen for activity context changes and call loadPortfolio
 
+    // REVIEW: why func, unused variables
     if(glue.activities.inActivity){
         glue.activities.my.onContextChanged(
             function(context, delta, removed) {
@@ -169,6 +175,7 @@ const registerAgmMethod = () => {
         // in the callback - call loadPortfolio passing the pId received as a parameter.
         // assign the received party object to partyObj, because we will need it later on.
 
+        // REVIEW: why function
         glue.agm.register({
             name: 'SetParty',
             displayName: 'Set Party',
@@ -288,6 +295,8 @@ const subscribeBySymbol = (symbol, callback) => {
     // as a second parameter pass an options object with an `arguments` property, which has a property 'Symbol' and assign to it the symbol variable passed to this function
     // When the promise is resolved save the created stream so that you can later close it and subscribe to new streams (when the portfolio changes)
     // Finally subscribe to the created stream's onData event and invoke the callback passed to this function with the received streamData
+
+    // REVIEW: mix arrow and function
     glue.agm.subscribe(
         StreamName,
         {
@@ -633,6 +642,8 @@ const setUpTabControls = () => {
             clientWindowObj.updateContext({
                 detachedTabsIds,
             })
+
+            // REVIEW: improve readability
 
             Promise.all(glue.windows.my().tabs.map(tab => tab.detachTab()));
 

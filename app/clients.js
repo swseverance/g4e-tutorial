@@ -14,6 +14,9 @@ const MethodName = 'SetParty';
 
 // Don't forget to catch any errors.
 
+
+// REVIEW: mix arrow and func
+
 Glue()
     .then((glue) => {
         window.glue = glue;
@@ -26,8 +29,6 @@ Glue()
     .catch(function (err) {
         console.log(err);
     });
-
-// Done
 
 const checkGlueConnection = () => {
 
@@ -201,6 +202,8 @@ const registerGlueMethods = () => {
 
 
     // TUTOR_TODO Chapter 7 - register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    
+    // REVIEW: Do better formating 
     glue.agm.register('g42.FindWhoToCall', (symbol) => {
         glue.windows.open('symbolPopup', window.location.href.replace('clients.html', 'symbolPopup.html'),
         {
