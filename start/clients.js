@@ -73,7 +73,7 @@ const setUpUi = () => {
 
         // TUTOR_TODO Chapter 4.4 - Use the windows API for handling frame button clicks to handle a frame button click, check the Id and open a portfolio window
 
-        // TUTOR_TODO Chapter 4.4 - pass the result of getWindowDirection as a second argument for openTabWindow
+        // TUTOR_TODO Chapter 4.4 - pass the result of getWindowDirection as a second argument for openWindow
         const direction = getWindowDirection();
     };
 
