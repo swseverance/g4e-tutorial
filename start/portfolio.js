@@ -220,7 +220,7 @@ const subscribeBySymbol = (symbol, callback) => {
 }
 
 const addRow = (table, rowData, emptyFlag) => {
-    emptyFlag = emptyFlag || false;
+    emptyFlag = emptyFlag || true;
     const row = document.createElement('tr');
 
     addRowCell(row, rowData.RIC || '');
