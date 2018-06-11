@@ -2,17 +2,24 @@ const RestServerUrl = 'http://localhost:22910/';
 const RestServerEndpoint = 'Clients';
 const MethodName = 'SetParty';
 
-
 // TUTOR_TODO Chapter 1.2 - Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
 // When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
+
+Glue(glueConfig)
+    .then((glue) => {
+        window.glue = glue;
+
+        checkGlueConnection();
+        setUpUi();
+        setupClients();
+        registerGlueMethods();
+        trackTheme();
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
 // Then call the following functions:
-
-// checkGlueConnection();
-// setUpUi();
-// setupClients();
-// registerGlueMethods();
-// trackTheme();
-
 // Don't forget to catch any errors.
 
 const checkGlueConnection = () => {
@@ -50,10 +57,9 @@ const setUpUi = () => {
     if (portfolioButton) {
 
         portfolioButton.onclick = () => {
-
             // TUTOR_TODO Chapter 4.1 - Call openWindow with a window name, current window instance and a direction
             const myWin = glue.windows.my();
-
+            openWindow('Portfolio', myWin, 'bottom');
         }
     }
 
@@ -92,10 +98,9 @@ const setupClients = () => {
         addRowCell(row, client.accountManager || '');
 
         row.onclick = () => {
-
             // TUTOR_TODO Chapter 11 - check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
-
             // TUTOR_TODO Chapter 4.4 - pass the result of getWindowDirection as a second argument for openTabWindow
+
             const direction = getWindowDirection();
 
             openTabWindow(client, 'right');
@@ -126,13 +131,14 @@ const setupClients = () => {
     }
 
     const getClients = (count, callback) => {
-
         // TUTOR_TODO chapter 4.2 - start the loader here
 
+        glue.windows.my().showLoader();
+
         $.ajax({
-                method: 'GET',
-                url: RestServerUrl + RestServerEndpoint
-            })
+            method: 'GET',
+            url: RestServerUrl + RestServerEndpoint
+        })
             .done((clients) => {
 
                 if (typeof clients !== 'undefined') {
@@ -151,6 +157,7 @@ const setupClients = () => {
             })
             .always(() => {
                 // TUTOR_TODO chapter 4.2 - stop the loader here
+                glue.windows.my().hideLoader();
             });
     }
 
@@ -172,9 +179,10 @@ const trackTheme = () => {
 };
 
 const invokeAgMethod = (client) => {
-
     // TUTOR_TODO Chapter 2.2 - Invoke the 'SetParty' AGM method passing the client object for the party argument.
-
+    glue.agm.invoke('SetParty', {
+        party: client
+    });
 };
 
 const getWindowDirection = () => {
@@ -189,7 +197,6 @@ const getWindowDirection = () => {
 }
 
 const openWindow = (windowName, myWin, direction) => {
-
     // TUTOR_TODO Chapter 4.2 - Add additional properties or modify the existing ones in the options object in order to open a portfolio window which:
     // is mode: 'flat', cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
     // create a context object inside the options and pass your window's id 'glue.windows.my().id'
@@ -199,6 +206,27 @@ const openWindow = (windowName, myWin, direction) => {
 
     // TUTOR_TODO Chapter 5 - Modify split the current options object into two separate objects - context and windowSettings
     // use the Application Management API to open a portfolio instance
+
+    const windowOptions = {
+        mode: 'html',
+        relativeTo: myWin.id,
+        relativeDirection: direction,
+        allowMinimize: false,
+        allowMaximize: false,
+        allowCollapse: false,
+        allowClose: false,
+        minHeight: 400,
+        minWidth: 600,
+        context: {
+            id: myWin.id,
+        },
+    };
+
+    glue.windows.open(
+        windowName,
+        window.location.href.replace('clients.html', 'portfolio.html'),
+        windowOptions
+    );
 };
 
 const openTabWindow = (party, direction) => {

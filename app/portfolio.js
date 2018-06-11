@@ -17,10 +17,18 @@ let logger;
 // When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
 // Then add all of the following code, leave the code under TUTOR_TODO Chapter 8 commented as you will need it later on:
 
-// instrumentService();
-// onInitializeApp();
-// initInstrumentSearch();
-// trackTheme();
+Glue(glueConfig)
+    .then((glue) => {
+        window.glue = glue;
+
+        instrumentService();
+        onInitializeApp();
+        initInstrumentSearch();
+        trackTheme();
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 
 // // TUTOR_TODO Chapter 8
 // // const glue4OfficeOptions = {
@@ -33,7 +41,6 @@ let logger;
 // // TUTOR_TODO Chapter 8 - Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible 
 
 // Don't forget to catch any errors.
-
 
 const instrumentService = () => {
 
@@ -51,16 +58,16 @@ const instrumentService = () => {
 const onInitializeApp = () => {
     if (glue.agm) {
         glue.agm.register({
-                name: 'Alert symbol',
-                objectTypes: ['Instrument'],
-            },
+            name: 'Alert symbol',
+            objectTypes: ['Instrument'],
+        },
             (args) => {
                 alert(args.instrument.ric);
             });
         glue.agm.register({
-                name: 'Alert bpod',
-                objectTypes: ['Instrument'],
-            },
+            name: 'Alert bpod',
+            objectTypes: ['Instrument'],
+        },
             (args) => {
                 alert(args.instrument.bpod);
             });
@@ -114,18 +121,31 @@ const setUpAppContent = () => {
 };
 
 const registerAgmMethod = () => {
-
     // TUTOR_TODO Chapter 11 - register the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
 
     // TUTOR_TODO Chapter 2.1 - register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings pId and ucn
     // in the callback - call loadPortfolio passing the pId received as a parameter.
     // assign the received party object to partyObj, because we will need it later on.
 
+    const setPartyMethodProperties = {
+        name: 'SetParty',
+        display_name: 'Set Party',
+        description: 'Switches the application window to work with the specified party.',
+        accepts: 'composite: { string pId, string ucn } party',
+        objectTypes: ['Party'],
+    };
+
+    const portfolioLoader = (args) => {
+        partyObj = args.party;
+        loadPortfolio(args.party.pId);
+    };
+
+    glue.agm.register(setPartyMethodProperties, portfolioLoader);
 };
 
 const loadPortfolio = (portf) => {
     const serviceUrl = RestServerUrl + RestServerEndpoint;
-
+    console.log(portf);
     const serviceRequest = 'xpath=//Portfolios/Portfolio[id=' + portf + ']';
 
     const requestStart = Date.now();
@@ -170,10 +190,10 @@ const loadPortfolio = (portf) => {
             }
 
             setupPortfolio(parsedPortfolio.Portfolios.Portfolio.Symbols.Symbol);
-            unsubscribeSymbolPrices();
+            // unsubscribeSymbolPrices();
             subscribeSymbolPrices();
         })
-        .fail(function(jqXHR, textStatus) {
+        .fail(function (jqXHR, textStatus) {
             // TUTOR_TODO Chapter 12 - stop the latency metric
 
             // TUTOR_TODO Chapter 12 - increment the error count
@@ -204,22 +224,34 @@ const subscribeSymbolPrices = () => {
 }
 
 const unsubscribeSymbolPrices = () => {
-
     // TUTOR_TODO Chapter 3 - Traverse the saved subscriptions and close each one.
     // We need to do this, because when the portfolio changes, we need to clear the existing subscriptions and subscribe to the new symbol's stream
 
+    subscriptions.forEach((subscription) => subscription.close());
 }
 
 const subscribeBySymbol = (symbol, callback) => {
-
     // TUTOR_TODO Chapter 3 - Subscribe to a stream called 'T42.MarketStream.Subscribe'
     // as a second parameter pass an options object with an `arguments` property, which has a property 'Symbol' and assign to it the symbol variable passed to this function
     // When the promise is resolved save the created subscription so that you can later close it and subscribe to new streams (when the portfolio changes)
     // Finally subscribe to the created subscription's onData event and invoke the callback passed to this function with the received streamData
 
+    glue.agm.subscribe(
+        StreamName,
+        {
+            arguments: { Symbol: symbol },
+        })
+        .then((subscription) => {
+            subscriptions.push(subscription);
+
+            console.log(subscription);
+            subscription.onData(callback);
+        })
+        .catch((error) => console.log(`Subscription failed: ${error}`));
 }
 
 const addRow = (table, rowData, emptyFlag) => {
+    console.log('asdsadasdasds');
     emptyFlag = emptyFlag || true;
     const row = document.createElement('tr');
 
@@ -228,15 +260,19 @@ const addRow = (table, rowData, emptyFlag) => {
     addRowCell(row, rowData.bid || '', 'text-right');
     addRowCell(row, rowData.ask || '', 'text-right');
 
-    row.onclick = function() {
+    row.onclick = function () {
         if (emptyFlag) {
             removeChildNodes('methodsList');
         }
-
         // TUTOR_TODO Chapter 2.3 - Discover all registered methods with objectType 'Instrument'
         // invoke addAvailableMethods(*discovered methods*, rowData.RIC, rowData.BPOD)
-
         // addAvailableMethods(partyMethods, rowData.RIC, rowData.BPOD);
+
+        const filteredMethodsNames = glue.agm
+            .methods()
+            .filter((method) => method.objectTypes.indexOf('Instrument') > -1);
+
+        addAvailableMethods(filteredMethodsNames, rowData.RIC, rowData.BPOD);
 
         row.setAttribute('data-toggle', 'modal');
         row.setAttribute('data-target', '#instruments');
@@ -324,13 +360,19 @@ const addAvailableMethods = (methods, symbol, bpod) => {
     })
 
     // Enable tooltip
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 };
 
 const invokeAgMethodByName = (methodName, params) => {
-
+    glue.agm.invoke(methodName, params)
+        .then((result) => {
+            console.log(`Successfully invoked ${methodName}.`);
+        })
+        .catch((error) => {
+            console.log(error.message);
+        });
     // TUTOR_TODO 2.3 invoke the agm method with the passed methodName and passed params
 
 };
@@ -443,11 +485,15 @@ const toggleStatusLabel = (elementId, text, available) => {
 };
 
 const setUpWindowEventsListeners = () => {
-
     // TUTOR_TODO Chapter 4.2 - subscribe to the onWindowRemoved event and implement the handler
     // compare the closed window's id with the client window id you were passed on window creation
     // if they match - glue.windows.my().close();
 
+    glue.windows.onWindowRemoved((GDWindow) => {
+        if (GDWindow.id === glue.windows.my().context.id) {
+            glue.windows.my().close();
+        }
+    });
 };
 
 const setUpTabControls = () => {
