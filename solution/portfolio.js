@@ -80,16 +80,16 @@ const instrumentService = () => {
 const onInitializeApp = () => {
     if (glue.agm) {
         glue.agm.register({
-                name: 'Alert symbol',
-                objectTypes: ['Instrument'],
-            },
+            name: 'Alert symbol',
+            objectTypes: ['Instrument'],
+        },
             (args) => {
                 alert(args.instrument.ric);
             });
         glue.agm.register({
-                name: 'Alert bpod',
-                objectTypes: ['Instrument'],
-            },
+            name: 'Alert bpod',
+            objectTypes: ['Instrument'],
+        },
             (args) => {
                 alert(args.instrument.bpod);
             });
@@ -164,7 +164,9 @@ const registerAgmMethod = () => {
 
     if (inActivity) {
         glue.activities.my.onContextChanged((client) => {
-            loadPortfolio(client.party.pId);
+            if (client.party) {
+                loadPortfolio(client.party.pId);
+            }
         });
         return;
     }
@@ -232,7 +234,7 @@ const loadPortfolio = (portf) => {
             unsubscribeSymbolPrices();
             subscribeSymbolPrices();
         })
-        .fail(function(jqXHR, textStatus) {
+        .fail(function (jqXHR, textStatus) {
 
             serviceLatency.stop();
 
@@ -299,7 +301,7 @@ const addRow = (table, rowData, emptyFlag) => {
     addRowCell(row, rowData.bid || '', 'text-right');
     addRowCell(row, rowData.ask || '', 'text-right');
 
-    row.onclick = function() {
+    row.onclick = function () {
         if (emptyFlag) {
             removeChildNodes('methodsList');
         }
@@ -392,7 +394,7 @@ const addAvailableMethods = (methods, symbol, bpod) => {
     })
 
     // Enable tooltip
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 };
