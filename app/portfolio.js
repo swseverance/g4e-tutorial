@@ -690,7 +690,9 @@ const sendPortfolioAsEmailClicked = (event) => {
         const content = getEmailContent(client, portfolio);
 
         // TUTOR_TODO Chapter 8 - create a new email by passing the content object above.
-        // g4o.outlook.newEmail()
+        window.g4o.outlook.newEmail(content)
+            .then(console.log('email created'))
+            .catch(console.error);
     }
 
     var portfolio = getCurrentPortfolio();
