@@ -20,6 +20,18 @@ let logger;
 Glue(glueConfig)
     .then((glue) => {
         window.glue = glue;
+        // // TUTOR_TODO Chapter 8
+        const glue4OfficeOptions = {
+            glue: glue,
+            outlook: true,
+            // //        // TUTOR_TODO Chapter 9 
+            // //        // excel: true
+        };
+
+        return Glue4Office(glue4OfficeOptions);
+    })
+    .then((g4o) => {
+        window.g4o = g4o;
 
         instrumentService();
         onInitializeApp();
@@ -30,13 +42,6 @@ Glue(glueConfig)
         console.log(err);
     });
 
-// // TUTOR_TODO Chapter 8
-// // const glue4OfficeOptions = {
-// //     glue: glue,
-// //     outlook: true,
-// //        // TUTOR_TODO Chapter 9 
-// //        // excel: true
-// // };
 
 // // TUTOR_TODO Chapter 8 - Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible 
 
@@ -100,8 +105,8 @@ const initInstrumentSearch = () => {
     // Use the created search client to create a query for 'Instrument'
     // subscribe to the created query's onData event and call displayResult() passing in the received entities
 
-    var instrumentQuery = createdClient.createQuery('Instrument');
-    instrumentQuery.onData((result) => displayResult(result));
+    _query = clientSearch.createQuery('Instrument');
+    _query.onData((result) => displayResult(result));
 };
 
 const trackTheme = () => {
@@ -632,7 +637,7 @@ const search = (event) => {
     var searchValue = document.getElementById('ticker').value;
 
     // TUTOR_TODO Chapter 6 - Use the created query's search function and pass in the searchValue;
-    instrumentQuery(searchValue);
+    _query.search(searchValue);
 };
 
 const sendPortfolioAsEmailClicked = (event) => {
@@ -685,6 +690,7 @@ const sendPortfolioAsEmailClicked = (event) => {
         const content = getEmailContent(client, portfolio);
 
         // TUTOR_TODO Chapter 8 - create a new email by passing the content object above.
+        // g4o.outlook.newEmail()
     }
 
     var portfolio = getCurrentPortfolio();

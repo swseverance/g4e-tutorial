@@ -166,8 +166,16 @@ const setupClients = () => {
 };
 
 const registerGlueMethods = () => {
-
     // TUTOR_TODO Chapter 7 - register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+
+    glue.agm.register({
+        name: 'g42.FindWhoToCall',
+    }, () => {
+        glue.windows.open(
+            'symbol_popup',
+            window.location.href.replace('clients.html', 'symbolPopup.html')
+        );
+    });
 };
 
 const trackTheme = () => {
@@ -251,7 +259,7 @@ const openTabWindow = (party, direction) => {
 
     const windowId = glue.windows.my().id;
     const foundWindow = glue.windows.list().find((win) => win.title === party.preferredName);
-    
+
     const portfolioTabs = glue.windows.list().filter((win) => win.tabGroupId === 'MyTabGroupId');
 
     if (foundWindow) {
