@@ -297,7 +297,7 @@ const openTabWindow = (party, direction) => {
 
     if (portfolioTabs.length === 0) {
         windowOptions.relativeTo = windowId;
-        windowOptions.relativeDirection = 'right';
+        windowOptions.relativeDirection = direction;
     }
 
     glue.appManager.application('Portfolios').start(context, windowOptions);
