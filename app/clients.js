@@ -263,7 +263,7 @@ const openWindow = (windowName, myWin, direction) => {
         minWidth: 600,
     };
 
-    glue.appManager.application('Portfolios').start(context, windowSettings);
+    glue.appManager.application('Portfolios').start(context, windowOptions);
 };
 
 const openTabWindow = (party, direction) => {
