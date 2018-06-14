@@ -78,6 +78,8 @@ const setUpUi = () => {
                 const direction = getWindowDirection();
                 openWindow('portfolio', currentWindow, direction);
             }
+
+            // REVIEW: else? silent error?
         });
     };
 
@@ -105,6 +107,7 @@ const setupClients = () => {
                 party: client,
             };
 
+            // REVIEW: extract variable to improve readability
             if (glue.activities.inActivity) {
                 glue.activities.my.updateContext(context);
                 return;
@@ -177,6 +180,7 @@ const setupClients = () => {
 const registerGlueMethods = () => {
     // TUTOR_TODO Chapter 7 - register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
 
+    // REVIEW: lack of consistency -> why no separate callback/options declaration
     glue.agm.register({
         name: 'g42.FindWhoToCall',
     }, () => {

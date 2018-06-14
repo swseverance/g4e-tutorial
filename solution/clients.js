@@ -149,9 +149,9 @@ const setupClients = () => {
         glue.windows.my().showLoader();
 
         $.ajax({
-                method: 'GET',
-                url: RestServerUrl + RestServerEndpoint
-            })
+            method: 'GET',
+            url: RestServerUrl + RestServerEndpoint
+        })
             .done((clients) => {
 
                 if (typeof clients !== 'undefined') {
@@ -293,24 +293,26 @@ const openTabWindow = (party, direction) => {
 
     if (clientWin) {
         clientWin.activate();
-    } else {
-        const context = {
-            party: party,
-            myWinId: glue.windows.my().id,
-        };
 
-        const windowSettings = {
-            mode: 'tab',
-            tabGroupId: 'MyTabGroupId'
-        };
-
-        const openedTabs = glue.windows.list().filter((w) => w.tabGroupId === windowSettings.tabGroupId);
-
-        if (openedTabs.length === 0) {
-            windowSettings.relativeTo = glue.windows.my().id;
-            windowSettings.relativeDirection = direction;
-        }
-
-        glue.appManager.application('Portfolios').start(context, windowSettings);
+        return;
     }
+
+    const context = {
+        party: party,
+        myWinId: glue.windows.my().id,
+    };
+
+    const windowSettings = {
+        mode: 'tab',
+        tabGroupId: 'MyTabGroupId'
+    };
+
+    const openedTabs = glue.windows.list().filter((w) => w.tabGroupId === windowSettings.tabGroupId);
+
+    if (openedTabs.length === 0) {
+        windowSettings.relativeTo = glue.windows.my().id;
+        windowSettings.relativeDirection = direction;
+    }
+
+    glue.appManager.application('Portfolios').start(context, windowSettings);
 };
