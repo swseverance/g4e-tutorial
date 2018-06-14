@@ -17,9 +17,7 @@ Glue(glueConfig)
         registerGlueMethods();
         trackTheme();
     })
-    .catch((err) => {
-        console.log(err);
-    });
+    .catch(console.error);
 
 // Then call the following functions:
 // Don't forget to catch any errors.
@@ -66,7 +64,7 @@ const setUpUi = () => {
 
         glue.windows.my()
             .addFrameButton(buttonOptions)
-            .catch((error) => console.log(error));
+            .catch(console.error);
     };
 
     const setUpFrameButtonClick = () => {
@@ -84,8 +82,11 @@ const setUpUi = () => {
     };
 
     // TUTOR_TODO Chapter 11 - check if you are in an activity and setup the frame buttons and events only if you are NOT
-    setUpPortfolioFrameButton();
-    setUpFrameButtonClick();
+
+    if (!glue.activities.aware) {
+        setUpPortfolioFrameButton();
+        setUpFrameButtonClick();
+    }
 };
 
 const setupClients = () => {
@@ -100,6 +101,14 @@ const setupClients = () => {
         row.onclick = () => {
             // TUTOR_TODO Chapter 11 - check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
             // TUTOR_TODO Chapter 4.4 - pass the result of getWindowDirection as a second argument for openTabWindow
+            const context = {
+                party: client,
+            };
+
+            if (glue.activities.inActivity) {
+                glue.activities.my.updateContext(context);
+                return;
+            }
 
             const direction = getWindowDirection();
 
@@ -185,6 +194,15 @@ const trackTheme = () => {
     };
 
     // TUTOR_TODO Chapter 10 - subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+    glue.contexts.subscribe('theme', (context) => {
+        console.log(context);
+        if (context.name === 'dark') {
+            setTheme('bootstrap-dark.min.css');
+            return;
+        }
+
+        setTheme('bootstrap.min.css');
+    });
 };
 
 const invokeAgMethod = (client) => {

@@ -24,8 +24,8 @@ Glue(glueConfig)
         const glue4OfficeOptions = {
             glue: glue,
             outlook: true,
-            // //        // TUTOR_TODO Chapter 9 
-            // //        // excel: true
+            // TUTOR_TODO Chapter 9 
+            excel: true,
         };
 
         return Glue4Office(glue4OfficeOptions);
@@ -33,10 +33,11 @@ Glue(glueConfig)
     .then((g4o) => {
         window.g4o = g4o;
 
-        instrumentService();
-        onInitializeApp();
-        initInstrumentSearch();
-        trackTheme();
+        instrumentService().then((res) => {
+            onInitializeApp();
+            initInstrumentSearch();
+            trackTheme();
+        });
     })
     .catch((err) => {
         console.log(err);
@@ -47,17 +48,22 @@ Glue(glueConfig)
 
 // Don't forget to catch any errors.
 
-const instrumentService = () => {
-
+const instrumentService = async () => {
     // TUTOR_TODO Chapter 12 - create sub-logger
+    logger = glue.logger.subLogger('portfolioLogger');
 
     // TUTOR_TODO Chapter 12 - create a metrics instance, a sub-system and set the state to GREEN
+    serviceMetricsSystem = await glue.metrics.subSystem('Module', 'System for metrics');
+    serviceMetricsSystem.setState(0);
 
     // TUTOR_TODO Chapter 12 - create an error count metric
+    serviceErrorCount = await serviceMetricsSystem.countMetric('ajaxFailures');
 
     // TUTOR_TODO Chapter 12 - create a composite error metric
+    lastServiceError = await serviceMetricsSystem.objectMetric('lastAjaxFailures', {});
 
     // TUTOR_TODO Chapter 12 - create a TimeSpan metric
+    serviceLatency = await serviceMetricsSystem.timespanMetric('ajaxLatency');
 };
 
 const onInitializeApp = () => {
@@ -65,17 +71,16 @@ const onInitializeApp = () => {
         glue.agm.register({
             name: 'Alert symbol',
             objectTypes: ['Instrument'],
-        },
-            (args) => {
-                alert(args.instrument.ric);
-            });
+        }, (args) => {
+            alert(args.instrument.ric);
+        });
+
         glue.agm.register({
             name: 'Alert bpod',
             objectTypes: ['Instrument'],
-        },
-            (args) => {
-                alert(args.instrument.bpod);
-            });
+        }, (args) => {
+            alert(args.instrument.bpod);
+        });
 
     }
 
@@ -87,7 +92,6 @@ const onInitializeApp = () => {
 };
 
 const initInstrumentSearch = () => {
-
     // TUTOR_TODO Chapter 6
     // Create a search client using the supplied options
 
@@ -115,6 +119,15 @@ const trackTheme = () => {
     }
 
     // TUTOR_TODO 10 - subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+    glue.contexts.subscribe('theme', (context) => {
+        console.log(context);
+        if (context.name === 'dark') {
+            setTheme('bootstrap-dark.min.css');
+            return;
+        }
+
+        setTheme('bootstrap.min.css');
+    });
 };
 
 const setUpAppContent = () => {
@@ -123,18 +136,18 @@ const setUpAppContent = () => {
     // and call loadPortfolio() passing in the pId from the party object
     // assign the received party object to partyObj, because we will need it later on.
 
-    const partyObject = glue.windows.my().context.party;
+    partyObj = glue.windows.my().context.party;
 
-    if (partyObject) {
+    if (partyObj) {
         // FIRE AND FORGET
 
         glue.windows.my()
-            .setTitle(partyObject.preferredName)
+            .setTitle(partyObj.preferredName)
             .catch((error) => console.log(error.message));
 
-        document.getElementById('title').textContent = partyObject.preferredName;
+        document.getElementById('title').textContent = partyObj.preferredName;
 
-        loadPortfolio(partyObject.pId);
+        loadPortfolio(partyObj.pId);
 
         return;
     }
@@ -149,6 +162,19 @@ const registerAgmMethod = () => {
     // in the callback - call loadPortfolio passing the pId received as a parameter.
     // assign the received party object to partyObj, because we will need it later on.
 
+    if (glue.activities.inActivity) {
+        const onContextChangeCallback = (context) => {
+            if (context.party) {
+                loadPortfolio(context.party.pId);
+                partyObj = context.party;
+            }
+        };
+
+        glue.activities.my.onContextChanged(onContextChangeCallback);
+
+        return;
+    }
+
     const setPartyMethodProperties = {
         name: 'SetParty',
         display_name: 'Set Party',
@@ -158,8 +184,8 @@ const registerAgmMethod = () => {
     };
 
     const portfolioLoader = (args) => {
-        partyObj = args.party;
         loadPortfolio(args.party.pId);
+        partyObj = args.party;
     };
 
     glue.agm.register(setPartyMethodProperties, portfolioLoader);
@@ -173,6 +199,7 @@ const loadPortfolio = (portf) => {
     const requestStart = Date.now();
 
     // TUTOR_TODO Chapter 12 - start the latency metric
+    serviceLatency.start();
 
     const ajaxOptions = {
         method: 'GET',
@@ -183,19 +210,18 @@ const loadPortfolio = (portf) => {
     $.ajax(ajaxOptions)
         .done((portfolio) => {
             // TUTOR_TODO Chapter 12 - stop the latency metric
+            serviceLatency.stop();
 
             const elapsedMillis = Date.now() - requestStart;
 
             if (elapsedMillis >= 1000) {
                 const message = 'Service at ' + serviceUrl + ' is lagging';
-
                 // TUTOR_TODO Chapter 12 - set system state to AMBER and pass the created message
 
-
+                serviceMetricsSystem.setState(50, message);
             } else {
-
                 // TUTOR_TODO Chapter 12 - set the system state to GREEN
-
+                serviceMetricsSystem.setState(0);
             }
 
             let parsedPortfolio;
@@ -206,19 +232,23 @@ const loadPortfolio = (portf) => {
             const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
             // TUTOR_TODO Chapter 12 - log to the console using the logger and the provided logMessage
 
+            logger.log(logMessage);
+
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
                 console.warn('The client has no portfolio')
                 return;
             }
 
             setupPortfolio(parsedPortfolio.Portfolios.Portfolio.Symbols.Symbol);
-            // unsubscribeSymbolPrices();
+            // unsubscribeSymbolPrices();// ????
             subscribeSymbolPrices();
         })
         .fail(function (jqXHR, textStatus) {
             // TUTOR_TODO Chapter 12 - stop the latency metric
-
+            
+            serviceLatency.stop();
             // TUTOR_TODO Chapter 12 - increment the error count
+            serviceErrorCount.increment();
 
             const errorMessage = 'Service at ' + serviceUrl + ' failed at ' + serviceRequest + ' with ' + textStatus;
 
@@ -230,8 +260,10 @@ const loadPortfolio = (portf) => {
             };
 
             // TUTOR_TODO Chapter 12 - capture the error with the composite metric and use the provided errorOptions object
+            lastServiceError = serviceErrorCount.objectMetric('lastAjaxFailures', errorOptions);
 
             // TUTOR_TODO Chapter 12 - set the system state to RED and pass the provided error message
+            serviceMetricsSystem.setState(100, errorMessage);
         })
 }
 
@@ -266,7 +298,6 @@ const subscribeBySymbol = (symbol, callback) => {
         .then((subscription) => {
             subscriptions.push(subscription);
 
-            console.log(subscription);
             subscription.onData(callback);
         })
         .catch((error) => console.log(`Subscription failed: ${error}`));
@@ -592,7 +623,6 @@ const setUpTabControls = () => {
     // - How are we going to remember the tabs we detached?
     // - glue.windows.findById() will be quite helpful here
     glue.windows.my().onFrameButtonClicked((buttonInfo) => {
-        console.log("click")
         const buttonType = buttonInfo.buttonId;
 
         const portfolioTabs = glue.windows.my().tabs;
@@ -611,7 +641,6 @@ const setUpTabControls = () => {
 
             clientsWindow.updateContext({ detachedTabs: detachedTabs });
         } else if (buttonType === 'gatherTabs') {
-            console.log('INSIDE GATHER');
             detachedTabs = clientsWindow.context.detachedTabs;
 
             const firstWindowId = detachedTabs.splice(0, 1)[0];
@@ -620,7 +649,6 @@ const setUpTabControls = () => {
             firstWindow.snap(clientsWindow, 'right')
                 .then((res) => {
                     detachedTabs.forEach((tab) => {
-                        console.log(tab);
                         firstWindow.attachTab(tab);
                     });
                 })
@@ -644,7 +672,6 @@ const sendPortfolioAsEmailClicked = (event) => {
     event.preventDefault();
 
     const sendPortfolioAsEmail = (client, portfolio) => {
-
         const getEmailContent = (client, portfolio) => {
 
             const props = ['ric', 'description', 'bid', 'ask']
@@ -697,7 +724,6 @@ const sendPortfolioAsEmailClicked = (event) => {
     }
 
     var portfolio = getCurrentPortfolio();
-
     sendPortfolioAsEmail(partyObj, portfolio);
 };
 
@@ -746,7 +772,16 @@ const sendPortfolioToExcelClicked = (event) => {
         };
 
         // TUTOR_TODO Chapter 9 - create a new spreadsheet passing the config object, then subscribe to the new sheet's onChanged event and call loadPortfolioFromExcel with the received data
+
+        window.g4o.excel.openSheet(config)
+        // .then((sheet) => {
+        //     sheet.onChanged((data) => {
+        //         loadPortfolioFromExcel(data);
+        //     });
+        // })
+        // .catch(console.error);
     };
+
 
     const portfolio = getCurrentPortfolio();
 
