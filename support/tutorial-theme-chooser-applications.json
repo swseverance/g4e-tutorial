@@ -1,0 +1,25 @@
+[
+    {
+        "activityTarget": {
+            "enabled": false
+        },
+        "allowMultiple": false,
+        "autoStart": false,
+        "caption": "ThemeChooser",
+        "details": {
+            "height": 150,
+            "isSticky": true,
+            "left": 200,
+            "name": "ThemeChooser",
+            "top": 200,
+            "url": "http://localhost:22909/support/theme-chooser.html",
+            "width": 250
+        },
+        "disabled": false,
+        "hidden": false,
+        "name": "ThemeChooser",
+        "title": "ThemeChooser",
+        "type": "window",
+        "version": "DEMO"
+    }
+]

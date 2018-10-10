@@ -1,0 +1,118 @@
+[
+    {
+        "allowMultiple": true,
+        "caption": "Client Portfolio",
+        "customProperties": {
+            "clientContextAware": "true"
+        },
+        "details": {
+            "activityType": "ClientPortfolio",
+            "layout": {
+                "cellSize": 5,
+                "mode": "percents"
+            },
+            "owner": {
+                "height": 12,
+                "left": 1,
+                "name": "Client",
+                "top": 1,
+                "type": "Client",
+                "width": 5
+            },
+            "windows": [
+                {
+                    "height": 12,
+                    "left": 6,
+                    "name": "Portfolio",
+                    "top": 1,
+                    "type": "Portfolio",
+                    "width": 5
+                },
+                {
+                    "height": 12,
+                    "left": 11,
+                    "name": "ClientDetails",
+                    "top": 1,
+                    "type": "ClientDetails",
+                    "width": 6
+                }
+            ]
+        },
+        "disabled": false,
+        "hidden": false,
+        "icon": "http://localhost:22909/resources/icons/tick42.ico",
+        "name": "ClientPortfolio",
+        "title": "Client Portfolio",
+        "type": "activity",
+        "version": "DEMO"
+    },
+    {
+        "activityTarget": {
+            "enabled": true,
+            "isIndependent": false,
+            "windowType": "Client"
+        },
+        "allowMultiple": true,
+        "caption": "Client",
+        "details": {
+            "allowMaximize": false,
+            "allowMinimize": false,
+            "mode": "html",
+            "name": "ClientPortfolio_Client",
+            "url": "http://localhost:22909/app/clients.html"
+        },
+        "disabled": false,
+        "hidden": true,
+        "icon": "http://localhost:22909/resources/icons/tick42.ico",
+        "name": "Client",
+        "title": "Client",
+        "type": "window",
+        "version": "DEMO"
+    },
+    {
+        "activityTarget": {
+            "enabled": true,
+            "isIndependent": false,
+            "windowType": "Portfolio"
+        },
+        "allowMultiple": true,
+        "caption": "Portfolio",
+        "details": {
+            "allowMaximize": false,
+            "allowMinimize": false,
+            "mode": "html",
+            "name": "ClientPortfolio_Portfolio",
+            "url": "http://localhost:22909/app/portfolio.html"
+        },
+        "disabled": false,
+        "hidden": true,
+        "icon": "http://localhost:22909/resources/icons/tick42.ico",
+        "name": "Portfolio",
+        "title": "Portfolio",
+        "type": "window",
+        "version": "DEMO"
+    },
+    {
+        "activityTarget": {
+            "enabled": true,
+            "isIndependent": false,
+            "windowType": "ClientDetails"
+        },
+        "allowMultiple": true,
+        "caption": "Client Details",
+        "details": {
+            "allowMaximize": false,
+            "allowMinimize": false,
+            "mode": "html",
+            "name": "ClientPortfolio_Details",
+            "url": "http://localhost:22909/app/client-details-window.html"
+        },
+        "disabled": false,
+        "hidden": true,
+        "icon": "http://localhost:22909/resources/icons/tick42.ico",
+        "name": "ClientDetails",
+        "title": "Client Details",
+        "type": "window",
+        "version": "DEMO"
+    }
+]

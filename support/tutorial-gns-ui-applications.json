@@ -1,0 +1,30 @@
+[
+    {
+        "activityTarget": {
+            "enabled": false
+        },
+        "allowMultiple": false,
+        "autoStart": false,
+        "caption": "Tick42 GNS UI",
+        "details": {
+            "allowClose": false,
+            "allowCollapse": false,
+            "allowMaximize": false,
+            "allowMinimize": false,
+            "height": 715,
+            "isSticky": false,
+            "left": 200,
+            "mode": "HTML",
+            "name": "t42-gns-ui",
+            "top": 200,
+            "url": "http://localhost:22909/support/tick42-gns-js-ui",
+            "width": 920
+        },
+        "disabled": false,
+        "hidden": false,
+        "icon": "http://localhost:22909/resources/icons/tick42.ico",
+        "name": "Tick42GNSUI",
+        "title": "GNS UI",
+        "type": "window"
+    }
+]
