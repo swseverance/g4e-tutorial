@@ -3,11 +3,11 @@
   "title": "Gss provider",
   "type": "window",
   "name": "gss-provider",
-  "hidden": false,
-  "service": false,
+  "hidden": true,
+  "service": true,
   "details": {
     "url": "https://enterprise-demos.tick42.com/gss-provider/",
-	  "hidden": false
+	  "hidden": true
   },
 	"customProperties": {
 		"test": "testString"
@@ -18,12 +18,11 @@
 	"title": "GSS JS Desktop Manager",
 	"type": "window",
 	"name": "gss-js-dm",
-	"hidden": false, //true
-	"service": false, //true
+	"hidden": true,
+	"service": true,
 	"details": {
 		"url": "https://enterprise-demos.tick42.com/gss-js-dm/",
-		// "url": "http://localhost:22080",
-		"hidden": false, //true
+		"hidden": true
 	},
 	"allowMultiple": false,
 	"autoStart": true,
