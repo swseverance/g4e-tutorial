@@ -1,0 +1,25 @@
+[
+    {
+        "activityTarget": {
+            "enabled": false
+        },
+        "allowMultiple": false,
+        "autoStart": false,
+        "caption": "SamplePricePublisher",
+        "details": {
+            "height": 150,
+            "isSticky": false,
+            "left": 200,
+            "name": "SamplePricePublisher",
+            "top": 200,
+            "url": "http://localhost:22909/support/sample-price-publisher.html",
+            "width": 250
+        },
+        "disabled": false,
+        "hidden": false,
+        "name": "SamplePricePublisher",
+        "title": "SamplePricePublisher",
+        "type": "window",
+        "version": "DEMO"
+    }
+]

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Sample GSS Publisher</title>
 	<script>
@@ -13,8 +14,19 @@
 <body>
 	Sample GSS Publisher
 	<script>
-        var entityType = gss.GssEntityType.fromJS(instrumentEntityType)
-        var parties = gss.convertGssEntitiesToJsObjects(instrumentData, entityType.properties)
+        var entityType = gss.GssEntityType.fromJS(instrumentEntityType);
+        var parties = gss.convertGssEntitiesToJsObjects(instrumentData, entityType.properties);
+
+        const glueConfig = {
+            layouts: true,
+            appManager: 'full',
+            logger: true,
+            windows: true,
+            outlook: true,
+            auth: {
+                gatewayToken: ""
+            },
+        }
 
         function addPartyEntityType(provider) {
             provider.addEntityType(instrumentEntityType, handlePartySearch)
@@ -34,7 +46,7 @@
             var props = request.query.properties
             if (props && props.length > 0) {
                 result = result.map(function (original) {
-                    return props.reduce(function(obj, propName) {
+                    return props.reduce(function (obj, propName) {
                         var value = original[propName]
                         if (value) {
                             obj[propName] = value
@@ -75,7 +87,7 @@
             var field = gssFilter.name
             var descriptor = entityType.properties.get(field)
             var searchType = gssFilter.searchType || descriptor.searchType
-            return function(data) {
+            return function (data) {
                 var val = data[field]
                 if (searchType === gss.GssSearchType.Exact) {
                     return val === gssFilter.value
@@ -88,7 +100,7 @@
         }
 
         function createAnyFilter(value, entityType) {
-            return function(data) {
+            return function (data) {
                 if (!data) {
                     return false
                 }
@@ -100,15 +112,14 @@
                         continue
                     }
 					var searchType = field.searchType
-					if (!searchType || searchType == gss.GssSearchType.None)
-					{
+                    if (!searchType || searchType == gss.GssSearchType.None) {
 						continue
 					}
                     var stringVal = String(data[prop])
                     var matches
                     if (field.type === gss.GssType.String) {
 						var pos = stringVal.indexOf(value)
-                        matches = pos !== -1 && (pos == 0 || stringVal[pos-1] == ' ') // matches "John" in "John Smith" and "Smith" in "John Smith"
+                        matches = pos !== -1 && (pos == 0 || stringVal[pos - 1] == ' ') // matches "John" in "John Smith" and "Smith" in "John Smith"
                     }
                     else {
                         matches = stringVal.indexOf(value) === 0 // startsWith
@@ -126,7 +137,7 @@
                 return filters[0]
             }
 
-            return function(data) {
+            return function (data) {
                 for (var i = 0; i < filters.length; ++i) {
                     var filter = filters[i]
                     if (!filter(data)) {
@@ -137,15 +148,28 @@
             }
         }
 
-        var p = new gss.GlueSearchProvider(glue.agm, { debug: true, measureLatency: false })
-        p.start()
-        .then(function () {
+        function initGlue(token) {
+            glueConfig.auth.gatewayToken =token;
+            return Glue(glueConfig)
+        }
+
+        function getToken(){
+            return glue42gd.getGWToken();
+        }
+        let p;
+        getToken().then(initGlue)
+        .then((glue) => {
+            window.glue = glue;
+            p = new gss.GlueSearchProvider(glue.agm, { debug: true, measureLatency: false });
+            return p.start();
+
+        }).then(function () {
             addPartyEntityType(p)
-        })
-        .catch(function (err) {
+        }) .catch(function (err) {
             console.error(err)
         })
 
 	</script>
 </body>
+
 </html>

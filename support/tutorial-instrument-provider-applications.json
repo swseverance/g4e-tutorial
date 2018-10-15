@@ -1,0 +1,25 @@
+[
+    {
+        "activityTarget": {
+            "enabled": false
+        },
+        "allowMultiple": false,
+        "autoStart": true,
+        "caption": "Instrument Publisher",
+        "details": {
+            "height": 300,
+            "isSticky": false,
+            "left": 200,
+            "name": "js-agm-instrument",
+            "top": 200,
+            "url": "http://localhost:22909/support/js-instrument-pub/pub.html",
+            "width": 200
+        },
+        "disabled": false,
+        "hidden": true,
+        "name": "InstrumentProvider",
+        "title": "Instrument Publisher",
+        "type": "window",
+        "version": "DEMO"
+    }
+]

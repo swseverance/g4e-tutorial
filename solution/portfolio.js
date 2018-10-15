@@ -306,7 +306,7 @@ const addRow = (table, rowData, emptyFlag) => {
             removeChildNodes('methodsList');
         }
 
-        const availableMethods = glue.agm.methods().filter(m => m.objectTypes.indexOf('Instrument') !== -1);
+        const availableMethods = glue.agm.methods().filter(m => m.objectTypes && m.objectTypes.indexOf('Instrument') !== -1);
 
         addAvailableMethods(availableMethods, rowData.RIC, rowData.BPOD);
 

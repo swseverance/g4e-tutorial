@@ -208,7 +208,7 @@ const invokeAgMethod = (client) => {
 };
 
 const getWindowDirection = () => {
-    const primaryWin = htmlContainer.monitors.filter(m => m.isPrimary === true)[0];
+    const primaryWin = glue42gd.monitors.filter(m => m.isPrimary === true)[0];
 
     const btmNeighbours = glue.windows.my().bottomNeighbours;
 

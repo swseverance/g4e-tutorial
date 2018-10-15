@@ -1,0 +1,25 @@
+[
+    {
+        "activityTarget": {
+            "enabled": false
+        },
+        "allowMultiple": false,
+        "autoStart": true,
+        "caption": "MdMonitorJsAgmGnsServer",
+        "details": {
+            "height": 300,
+            "isSticky": false,
+            "left": 200,
+            "name": "MdMonitorJsAgmGnsServer",
+            "top": 200,
+            "url": "http://localhost:22909/support/market-data-monitor.html",
+            "width": 200
+        },
+        "disabled": false,
+        "hidden": true,
+        "name": "MdMonitorJsAgmGnsServer",
+        "title": "MdMonitorJsAgmGnsServer",
+        "type": "window",
+        "version": "DEMO"
+    }
+]
