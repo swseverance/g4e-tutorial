@@ -136,10 +136,12 @@
                 return true
             }
         }
-
-        var p = new gss.GlueSearchProvider(glue.agm, { debug: true, measureLatency: false })
-        p.start()
-        .then(function () {
+        let p;
+        Glue({}).then((glue)=>{
+            window.glue=glue;
+            p = new gss.GlueSearchProvider(glue.agm, { debug: true, measureLatency: false })
+            p.start()
+        }).then(function () {
             addPartyEntityType(p)
         })
         .catch(function (err) {
