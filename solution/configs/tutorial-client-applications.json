@@ -3,12 +3,14 @@
         "activityTarget": {
             "enabled": false
         },
-        "allowMultiple": "true",
+        "allowMultiple": true,
         "caption": "A Demo showing clients.",
         "details": {
             "height": 400,
             "left": 500,
-            "loader": "true",
+            "loader": {
+				"enabled":true
+			},
             "minHeight": 400,
             "minWidth": 600,
             "mode": "html",
@@ -17,8 +19,8 @@
             "url": "http://localhost:22909/app/clients.html",
             "width": 600
         },
-        "disabled": "false",
-        "hidden": "false",
+        "disabled": false,
+        "hidden": false,
         "icon": "http://localhost:22909/resources/icons/tick42.ico",
         "name": "Clients",
         "title": "Clients",
