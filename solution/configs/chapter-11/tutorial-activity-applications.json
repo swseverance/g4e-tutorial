@@ -3,7 +3,7 @@
         "allowMultiple": true,
         "caption": "Client Portfolio",
         "customProperties": {
-            "clientContextAware": "true"
+            "clientContextAware": true
         },
         "details": {
             "activityType": "ClientPortfolio",

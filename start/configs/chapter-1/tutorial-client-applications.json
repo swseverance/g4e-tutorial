@@ -1,4 +1,7 @@
 {
+	"activityTarget": {
+        "enabled": false
+    },
     "allowMultiple": true,
     "caption": "A Demo showing clients.",
     "details": {
