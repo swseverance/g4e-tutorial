@@ -3,7 +3,8 @@ const RestServerEndpoint = 'Clients';
 const MethodName = 'SetParty';
 
 
-// TUTOR_TODO Chapter 1.2 - Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
+// TUTOR_TODO Chapter 1.2 Task 3
+// Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
 // When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
 // Then call the following functions:
 
