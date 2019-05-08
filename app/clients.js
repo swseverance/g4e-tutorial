@@ -210,28 +210,37 @@ const getWindowDirection = () => {
 
 const openWindow = (windowName, myWin, direction) => {
 
-    // SOLVED TUTOR_TODO Chapter 4.1 Task 3
-    const options = {
-        mode: 'html',
-        relativeTo: myWin.id,
-        relativeDirection: direction,
-        // SOLVED TUTOR_TODO Chapter 4.2 Task 1
-        allowMinimize: false,
-        allowMaximize: false,
-        allowCollapse: false,
-        allowClose: false,
-        minHeight: 400,
-        minWidth: 600,
-        context: {
-            myWinId: myWin.id
-        }
+    // // SOLVED TUTOR_TODO Chapter 4.1 Task 3
+    // const options = {
+    //     mode: 'html',
+    //     relativeTo: myWin.id,
+    //     relativeDirection: direction,
+    //     // SOLVED TUTOR_TODO Chapter 4.2 Task 1
+    //     allowMinimize: false,
+    //     allowMaximize: false,
+    //     allowCollapse: false,
+    //     allowClose: false,
+    //     minHeight: 400,
+    //     minWidth: 600,
+    //     context: {
+    //         myWinId: myWin.id
+    //     }
+    // };
+
+    // glue.windows.open(windowName, window.location.href.replace('clients.html', 'portfolio.html'), options);
+
+    // SOLVED TUTOR_TODO Chapter 5 Task 1
+    const context = {
+        myWinId: myWin.id
     };
 
-    glue.windows.open(windowName, window.location.href.replace('clients.html', 'portfolio.html'), options);
+    const windowSettings = {
+        mode: 'html',
+        relativeTo: myWin.id,
+        relativeDirection: direction
+    };
 
-    // TUTOR_TODO Chapter 5 Task 1
-    // Modify split the current options object into two separate objects - context and windowSettings;
-    // Use the Application Management API to open a portfolio instance.
+    glue.appManager.application('Portfolios').start(context, windowSettings);
 };
 
 const openTabWindow = (party, direction) => {
