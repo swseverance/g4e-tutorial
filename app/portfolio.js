@@ -205,8 +205,8 @@ const loadPortfolio = (portf) => {
 
     $.ajax(ajaxOptions)
         .done((portfolio) => {
-            // TUTOR_TODO Chapter 12 Task 8
-            // Stop the latency metric.
+            // SOLVED TUTOR_TODO Chapter 12 Task 8
+            serviceLatency.stop();
 
             const elapsedMillis = Date.now() - requestStart;
 
