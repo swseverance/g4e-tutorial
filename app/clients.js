@@ -213,9 +213,14 @@ const openWindow = (windowName, myWin, direction) => {
     // is mode: 'flat', cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
     // create a context object inside the options and pass your window's id 'glue.windows.my().id'
 
-    // TUTOR_TODO Chapter 4.1 Task 3
-    // Create an options object and define mode, relativeTo and relativeDirection properties
-    // Use the Windows API to open a window with the provided windowName, options object and correct URL
+    // SOLVED TUTOR_TODO Chapter 4.1 Task 3
+    const options = {
+        mode: 'html',
+        relativeTo: myWin.id,
+        relativeDirection: direction
+    };
+
+    glue.windows.open(windowName, window.location.href.replace('clients.html', 'portfolio.html'), options);
 
     // TUTOR_TODO Chapter 5 Task 1
     // Modify split the current options object into two separate objects - context and windowSettings;
