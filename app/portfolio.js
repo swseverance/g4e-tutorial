@@ -119,7 +119,7 @@ const setUpAppContent = () => {
 const registerAgmMethod = () => {
 
     // TUTOR_TODO Chapter 11 Task 3
-    // Rregister the Interop method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
+    // Register the Interop method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
 
     // TUTOR_TODO Chapter 2.1
     // Register an Interop method 'SetParty', which accepts a composite argument 'party' with optional strings pId and ucn
