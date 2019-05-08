@@ -280,7 +280,7 @@ const openTabWindow = (party, direction) => {
     //     glue.windows.open(`PortfolioTabs_${party.pId}`, window.location.href.replace('clients.html', 'portfolio.html'), options);
     // }
 
-    // TUTOR_TODO Chapter 5 Task 2
+    // SOLVED TUTOR_TODO Chapter 5 Task 2
     const clientWin = glue.windows.list().find(w => w.title === party.name);
 
     if (clientWin) {
