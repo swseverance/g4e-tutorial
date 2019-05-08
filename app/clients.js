@@ -181,8 +181,14 @@ const trackTheme = () => {
         $('#themeLink').attr('href', '../lib/themes/css/' + name);
     };
 
-    // TUTOR_TODO Chapter 10 task 1
-    // Subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+    // SOLVED TUTOR_TODO Chapter 10 task 1
+    glue.contexts.subscribe('theme', (theme) => {
+        if (theme.name == 'dark') {
+            setTheme('bootstrap-dark.min.css');
+            return;
+        }
+        setTheme('bootstrap.min.css');
+    });
 };
 
 const invokeAgMethod = (client) => {
