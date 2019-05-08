@@ -52,7 +52,9 @@ const setUpUi = () => {
 
         portfolioButton.onclick = () => {
 
-            // TUTOR_TODO Chapter 4.1 - Call openWindow with a window name, current window instance and a direction
+            // TUTOR_TODO Chapter 4.1 Task 2
+            // Call openWindow with a window name, current window instance and a direction.
+
             const myWin = glue.windows.my();
 
         }
@@ -128,7 +130,8 @@ const setupClients = () => {
 
     const getClients = (count, callback) => {
 
-        // TUTOR_TODO chapter 4.2 - start the loader here
+        // TUTOR_TODO chapter 4.2 Task 3
+        // Start the loader here.
 
         $.ajax({
                 method: 'GET',
@@ -146,12 +149,11 @@ const setupClients = () => {
                 }
             })
             .fail((jqXHR, textStatus) => {
-                // TUTOR_TODO chapter 4.2 - stop the loader here
-
                 console.error('Request failed: ' + textStatus);
             })
             .always(() => {
-                // TUTOR_TODO chapter 4.2 - stop the loader here
+                // TUTOR_TODO chapter 4.2 Task 4
+                // Stop the loader here.
             });
     }
 
@@ -174,7 +176,8 @@ const trackTheme = () => {
 
 const invokeAgMethod = (client) => {
 
-    // TUTOR_TODO Chapter 2.2 - Invoke the 'SetParty' AGM method passing the client object for the party argument.
+    // TUTOR_TODO Chapter 2.2
+    // Invoke the 'SetParty' AGM method passing the client object for the party argument.
 
 };
 
@@ -191,11 +194,13 @@ const getWindowDirection = () => {
 
 const openWindow = (windowName, myWin, direction) => {
 
-    // TUTOR_TODO Chapter 4.2 - Add additional properties or modify the existing ones in the options object in order to open a portfolio window which:
+    // TUTOR_TODO Chapter 4.2 Task 1
+    // Add additional properties or modify the existing ones in the options object in order to open a portfolio window which:
     // is mode: 'flat', cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
     // create a context object inside the options and pass your window's id 'glue.windows.my().id'
 
-    // TUTOR_TODO Chapter 4.1 - create an options object and define mode, relativeTo and relativeDirection properties
+    // TUTOR_TODO Chapter 4.1 Task 3
+    // Create an options object and define mode, relativeTo and relativeDirection properties
     // Use the Windows API to open a window with the provided windowName, options object and correct URL
 
     // TUTOR_TODO Chapter 5 - Modify split the current options object into two separate objects - context and windowSettings

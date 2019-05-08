@@ -52,16 +52,16 @@ const instrumentService = () => {
 const onInitializeApp = () => {
     if (glue.agm) {
         glue.agm.register({
-                name: 'Alert symbol',
-                objectTypes: ['Instrument'],
-            },
+            name: 'Alert symbol',
+            objectTypes: ['Instrument'],
+        },
             (args) => {
                 alert(args.instrument.ric);
             });
         glue.agm.register({
-                name: 'Alert bpod',
-                objectTypes: ['Instrument'],
-            },
+            name: 'Alert bpod',
+            objectTypes: ['Instrument'],
+        },
             (args) => {
                 alert(args.instrument.bpod);
             });
@@ -174,7 +174,7 @@ const loadPortfolio = (portf) => {
             unsubscribeSymbolPrices();
             subscribeSymbolPrices();
         })
-        .fail(function(jqXHR, textStatus) {
+        .fail(function (jqXHR, textStatus) {
             // TUTOR_TODO Chapter 12 - stop the latency metric
 
             // TUTOR_TODO Chapter 12 - increment the error count
@@ -206,15 +206,17 @@ const subscribeSymbolPrices = () => {
 
 const unsubscribeSymbolPrices = () => {
 
-    // TUTOR_TODO Chapter 3 - Traverse the saved subscriptions and close each one.
+    // TUTOR_TODO Chapter 3 Task 2
+    // Traverse the saved subscriptions and close each one.
     // We need to do this, because when the portfolio changes, we need to clear the existing subscriptions and subscribe to the new symbol's stream
 
 }
 
 const subscribeBySymbol = (symbol, callback) => {
 
-    // TUTOR_TODO Chapter 3 - Subscribe to a stream called 'T42.MarketStream.Subscribe'
-    // as a second parameter pass an options object with an `arguments` property, which has a property 'Symbol' and assign to it the symbol variable passed to this function
+    // TUTOR_TODO Chapter 3 Task 1
+    // Subscribe to a stream called 'T42.MarketStream.Subscribe';
+    // As a second parameter pass an options object with an `arguments` property, which has a property 'Symbol' and assign to it the symbol variable passed to this function
     // When the promise is resolved save the created subscription so that you can later close it and subscribe to new streams (when the portfolio changes)
     // Finally subscribe to the created subscription's onData event and invoke the callback passed to this function with the received streamData
 
@@ -229,15 +231,15 @@ const addRow = (table, rowData, emptyFlag) => {
     addRowCell(row, rowData.bid || '', 'text-right');
     addRowCell(row, rowData.ask || '', 'text-right');
 
-    row.onclick = function() {
+    row.onclick = function () {
         if (emptyFlag) {
             removeChildNodes('methodsList');
         }
 
-        // TUTOR_TODO Chapter 2.3 - Discover all registered methods with objectType 'Instrument'
-        // invoke addAvailableMethods(*discovered methods*, rowData.RIC, rowData.BPOD)
-
-        // addAvailableMethods(partyMethods, rowData.RIC, rowData.BPOD);
+        // TUTOR_TODO Chapter 2.3 Task 1
+        // Discover all registered methods with objectType 'Instrument';
+        // Invoke addAvailableMethods(*discovered methods*, rowData.RIC, rowData.BPOD);
+        // AddAvailableMethods(partyMethods, rowData.RIC, rowData.BPOD);
 
         row.setAttribute('data-toggle', 'modal');
         row.setAttribute('data-target', '#instruments');
@@ -325,14 +327,15 @@ const addAvailableMethods = (methods, symbol, bpod) => {
     })
 
     // Enable tooltip
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 };
 
 const invokeAgMethodByName = (methodName, params) => {
 
-    // TUTOR_TODO 2.3 invoke the agm method with the passed methodName and passed params
+    // TUTOR_TODO 2.3 Task 2
+    // Invoke the agm method with the passed methodName and passed params
 
 };
 
@@ -445,9 +448,10 @@ const toggleStatusLabel = (elementId, text, available) => {
 
 const setUpWindowEventsListeners = () => {
 
-    // TUTOR_TODO Chapter 4.2 - subscribe to the onWindowRemoved event and implement the handler
-    // compare the closed window's id with the client window id you were passed on window creation
-    // if they match - glue.windows.my().close();
+    // TUTOR_TODO Chapter 4.2 Task 2
+    // Subscribe to the onWindowRemoved event and implement the handler;
+    // Compare the closed window's id with the client window id you were passed on window creation.
+    // If they match - glue.windows.my().close();
 
 };
 
