@@ -47,8 +47,9 @@ const instrumentService = () => {
     // SOLVED TUTOR_TODO Chapter 12 Task 1
     logger = glue.logger.subLogger('PortfolioWindow');
 
-    // TUTOR_TODO Chapter 12 Task 3
-    // Create a metrics instance, a sub-system and set the state to GREEN.
+    // SOLVED TUTOR_TODO Chapter 12 Task 3
+    serviceMetricsSystem = glue.metrics.subSystem('PortfolioSystem', 'Portfolio REST Service');
+    serviceMetricsSystem.setState(0, 'OK');
 
     // TUTOR_TODO Chapter 12 Task 4
     // Create an error count metric.
