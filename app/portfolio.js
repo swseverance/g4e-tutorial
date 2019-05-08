@@ -21,18 +21,18 @@ Glue(glueConfig)
         onInitializeApp();
         initInstrumentSearch();
         trackTheme();
+
+        // SOLVED TUTOR_TODO Chapter 8 Task 3
+        const glue4OfficeOptions = {
+            glue: glue,
+            outlook: true,
+            // TUTOR_TODO Chapter 9 Task 2
+            // excel: true
+        };
+
+        // // TUTOR_TODO Chapter 8 Task 4
+        // // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
     })
-    // // TUTOR_TODO Chapter 8 Task 3
-    // // const glue4OfficeOptions = {
-    // //     glue: glue,
-    // //     outlook: true,
-    // //        // TUTOR_TODO Chapter 9 Task 2
-    // //        // excel: true
-    // // };
-
-    // // TUTOR_TODO Chapter 8 Task 4
-    // // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
-
     .catch((err) => {
         console.log(err);
     });
