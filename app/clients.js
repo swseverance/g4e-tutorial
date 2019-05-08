@@ -159,8 +159,8 @@ const setupClients = () => {
                 console.error('Request failed: ' + textStatus);
             })
             .always(() => {
-                // TUTOR_TODO chapter 4.2 Task 4
-                // Stop the loader here.
+                // SOLVED TUTOR_TODO chapter 4.2 Task 4
+                glue.windows.my().hideLoader();
             });
     }
 
