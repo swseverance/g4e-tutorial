@@ -234,23 +234,32 @@ const openWindow = (windowName, myWin, direction) => {
 
 const openTabWindow = (party, direction) => {
 
-    // TUTOR_TODO Chapter 4.3 Task 1
-    // Implement the functionality to open and stack tab windows;
-    // Use the provided options object to create the tab;
-    // First check if there is a tab frame created already (maybe by checking if there is a window whose name contains 'PortfolioTabs'?);
-    // If there aren't any tabs, add the relativeTo and relativeDirection keys to the object.
-    // Note: you only need those for the first tab - the one that creates the frame, subsequent tabs should not specify them.
-    // Finally, create a window using the method you are already familiar with - glue.windows.open(). But don't forget to check if the client's portfolio is already opened.
-    // If that is the case you should activate() the tab.
-
-    // const options = {
-    //     mode: 'tab',
-    //     tabGroupId: 'MyTabGroupId',
-    //     context: {
-    //         party: party,
-    //         winId: glue.windows.my().id,
-    //     }
-    // }
+    // SOLVED TUTOR_TODO Chapter 4.3 Task 1
+    const clientWin = glue.windows.list().find(w => w.title === party.name);
+    if (clientWin) {
+        clientWin.activate();
+    } else {
+        const tabs = glue.windows.list().filter(win => win.name.indexOf('PortfolioTabs_') !== -1);
+        const options = {
+            mode: 'tab',
+            tabGroupId: 'MyTabGroupId',
+            allowMinimize: false,
+            allowMaximize: false,
+            allowCollapse: false,
+            allowClose: false,
+            minHeight: 400,
+            minWidth: 600,
+            context: {
+                party: party,
+                myWinId: glue.windows.my().id,
+            }
+        };
+        if (tabs.length === 0) {
+            options.relativeTo = glue.windows.my().id,
+                options.relativeDirection = direction
+        }
+        glue.windows.open(`PortfolioTabs_${party.pId}`, window.location.href.replace('clients.html', 'portfolio.html'), options);
+    }
 
     // TUTOR_TODO Chapter 5 Task 2
     // Modify split the current options object into two separate objects - context and windowSettings;
