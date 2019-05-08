@@ -542,15 +542,33 @@ const setUpTabControls = () => {
             glue.windows.my().removeFrameButton('extractTabs');
         }
     });
-    
-    // TUTOR_TODO 4.4 Task 7
-    // Implement the frame button click events:
-    // - Which button was clicked?
-    // - How are we going to remember the tabs we detached?
-    // - glue.windows.findById() will be quite helpful here
 
+    // SOLVED TUTOR_TODO 4.4 Task 7
     glue.windows.my().onFrameButtonClicked((buttonInfo) => {
+        const tabs = glue.windows.my().tabs;
+        const clientWindowId = glue.windows.my().context.myWinId;
+        const clientsWindow = glue.windows.findById(clientWindowId);
 
+        if (buttonInfo.buttonId === 'extractTabs') {
+            tabs.forEach((tab) => {
+                detachedTabs.push(tab.id);
+                tab.detachTab();
+            });
+            clientsWindow.updateContext({
+                detached: detachedTabs
+            });
+        } else {
+            const firstDetachedId = clientsWindow.context.detached[0];
+            const firstTab = glue.windows.findById(firstDetachedId);
+            const allDetached = clientsWindow.context.detached;
+            firstTab.snap(clientsWindow, 'right', () => {
+                const remainingDetachedIds = allDetached.slice(1);
+                remainingDetachedIds.forEach((id) => {
+                    const tab = glue.windows.findById(id);
+                    firstTab.attachTab(tab);
+                });
+            });
+        }
     });
 
     // TUTOR_TODO Chapter 4.4 Task 8
