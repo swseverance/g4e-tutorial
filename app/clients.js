@@ -168,7 +168,7 @@ const setupClients = () => {
 const registerGlueMethods = () => {
 
     // TUTOR_TODO Chapter 7
-    // Register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    // Register an Interop method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
 
 };
 
