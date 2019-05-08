@@ -589,8 +589,8 @@ const search = (event) => {
     event.preventDefault();
     var searchValue = document.getElementById('ticker').value;
 
-    // TUTOR_TODO Chapter 6 Task 3
-    // Use the created query's search function and pass in the searchValue;
+    // SOLVED TUTOR_TODO Chapter 6 Task 3
+    _query.search(searchValue);
 };
 
 const sendPortfolioAsEmailClicked = (event) => {
