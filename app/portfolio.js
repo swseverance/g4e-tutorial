@@ -26,8 +26,8 @@ Glue(glueConfig)
         const glue4OfficeOptions = {
             glue: glue,
             outlook: true,
-            // TUTOR_TODO Chapter 9 Task 2
-            // excel: true
+            // SOLVED TUTOR_TODO Chapter 9 Task 2
+            excel: true
         };
 
         // SOLVED TUTOR_TODO Chapter 8 Task 4
