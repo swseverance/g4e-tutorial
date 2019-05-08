@@ -215,8 +215,8 @@ const loadPortfolio = (portf) => {
                 // SOLVED TUTOR_TODO Chapter 12 Task 10
                 serviceMetricsSystem.setState(50, message);
             } else {
-                // TUTOR_TODO Chapter 12 Task 11
-                // Set the system state to GREEN.
+                // SOLVED TUTOR_TODO Chapter 12 Task 11
+                serviceMetricsSystem.setState(0, 'OK');
             }
 
             let parsedPortfolio;
