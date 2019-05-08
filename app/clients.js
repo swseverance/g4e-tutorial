@@ -169,7 +169,7 @@ const setupClients = () => {
 const registerGlueMethods = () => {
 
     // TUTOR_TODO Chapter 7
-    // Register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    // Register an Interop method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
 
 };
 
@@ -186,7 +186,7 @@ const trackTheme = () => {
 const invokeAgMethod = (client) => {
 
     // TUTOR_TODO Chapter 2.2
-    // Invoke the 'SetParty' AGM method passing the client object for the party argument.
+    // Invoke the 'SetParty' Interop method passing the client object for the party argument.
 
 };
 
