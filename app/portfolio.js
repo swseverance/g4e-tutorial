@@ -44,8 +44,8 @@ Glue(glueConfig)
 
 const instrumentService = () => {
 
-    // TUTOR_TODO Chapter 12 Task 1
-    // Create sub-logger.
+    // SOLVED TUTOR_TODO Chapter 12 Task 1
+    logger = glue.logger.subLogger('PortfolioWindow');
 
     // TUTOR_TODO Chapter 12 Task 3
     // Create a metrics instance, a sub-system and set the state to GREEN.
