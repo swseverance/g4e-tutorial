@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- JQuery, Bootstrap, and Lodash -->
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/lodash/lodash.min.js"></script>
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center" id='symbol'></h1>
+        </div>
+    </div>
+    <div class="row">
+        <table id="clientsTable" class="table table-hover">
+            <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Phone</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Travis Luke</td>
+                <td>(517) 384-3146</td>
+                <td>
+                    <button class="btn btn-success">Call</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Ned Dannie</td>
+                <td>(521) 214-2514</td>
+                <td>
+                    <button class="btn btn-success">Call</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Donovan Burt</td>
+                <td>(955) 345-9943</td>
+                <td>
+                    <button class="btn btn-success">Call</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('symbol').textContent = glue42gd.getContext().symbol
+    })
+</script>
+
+</body>
+
+</html>
