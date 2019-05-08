@@ -571,10 +571,12 @@ const setUpTabControls = () => {
         }
     });
 
-    // TUTOR_TODO Chapter 4.4 Task 8
-    // What frame button should be displayed when the tab is created?
-    // Implement the logic for each of these events - which buttons should show/hide in each scenario?
-    // hint - maybe glue.windows.my().tabs.length would be useful somewhere?
+    // SOLVED TUTOR_TODO Chapter 4.4 Task 8
+    if (glue.windows.my().tabs.length >= 2) {
+        console.log('asdasdasd');
+        glue.windows.my().addFrameButton(extractTab);
+        glue.windows.my().removeFrameButton('gatherTabs');
+    }
 
 };
 
