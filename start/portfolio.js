@@ -108,10 +108,9 @@ const setUpAppContent = () => {
 
     registerAgmMethod();
 
-    // TUTOR_TODO chapter 4.3 - Check whether the current window context contains the attribute 'party'
-    // if doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object
-    // and call loadPortfolio() passing in the pId from the party object
-    // assign the received party object to partyObj, because we will need it later on.
+    // TUTOR_TODO chapter 4.3 Task 2
+    // Check whether the current window context contains the attribute 'party';
+    // If doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object and call loadPortfolio() passing in the pId from the party object assign the received party object to partyObj, because we will need it later on.
 };
 
 const registerAgmMethod = () => {

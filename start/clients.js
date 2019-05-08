@@ -52,17 +52,19 @@ const setUpUi = () => {
 
         portfolioButton.onclick = () => {
 
+            const myWin = glue.windows.my();
+
             // TUTOR_TODO Chapter 4.1 Task 2
             // Call openWindow with a window name, current window instance and a direction.
-
-            const myWin = glue.windows.my();
 
         }
     }
 
     const setUpPortfolioFrameButton = () => {
 
-        // TUTOR_TODO Chapter 4.4 - Use the windows API to create a new frame button
+        // TUTOR_TODO Chapter 4.4 Task 1
+        // Use the windows API to create a new frame button.
+        //
         // const buttonOptions = {
         //     buttonId: 'portfolio-btn',
         //     tooltip: 'Open a portfolio',
@@ -209,10 +211,11 @@ const openWindow = (windowName, myWin, direction) => {
 
 const openTabWindow = (party, direction) => {
 
-    // TUTOR_TODO Chapter 4.3 - Implement the functionality to open and stack tab windows
-    // Use the provided options object to create the tab
-    // First check if there is a tab frame created already (maybe by checking if there is a window whose name contains 'PortfolioTabs'?)
-    // If there aren't any tabs, add the relativeTo and relativeDirection keys to the object
+    // TUTOR_TODO Chapter 4.3 Task 1
+    // Implement the functionality to open and stack tab windows;
+    // Use the provided options object to create the tab;
+    // First check if there is a tab frame created already (maybe by checking if there is a window whose name contains 'PortfolioTabs'?);
+    // If there aren't any tabs, add the relativeTo and relativeDirection keys to the object.
     // Note: you only need those for the first tab - the one that creates the frame, subsequent tabs should not specify them.
     // Finally, create a window using the method you are already familiar with - glue.windows.open(). But don't forget to check if the client's portfolio is already opened.
     // If that is the case you should activate() the tab.
