@@ -55,8 +55,8 @@ const setUpUi = () => {
 
             const myWin = glue.windows.my();
 
-            // TUTOR_TODO Chapter 4.1 Task 2
-            // Call openWindow with a window name, current window instance and a direction.
+            // SOLVED TUTOR_TODO Chapter 4.1 Task 2
+            openWindow('Portfolio', myWin, 'bottom');
 
         }
     }
