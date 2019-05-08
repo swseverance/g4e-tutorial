@@ -122,10 +122,18 @@ const registerAgmMethod = () => {
     // TUTOR_TODO Chapter 11 Task 3
     // Rregister the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
 
-    // TUTOR_TODO Chapter 2.1
-    // Register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings pId and ucn
-    // in the callback - call loadPortfolio passing the pId received as a parameter.
-    // assign the received party object to partyObj, because we will need it later on.
+    // SOLVED TUTOR_TODO Chapter 2.1
+    const methodOptions = {
+        name: 'SetParty',
+        display_name: 'Set Party',
+        description: 'Switches the application window to work with the specified party',
+        accepts: 'Composite: { String? pId, String? ucn } party'
+    };
+    
+    glue.agm.register(methodOptions, (args) => {
+        partyObj = args.party;
+        loadPortfolio(args.party.pId);
+    });
 
 };
 
