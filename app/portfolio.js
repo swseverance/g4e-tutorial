@@ -495,8 +495,10 @@ const setUpWindowEventsListeners = () => {
 
 const setUpTabControls = () => {
 
-    // TUTOR_TODO Chapter 4.4 Task 5
-    // Check if the window is tabbed - if it isn't, simply return, because in this case we do not need any tab controls.
+    // SOLVED TUTOR_TODO Chapter 4.4 Task 5
+    if (glue.windows.my().mode !== 'tab') {
+        return;
+    }
 
     // TUTOR_TODO Chapter 4.4 Task 6
     // We have prepared for you the config objects for both buttons.
