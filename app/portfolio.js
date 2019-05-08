@@ -239,8 +239,8 @@ const loadPortfolio = (portf) => {
             subscribeSymbolPrices();
         })
         .fail(function (jqXHR, textStatus) {
-            // TUTOR_TODO Chapter 12 Task 9
-            // Stop the latency metric.
+            // SOLVED TUTOR_TODO Chapter 12 Task 9
+            serviceLatency.stop();
 
             // TUTOR_TODO Chapter 12 Task 12
             // Increment the error count.
