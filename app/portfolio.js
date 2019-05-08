@@ -699,8 +699,16 @@ const sendPortfolioToExcelClicked = (event) => {
             subscribeSymbolPrices();
         };
 
-        // TUTOR_TODO Chapter 9 Task 3
-        // Create a new spreadsheet passing the config object, then subscribe to the new sheet's onChanged event and call loadPortfolioFromExcel with the received data.
+        // SOLVED TUTOR_TODO Chapter 9 Task 3
+        excel.openSheet(config)
+            .then((sheet) => {
+                sheet.onChanged((newPortfolio) => {
+                    loadPortfolioFromExcel(newPortfolio);
+                })
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const portfolio = getCurrentPortfolio();
