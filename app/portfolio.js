@@ -13,28 +13,29 @@ let lastServiceError;
 let serviceLatency;
 let logger;
 
-// TUTOR_TODO Chapter 1.2 Task 4
-// Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
-// When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
-// Then add all of the following code, leave the code under TUTOR_TODO Chapter 8 commented as you will need it later on:
+// SOLVED TUTOR_TODO Chapter 1.2 Task 4
+Glue(glueConfig)
+    .then((glue) => {
+        window.glue = glue;
+        instrumentService();
+        onInitializeApp();
+        initInstrumentSearch();
+        trackTheme();
+    })
+    // // TUTOR_TODO Chapter 8 Task 3
+    // // const glue4OfficeOptions = {
+    // //     glue: glue,
+    // //     outlook: true,
+    // //        // TUTOR_TODO Chapter 9 Task 2
+    // //        // excel: true
+    // // };
 
-// instrumentService();
-// onInitializeApp();
-// initInstrumentSearch();
-// trackTheme();
+    // // TUTOR_TODO Chapter 8 Task 4
+    // // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
 
-// // TUTOR_TODO Chapter 8 Task 3
-// // const glue4OfficeOptions = {
-// //     glue: glue,
-// //     outlook: true,
-// //        // TUTOR_TODO Chapter 9 Task 2
-// //        // excel: true
-// // };
-
-// // TUTOR_TODO Chapter 8 Task 4
-// // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
-
-// Don't forget to catch any errors.
+    .catch((err) => {
+        console.log(err);
+    });
 
 
 const instrumentService = () => {
