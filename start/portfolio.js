@@ -98,7 +98,8 @@ const trackTheme = () => {
         $('#themeLink').attr('href', '../lib/themes/css/' + name);
     }
 
-    // TUTOR_TODO 10 - subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+    // TUTOR_TODO Chapter 10 Task 2
+    // Subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
 };
 
 const setUpAppContent = () => {
@@ -112,9 +113,11 @@ const setUpAppContent = () => {
 
 const registerAgmMethod = () => {
 
-    // TUTOR_TODO Chapter 11 - register the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
+    // TUTOR_TODO Chapter 11 Task 3
+    // Rregister the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
 
-    // TUTOR_TODO Chapter 2.1 - register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings pId and ucn
+    // TUTOR_TODO Chapter 2.1
+    // Register an AGM method 'SetParty', which accepts a composite argument 'party' with optional strings pId and ucn
     // in the callback - call loadPortfolio passing the pId received as a parameter.
     // assign the received party object to partyObj, because we will need it later on.
 

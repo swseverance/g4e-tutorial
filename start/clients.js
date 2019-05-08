@@ -82,7 +82,8 @@ const setUpUi = () => {
 
     };
 
-    // TUTOR_TODO Chapter 11 - check if you are in an activity and setup the frame buttons and events only if you are NOT
+    // TUTOR_TODO Chapter 11 Task 1
+    // Check if you are in an activity and setup the frame buttons and events only if you are NOT
     setUpPortfolioFrameButton();
     setUpFrameButtonClick();
 };
@@ -98,7 +99,8 @@ const setupClients = () => {
 
         row.onclick = () => {
 
-            // TUTOR_TODO Chapter 11 - check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
+            // TUTOR_TODO Chapter 11 Task 2
+            // Check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
 
             const direction = getWindowDirection();
 
@@ -168,7 +170,7 @@ const registerGlueMethods = () => {
 
     // TUTOR_TODO Chapter 7
     // Register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
-    
+
 };
 
 const trackTheme = () => {
@@ -177,7 +179,8 @@ const trackTheme = () => {
         $('#themeLink').attr('href', '../lib/themes/css/' + name);
     };
 
-    // TUTOR_TODO Chapter 10 - subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
+    // TUTOR_TODO Chapter 10 task 1
+    // Subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
 };
 
 const invokeAgMethod = (client) => {
