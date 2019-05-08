@@ -168,8 +168,10 @@ const setupClients = () => {
 
 const registerGlueMethods = () => {
 
-    // TUTOR_TODO Chapter 7
-    // Register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    // SOLVED TUTOR_TODO Chapter 7
+    glue.agm.register('g42.FindWhoToCall', (args) => {
+        glue.windows.open(`call_clients`, window.location.href.replace('clients.html', 'symbolPopup.html'));
+    })
 
 };
 
