@@ -194,8 +194,8 @@ const loadPortfolio = (portf) => {
 
     const requestStart = Date.now();
 
-    // TUTOR_TODO Chapter 12 Task 7
-    // Start the latency metric.
+    // SOLVED TUTOR_TODO Chapter 12 Task 7
+    serviceLatency.start();
 
     const ajaxOptions = {
         method: 'GET',
