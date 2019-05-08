@@ -166,7 +166,9 @@ const setupClients = () => {
 
 const registerGlueMethods = () => {
 
-    // TUTOR_TODO Chapter 7 - register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    // TUTOR_TODO Chapter 7
+    // Register an AGM method "g42.FindWhoToCall", the handler should open the 'symbolPopup.html' window.
+    
 };
 
 const trackTheme = () => {

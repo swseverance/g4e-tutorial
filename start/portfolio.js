@@ -23,15 +23,16 @@ let logger;
 // initInstrumentSearch();
 // trackTheme();
 
-// // TUTOR_TODO Chapter 8
+// // TUTOR_TODO Chapter 8 Task 3
 // // const glue4OfficeOptions = {
 // //     glue: glue,
 // //     outlook: true,
-// //        // TUTOR_TODO Chapter 9
+// //        // TUTOR_TODO Chapter 9 Task 2
 // //        // excel: true
 // // };
 
-// // TUTOR_TODO Chapter 8 - Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible
+// // TUTOR_TODO Chapter 8 Task 4
+// // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
 
 // Don't forget to catch any errors.
 
@@ -561,7 +562,8 @@ const sendPortfolioAsEmailClicked = (event) => {
 
         const content = getEmailContent(client, portfolio);
 
-        // TUTOR_TODO Chapter 8 - create a new email by passing the content object above.
+        // TUTOR_TODO Chapter 8 Task 5
+        // Create a new email by passing the content object above.
     }
 
     var portfolio = getCurrentPortfolio();
@@ -613,7 +615,8 @@ const sendPortfolioToExcelClicked = (event) => {
             subscribeSymbolPrices();
         };
 
-        // TUTOR_TODO Chapter 9 - create a new spreadsheet passing the config object, then subscribe to the new sheet's onChanged event and call loadPortfolioFromExcel with the received data
+        // TUTOR_TODO Chapter 9 Task 3
+        // Create a new spreadsheet passing the config object, then subscribe to the new sheet's onChanged event and call loadPortfolioFromExcel with the received data.
     };
 
     const portfolio = getCurrentPortfolio();
