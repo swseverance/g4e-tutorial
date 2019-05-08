@@ -476,10 +476,13 @@ const toggleStatusLabel = (elementId, text, available) => {
 
 const setUpWindowEventsListeners = () => {
 
-    // TUTOR_TODO Chapter 4.2 Task 2
-    // Subscribe to the onWindowRemoved event and implement the handler;
-    // Compare the closed window's id with the client window id you were passed on window creation.
-    // If they match - glue.windows.my().close();
+    // SOLVED TUTOR_TODO Chapter 4.2 Task 2
+    glue.windows.onWindowRemoved((window) => {
+        const parentId = glue.windows.my().context.myWinId;
+        if (window.id === parentId) {
+            glue.windows.my().close();
+        }
+    });
 
 };
 
