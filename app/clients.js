@@ -75,10 +75,13 @@ const setUpUi = () => {
 
     const setUpFrameButtonClick = () => {
 
-        // TUTOR_TODO Chapter 4.4 Task 4
-        // Use the windows API for handling frame button clicks to handle a frame button click, check the Id and open a portfolio window.
-        // Pass the result of getWindowDirection as a second argument for openWindow
-
+        // SOLVED TUTOR_TODO Chapter 4.4 Task 4
+        glue.windows.my().onFrameButtonClicked((button) => {
+            if (button.buttonId === 'portfolio-btn') {
+                const direction = getWindowDirection();
+                openWindow('Portfolio', glue.windows.my(), direction);
+            }
+        });
     };
 
     // TUTOR_TODO Chapter 11 Task 1
