@@ -129,7 +129,7 @@ const registerAgmMethod = () => {
         description: 'Switches the application window to work with the specified party',
         accepts: 'Composite: { String? pId, String? ucn } party'
     };
-    
+
     glue.agm.register(methodOptions, (args) => {
         partyObj = args.party;
         loadPortfolio(args.party.pId);
@@ -254,10 +254,10 @@ const addRow = (table, rowData, emptyFlag) => {
             removeChildNodes('methodsList');
         }
 
-        // TUTOR_TODO Chapter 2.3 Task 1
-        // Discover all registered methods with objectType 'Instrument';
-        // Invoke addAvailableMethods(*discovered methods*, rowData.RIC, rowData.BPOD);
-        // AddAvailableMethods(partyMethods, rowData.RIC, rowData.BPOD);
+        // SOLVED TUTOR_TODO Chapter 2.3 Task 1
+        const availableMethods = glue.agm.methods().filter(m =>
+            m.objectTypes && m.objectTypes.indexOf('Instrument') !== -1);
+        addAvailableMethods(availableMethods, rowData.RIC, rowData.BPOD);
 
         row.setAttribute('data-toggle', 'modal');
         row.setAttribute('data-target', '#instruments');
