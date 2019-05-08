@@ -84,8 +84,10 @@ const setUpUi = () => {
         });
     };
 
-    // TUTOR_TODO Chapter 11 Task 1
-    // Check if you are in an activity and setup the frame buttons and events only if you are NOT
+    // SOLVED TUTOR_TODO Chapter 11 Task 1
+    if (inActivity) {
+        return;
+    }
     setUpPortfolioFrameButton();
     setUpFrameButtonClick();
 };
