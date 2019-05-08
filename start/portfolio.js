@@ -39,15 +39,20 @@ let logger;
 
 const instrumentService = () => {
 
-    // TUTOR_TODO Chapter 12 - create sub-logger
+    // TUTOR_TODO Chapter 12 Task 1
+    // Create sub-logger.
 
-    // TUTOR_TODO Chapter 12 - create a metrics instance, a sub-system and set the state to GREEN
+    // TUTOR_TODO Chapter 12 Task 3
+    // Create a metrics instance, a sub-system and set the state to GREEN.
 
-    // TUTOR_TODO Chapter 12 - create an error count metric
+    // TUTOR_TODO Chapter 12 Task 4
+    // Create an error count metric.
 
-    // TUTOR_TODO Chapter 12 - create a composite error metric
+    // TUTOR_TODO Chapter 12 Task 5
+    // Create a composite error metric.
 
-    // TUTOR_TODO Chapter 12 - create a TimeSpan metric
+    // TUTOR_TODO Chapter 12 Task 6
+    // Create a TimeSpan metric.
 };
 
 const onInitializeApp = () => {
@@ -130,7 +135,8 @@ const loadPortfolio = (portf) => {
 
     const requestStart = Date.now();
 
-    // TUTOR_TODO Chapter 12 - start the latency metric
+    // TUTOR_TODO Chapter 12 Task 7
+    // Start the latency metric.
 
     const ajaxOptions = {
         method: 'GET',
@@ -140,20 +146,19 @@ const loadPortfolio = (portf) => {
 
     $.ajax(ajaxOptions)
         .done((portfolio) => {
-            // TUTOR_TODO Chapter 12 - stop the latency metric
+            // TUTOR_TODO Chapter 12 Task 8
+            // Stop the latency metric.
 
             const elapsedMillis = Date.now() - requestStart;
 
             if (elapsedMillis >= 1000) {
                 const message = 'Service at ' + serviceUrl + ' is lagging';
-
-                // TUTOR_TODO Chapter 12 - set system state to AMBER and pass the created message
-
+                // TUTOR_TODO Chapter 12 Task 10
+                // Set system state to AMBER and pass the created message.
 
             } else {
-
-                // TUTOR_TODO Chapter 12 - set the system state to GREEN
-
+                // TUTOR_TODO Chapter 12 Task 11
+                // Set the system state to GREEN.
             }
 
             let parsedPortfolio;
@@ -162,7 +167,8 @@ const loadPortfolio = (portf) => {
             }
 
             const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
-            // TUTOR_TODO Chapter 12 - log to the console using the logger and the provided logMessage
+            // TUTOR_TODO Chapter 12 Task 2
+            // Log to the console using the logger and the provided logMessage.
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
                 console.warn('The client has no portfolio')
@@ -174,9 +180,11 @@ const loadPortfolio = (portf) => {
             subscribeSymbolPrices();
         })
         .fail(function (jqXHR, textStatus) {
-            // TUTOR_TODO Chapter 12 - stop the latency metric
+            // TUTOR_TODO Chapter 12 Task 9
+            // Stop the latency metric.
 
-            // TUTOR_TODO Chapter 12 - increment the error count
+            // TUTOR_TODO Chapter 12 Task 12
+            // Increment the error count.
 
             const errorMessage = 'Service at ' + serviceUrl + ' failed at ' + serviceRequest + ' with ' + textStatus;
 
@@ -187,9 +195,11 @@ const loadPortfolio = (portf) => {
                 stackTrace: ''
             };
 
-            // TUTOR_TODO Chapter 12 - capture the error with the composite metric and use the provided errorOptions object
+            // TUTOR_TODO Chapter 12 Task 13
+            // Capture the error with the composite metric and use the provided errorOptions object.
 
-            // TUTOR_TODO Chapter 12 - set the system state to RED and pass the provided error message
+            // TUTOR_TODO Chapter 12 Task 14
+            // Set the system state to RED and pass the provided error message.
         })
 }
 
