@@ -232,11 +232,20 @@ const unsubscribeSymbolPrices = () => {
 
 const subscribeBySymbol = (symbol, callback) => {
 
-    // TUTOR_TODO Chapter 3 Task 1
-    // Subscribe to a stream called 'T42.MarketStream.Subscribe';
-    // As a second parameter pass an options object with an `arguments` property, which has a property 'Symbol' and assign to it the symbol variable passed to this function
-    // When the promise is resolved save the created subscription so that you can later close it and subscribe to new streams (when the portfolio changes)
-    // Finally subscribe to the created subscription's onData event and invoke the callback passed to this function with the received streamData
+    // SOLVED TUTOR_TODO Chapter 3 Task 1
+    const options = {
+        arguments: {
+            Symbol: symbol
+        }
+    };
+
+    glue.agm.subscribe('T42.MarketStream.Subscribe', options)
+        .then((subscription) => {
+            subscriptions.push(subscription);
+            subscription.onData((subscriptionData) => {
+                callback(subscriptionData);
+            })
+        })
 
 }
 
