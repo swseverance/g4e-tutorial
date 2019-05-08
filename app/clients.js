@@ -3,18 +3,19 @@ const RestServerEndpoint = 'Clients';
 const MethodName = 'SetParty';
 
 
-// TUTOR_TODO Chapter 1.2 Task 3
-// Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
-// When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
-// Then call the following functions:
-
-// checkGlueConnection();
-// setUpUi();
-// setupClients();
-// registerGlueMethods();
-// trackTheme();
-
-// Don't forget to catch any errors.
+// SOLVED TUTOR_TODO Chapter 1.2 Task 3
+Glue(glueConfig)
+    .then((glue) => {
+        window.glue = glue;
+        checkGlueConnection();
+        setUpUi();
+        setupClients();
+        registerGlueMethods();
+        trackTheme();
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 
 const checkGlueConnection = () => {
 
@@ -140,9 +141,9 @@ const setupClients = () => {
         // Start the loader here.
 
         $.ajax({
-                method: 'GET',
-                url: RestServerUrl + RestServerEndpoint
-            })
+            method: 'GET',
+            url: RestServerUrl + RestServerEndpoint
+        })
             .done((clients) => {
 
                 if (typeof clients !== 'undefined') {
