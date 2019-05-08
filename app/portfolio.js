@@ -71,8 +71,12 @@ const instrumentService = () => {
     }
     lastServiceError = serviceMetricsSystem.objectMetric(lastErrorOptions, initialValue);
 
-    // TUTOR_TODO Chapter 12 Task 6
-    // Create a TimeSpan metric.
+    // SOLVED TUTOR_TODO Chapter 12 Task 6
+    const latencyOptions = {
+        name: 'latency',
+        description: 'request latency'
+    }
+    serviceLatency = serviceMetricsSystem.timespanMetric(latencyOptions);
 };
 
 const onInitializeApp = () => {
