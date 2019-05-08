@@ -30,8 +30,12 @@ Glue(glueConfig)
             // excel: true
         };
 
-        // // TUTOR_TODO Chapter 8 Task 4
-        // // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
+        // SOLVED TUTOR_TODO Chapter 8 Task 4
+        return Glue4Office(glue4OfficeOptions);
+    })
+    .then((g4o) => {
+        window.outlook = g4o.outlook;
+        window.excel = g4o.excel;
     })
     .catch((err) => {
         console.log(err);
