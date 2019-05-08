@@ -84,18 +84,23 @@ const onInitializeApp = () => {
 
 const initInstrumentSearch = () => {
 
-    // TUTOR_TODO Chapter 6 Task 2
-    // Create a search client using the supplied options;
-    // const gssOptions = {
-    //     agm: glue.agm,
-    //     defaultQueryLimit: 500,
-    //     measureLatency: false,
-    //     searchTimeoutInMillis: 10000,
-    //     debugGss: false,
-    //     debug: false
-    // };
-    // Use the created search client to create a query for 'Instrument';
-    // Subscribe to the created query's onData event and call displayResult() passing in the received entities.
+    // SOLVED TUTOR_TODO Chapter 6 Task 2
+    const gssOptions = {
+        agm: glue.agm,
+        defaultQueryLimit: 500,
+        measureLatency: false,
+        searchTimeoutInMillis: 10000,
+        debugGss: false,
+        debug: false
+    };
+
+    const searchClient = new gssClientSearch.create(gssOptions);
+
+    _query = searchClient.createQuery('Instrument');
+
+    _query.onData((entities) => {
+        displayResult(entities);
+    });
 
 };
 
