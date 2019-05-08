@@ -208,16 +208,21 @@ const getWindowDirection = () => {
 
 const openWindow = (windowName, myWin, direction) => {
 
-    // TUTOR_TODO Chapter 4.2 Task 1
-    // Add additional properties or modify the existing ones in the options object in order to open a portfolio window which:
-    // is mode: 'flat', cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
-    // create a context object inside the options and pass your window's id 'glue.windows.my().id'
-
     // SOLVED TUTOR_TODO Chapter 4.1 Task 3
     const options = {
         mode: 'html',
         relativeTo: myWin.id,
-        relativeDirection: direction
+        relativeDirection: direction,
+        // SOLVED TUTOR_TODO Chapter 4.2 Task 1
+        allowMinimize: false,
+        allowMaximize: false,
+        allowCollapse: false,
+        allowClose: false,
+        minHeight: 400,
+        minWidth: 600,
+        context: {
+            myWinId: myWin.id
+        }
     };
 
     glue.windows.open(windowName, window.location.href.replace('clients.html', 'portfolio.html'), options);
