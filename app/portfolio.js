@@ -58,8 +58,18 @@ const instrumentService = () => {
     };
     serviceErrorCount = serviceMetricsSystem.countMetric(errorCountOptions, 0);
 
-    // TUTOR_TODO Chapter 12 Task 5
-    // Create a composite error metric.
+    // SOLVED TUTOR_TODO Chapter 12 Task 5
+    const lastErrorOptions = {
+        name: 'lastError',
+        description: 'last recorded service error'
+    };
+    const initialValue = {
+        clientId: '',
+        time: new Date(),
+        message: '',
+        stackTrace: ''
+    }
+    lastServiceError = serviceMetricsSystem.objectMetric(lastErrorOptions, initialValue);
 
     // TUTOR_TODO Chapter 12 Task 6
     // Create a TimeSpan metric.
