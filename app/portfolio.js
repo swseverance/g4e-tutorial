@@ -646,8 +646,8 @@ const sendPortfolioAsEmailClicked = (event) => {
 
         const content = getEmailContent(client, portfolio);
 
-        // TUTOR_TODO Chapter 8 Task 5
-        // Create a new email by passing the content object above.
+        // SOLVED TUTOR_TODO Chapter 8 Task 5
+        outlook.newEmail(content);
     }
 
     var portfolio = getCurrentPortfolio();
