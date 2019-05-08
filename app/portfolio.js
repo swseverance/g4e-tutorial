@@ -110,9 +110,16 @@ const trackTheme = () => {
 
 const setUpAppContent = () => {
 
-    // TUTOR_TODO chapter 4.3 Task 2
-    // Check whether the current window context contains the attribute 'party';
-    // If doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object and call loadPortfolio() passing in the pId from the party object assign the received party object to partyObj, because we will need it later on.
+    // SOLVED TUTOR_TODO chapter 4.3 Task 2
+    const context = glue.windows.my().context;
+    if (context.party) {
+        const preferredName = context.party.preferredName;
+        glue.windows.my().setTitle(preferredName);
+        document.getElementById('title').textContent = preferredName;
+        partyObj = context.party;
+        loadPortfolio(context.party.pId);
+        return;
+    }
 
     registerAgmMethod();
 };
