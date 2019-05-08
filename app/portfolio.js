@@ -141,8 +141,17 @@ const setUpAppContent = () => {
 
 const registerAgmMethod = () => {
 
-    // TUTOR_TODO Chapter 11 Task 3
-    // Rregister the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
+    // SOLVED TUTOR_TODO Chapter 11 Task 3
+    const inActivity = glue.activities.inActivity;
+
+    if (inActivity) {
+        glue.activities.my.onContextChanged((client) => {
+            if (client.party) {
+                loadPortfolio(client.party.pId);
+            }
+        });
+        return;
+    }
 
     // SOLVED TUTOR_TODO Chapter 2.1
     const methodOptions = {
