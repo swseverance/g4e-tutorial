@@ -137,8 +137,8 @@ const setupClients = () => {
 
     const getClients = (count, callback) => {
 
-        // TUTOR_TODO chapter 4.2 Task 3
-        // Start the loader here.
+        // SOLVED TUTOR_TODO chapter 4.2 Task 3
+        glue.windows.my().showLoader();
 
         $.ajax({
             method: 'GET',
