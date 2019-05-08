@@ -224,9 +224,10 @@ const subscribeSymbolPrices = () => {
 
 const unsubscribeSymbolPrices = () => {
 
-    // TUTOR_TODO Chapter 3 Task 2
-    // Traverse the saved subscriptions and close each one.
-    // We need to do this, because when the portfolio changes, we need to clear the existing subscriptions and subscribe to the new symbol's stream
+    // SOLVED TUTOR_TODO Chapter 3 Task 2
+    subscriptions.forEach((subscription) => {
+        subscription.close();
+    });
 
 }
 
