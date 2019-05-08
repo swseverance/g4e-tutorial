@@ -103,10 +103,8 @@ const setupClients = () => {
 
             const direction = getWindowDirection();
 
-            // TUTOR_TODO Chapter 4.4 Task 3
-            // Pass the result of getWindowDirection as a second argument for openTabWindow
-
-            openTabWindow(client, 'right');
+            // SOLVED TUTOR_TODO Chapter 4.4 Task 3
+            openTabWindow(client, direction);
             invokeAgMethod(client);
 
         }
