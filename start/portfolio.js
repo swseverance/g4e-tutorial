@@ -77,10 +77,8 @@ const onInitializeApp = () => {
 
 const initInstrumentSearch = () => {
 
-    // TUTOR_TODO Chapter 6
-
-    // Create a search client using the supplied options
-
+    // TUTOR_TODO Chapter 6 Task 2
+    // Create a search client using the supplied options;
     // const gssOptions = {
     //     agm: glue.agm,
     //     defaultQueryLimit: 500,
@@ -89,10 +87,8 @@ const initInstrumentSearch = () => {
     //     debugGss: false,
     //     debug: false
     // };
-
-    // Use the created search client to create a query for 'Instrument'
-
-    // subscribe to the created query's onData event and call displayResult() passing in the received entities
+    // Use the created search client to create a query for 'Instrument';
+    // Subscribe to the created query's onData event and call displayResult() passing in the received entities.
 
 };
 
@@ -512,7 +508,8 @@ const search = (event) => {
     event.preventDefault();
     var searchValue = document.getElementById('ticker').value;
 
-    // TUTOR_TODO Chapter 6 - Use the created query's search function and pass in the searchValue;
+    // TUTOR_TODO Chapter 6 Task 3
+    // Use the created query's search function and pass in the searchValue;
 };
 
 const sendPortfolioAsEmailClicked = (event) => {

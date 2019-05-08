@@ -207,8 +207,9 @@ const openWindow = (windowName, myWin, direction) => {
     // Create an options object and define mode, relativeTo and relativeDirection properties
     // Use the Windows API to open a window with the provided windowName, options object and correct URL
 
-    // TUTOR_TODO Chapter 5 - Modify split the current options object into two separate objects - context and windowSettings
-    // use the Application Management API to open a portfolio instance
+    // TUTOR_TODO Chapter 5 Task 1
+    // Modify split the current options object into two separate objects - context and windowSettings;
+    // Use the Application Management API to open a portfolio instance.
 };
 
 const openTabWindow = (party, direction) => {
@@ -231,9 +232,9 @@ const openTabWindow = (party, direction) => {
     //     }
     // }
 
-    // TUTOR_TODO Chapter 5 - Modify split the current options object into two separate objects - context and windowSettings
-    // use the Application Management API to open a portfolio tab instance
-    // Note that using the Application Management API your window gets a default name, so you can't reuse the filter condition to check for open tabs
-    // so you need to get creative. What else is unique to the tabs that we can filter on?
+    // TUTOR_TODO Chapter 5 Task 2
+    // Modify split the current options object into two separate objects - context and windowSettings;
+    // Use the Application Management API to open a portfolio tab instance;
+    // Note that using the Application Management API your window gets a default name, so you can't reuse the filter condition to check for open tabs so you need to get creative. What else is unique to the tabs that we can filter on?
 
 };
