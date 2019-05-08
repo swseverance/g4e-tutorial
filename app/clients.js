@@ -103,8 +103,15 @@ const setupClients = () => {
 
         row.onclick = () => {
 
-            // TUTOR_TODO Chapter 11 Task 2
-            // Check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
+            // SOLVED TUTOR_TODO Chapter 11 Task 2
+            const inActivity = glue.activities.inActivity;
+
+            if (inActivity) {
+                glue.activities.my.updateContext({
+                    party: client
+                });
+                return;
+            }
 
             const direction = getWindowDirection();
 
