@@ -253,8 +253,8 @@ const loadPortfolio = (portf) => {
                 stackTrace: ''
             };
 
-            // TUTOR_TODO Chapter 12 Task 13
-            // Capture the error with the composite metric and use the provided errorOptions object.
+            // SOLVED TUTOR_TODO Chapter 12 Task 13
+            lastServiceError.update(errorOptions);
 
             // TUTOR_TODO Chapter 12 Task 14
             // Set the system state to RED and pass the provided error message.
