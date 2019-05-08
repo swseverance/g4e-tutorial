@@ -245,36 +245,57 @@ const openWindow = (windowName, myWin, direction) => {
 
 const openTabWindow = (party, direction) => {
 
-    // SOLVED TUTOR_TODO Chapter 4.3 Task 1
+    // // SOLVED TUTOR_TODO Chapter 4.3 Task 1
+    // const clientWin = glue.windows.list().find(w => w.title === party.name);
+    // if (clientWin) {
+    //     clientWin.activate();
+    // } else {
+    //     const tabs = glue.windows.list().filter(win => win.name.indexOf('PortfolioTabs_') !== -1);
+    //     const options = {
+    //         mode: 'tab',
+    //         tabGroupId: 'MyTabGroupId',
+    //         allowMinimize: false,
+    //         allowMaximize: false,
+    //         allowCollapse: false,
+    //         allowClose: false,
+    //         minHeight: 400,
+    //         minWidth: 600,
+    //         context: {
+    //             party: party,
+    //             myWinId: glue.windows.my().id,
+    //         }
+    //     };
+    //     if (tabs.length === 0) {
+    //         options.relativeTo = glue.windows.my().id,
+    //             options.relativeDirection = direction
+    //     }
+    //     glue.windows.open(`PortfolioTabs_${party.pId}`, window.location.href.replace('clients.html', 'portfolio.html'), options);
+    // }
+
+    // TUTOR_TODO Chapter 5 Task 2
     const clientWin = glue.windows.list().find(w => w.title === party.name);
+
     if (clientWin) {
         clientWin.activate();
     } else {
-        const tabs = glue.windows.list().filter(win => win.name.indexOf('PortfolioTabs_') !== -1);
-        const options = {
-            mode: 'tab',
-            tabGroupId: 'MyTabGroupId',
-            allowMinimize: false,
-            allowMaximize: false,
-            allowCollapse: false,
-            allowClose: false,
-            minHeight: 400,
-            minWidth: 600,
-            context: {
-                party: party,
-                myWinId: glue.windows.my().id,
-            }
+        const context = {
+            party: party,
+            myWinId: glue.windows.my().id,
         };
-        if (tabs.length === 0) {
-            options.relativeTo = glue.windows.my().id,
-                options.relativeDirection = direction
-        }
-        glue.windows.open(`PortfolioTabs_${party.pId}`, window.location.href.replace('clients.html', 'portfolio.html'), options);
-    }
 
-    // TUTOR_TODO Chapter 5 Task 2
-    // Modify split the current options object into two separate objects - context and windowSettings;
-    // Use the Application Management API to open a portfolio tab instance;
-    // Note that using the Application Management API your window gets a default name, so you can't reuse the filter condition to check for open tabs so you need to get creative. What else is unique to the tabs that we can filter on?
+        const windowSettings = {
+            mode: 'tab',
+            tabGroupId: 'MyTabGroupId'
+        };
+
+        const openedTabs = glue.windows.list().filter((w) => w.tabGroupId === windowSettings.tabGroupId);
+
+        if (openedTabs.length === 0) {
+            windowSettings.relativeTo = glue.windows.my().id;
+            windowSettings.relativeDirection = direction;
+        }
+
+        glue.appManager.application('Portfolios').start(context, windowSettings);
+    }
 
 };
