@@ -207,8 +207,8 @@ const loadPortfolio = (portf) => {
             }
 
             const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
-            // TUTOR_TODO Chapter 12 Task 2
-            // Log to the console using the logger and the provided logMessage.
+            // SOLVED TUTOR_TODO Chapter 12 Task 2
+            logger.info(logMessage);
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
                 console.warn('The client has no portfolio')
