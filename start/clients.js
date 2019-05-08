@@ -76,10 +76,10 @@ const setUpUi = () => {
 
     const setUpFrameButtonClick = () => {
 
-        // TUTOR_TODO Chapter 4.4 - Use the windows API for handling frame button clicks to handle a frame button click, check the Id and open a portfolio window
+        // TUTOR_TODO Chapter 4.4 Task 4
+        // Use the windows API for handling frame button clicks to handle a frame button click, check the Id and open a portfolio window.
+        // Pass the result of getWindowDirection as a second argument for openWindow
 
-        // TUTOR_TODO Chapter 4.4 - pass the result of getWindowDirection as a second argument for openWindow
-        const direction = getWindowDirection();
     };
 
     // TUTOR_TODO Chapter 11 - check if you are in an activity and setup the frame buttons and events only if you are NOT
@@ -100,8 +100,10 @@ const setupClients = () => {
 
             // TUTOR_TODO Chapter 11 - check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
 
-            // TUTOR_TODO Chapter 4.4 - pass the result of getWindowDirection as a second argument for openTabWindow
             const direction = getWindowDirection();
+
+            // TUTOR_TODO Chapter 4.4 Task 3
+            // Pass the result of getWindowDirection as a second argument for openTabWindow
 
             openTabWindow(client, 'right');
             invokeAgMethod(client);
@@ -185,12 +187,12 @@ const invokeAgMethod = (client) => {
 
 const getWindowDirection = () => {
 
-    // TUTOR_TODO Chapter 4.4 - get the primary monitor
-    // get the bottom neightbours
-    // get the working area height
-    // calculate the window bottom
-    // pass 'bottom' if there is enough space for a portfolio window
-    // else pass right
+    // TUTOR_TODO Chapter 4.4 Task 2
+    // Get the primary monitor;
+    // Get the bottom neightbours;
+    // Get the working area height;
+    // Calculate the window bottom;
+    // Pass 'bottom' if there is enough space for a portfolio window, else pass right.
 
 }
 
