@@ -51,8 +51,12 @@ const instrumentService = () => {
     serviceMetricsSystem = glue.metrics.subSystem('PortfolioSystem', 'Portfolio REST Service');
     serviceMetricsSystem.setState(0, 'OK');
 
-    // TUTOR_TODO Chapter 12 Task 4
-    // Create an error count metric.
+    // SOLVED TUTOR_TODO Chapter 12 Task 4
+    const errorCountOptions = {
+        name: 'ErrorCount',
+        description: 'Records the number of failed requests'
+    };
+    serviceErrorCount = serviceMetricsSystem.countMetric(errorCountOptions, 0);
 
     // TUTOR_TODO Chapter 12 Task 5
     // Create a composite error metric.
