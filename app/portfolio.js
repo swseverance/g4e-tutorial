@@ -112,7 +112,7 @@ const setUpAppContent = () => {
 
     // TUTOR_TODO chapter 4.3 Task 2
     // Check whether the current window context contains the attribute 'party';
-    // If doesn't, then go ahead and register the AGM method, otherwise the title of the tab and the window, using the preferredName from the party object and call loadPortfolio() passing in the pId from the party object assign the received party object to partyObj, because we will need it later on.
+    // If doesn't, then go ahead and register the Interop method, otherwise the title of the tab and the window, using the preferredName from the party object and call loadPortfolio() passing in the pId from the party object assign the received party object to partyObj, because we will need it later on.
 
     registerAgmMethod();
 };
@@ -120,7 +120,7 @@ const setUpAppContent = () => {
 const registerAgmMethod = () => {
 
     // TUTOR_TODO Chapter 11 Task 3
-    // Rregister the AGM method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
+    // Rregister the Interop method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
 
     // SOLVED TUTOR_TODO Chapter 2.1
     const methodOptions = {
@@ -129,7 +129,7 @@ const registerAgmMethod = () => {
         description: 'Switches the application window to work with the specified party',
         accepts: 'Composite: { String? pId, String? ucn } party'
     };
-    
+
     glue.agm.register(methodOptions, (args) => {
         partyObj = args.party;
         loadPortfolio(args.party.pId);
@@ -353,7 +353,7 @@ const addAvailableMethods = (methods, symbol, bpod) => {
 const invokeAgMethodByName = (methodName, params) => {
 
     // TUTOR_TODO 2.3 Task 2
-    // Invoke the agm method with the passed methodName and passed params
+    // Invoke the Interop method with the passed methodName and passed params
 
 };
 
