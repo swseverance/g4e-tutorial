@@ -212,9 +212,8 @@ const loadPortfolio = (portf) => {
 
             if (elapsedMillis >= 1000) {
                 const message = 'Service at ' + serviceUrl + ' is lagging';
-                // TUTOR_TODO Chapter 12 Task 10
-                // Set system state to AMBER and pass the created message.
-
+                // SOLVED TUTOR_TODO Chapter 12 Task 10
+                serviceMetricsSystem.setState(50, message);
             } else {
                 // TUTOR_TODO Chapter 12 Task 11
                 // Set the system state to GREEN.
