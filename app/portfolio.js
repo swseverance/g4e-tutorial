@@ -241,8 +241,8 @@ const loadPortfolio = (portf) => {
             // SOLVED TUTOR_TODO Chapter 12 Task 9
             serviceLatency.stop();
 
-            // TUTOR_TODO Chapter 12 Task 12
-            // Increment the error count.
+            // SOLVED TUTOR_TODO Chapter 12 Task 12
+            serviceErrorCount.increment();
 
             const errorMessage = 'Service at ' + serviceUrl + ' failed at ' + serviceRequest + ' with ' + textStatus;
 
