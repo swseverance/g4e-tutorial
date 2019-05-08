@@ -256,8 +256,8 @@ const loadPortfolio = (portf) => {
             // SOLVED TUTOR_TODO Chapter 12 Task 13
             lastServiceError.update(errorOptions);
 
-            // TUTOR_TODO Chapter 12 Task 14
-            // Set the system state to RED and pass the provided error message.
+            // SOLVED TUTOR_TODO Chapter 12 Task 14
+            serviceMetricsSystem.setState(100, errorMessage);
         })
 }
 
