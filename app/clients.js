@@ -85,6 +85,7 @@ const setUpUi = () => {
     };
 
     // SOLVED TUTOR_TODO Chapter 11 Task 1
+    const inActivity = glue.activities.inActivity;
     if (inActivity) {
         return;
     }
