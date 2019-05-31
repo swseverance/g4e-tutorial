@@ -1,0 +1,30 @@
+{
+    "activityTarget": {
+        "enabled": false
+    },
+    "allowMultiple": true,
+    "caption": "A Demo showing clients portfolio.",
+    "details": {
+        "allowClose": false,
+        "allowCollapse": false,
+        "allowMaximize": false,
+        "allowMinimize": false,
+        "height": 400,
+        "left": 500,
+        "maxHeight": 450,
+        "maxWidth": 650,
+        "minHeight": 350,
+        "minWidth": 550,
+        "mode": "flat",
+        "name": "portfolio_window",
+        "top": 50,
+        "url": "http://localhost:22909/app/portfolio.html",
+        "width": 600
+    },
+    "disabled": false,
+    "hidden": false,
+    "icon": "http://localhost:22909/resources/icons/tick42.ico",
+    "name": "Portfolios",
+    "title": "Portfolio",
+    "type": "window"
+}
