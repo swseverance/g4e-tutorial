@@ -1,0 +1,20 @@
+{
+    "Instruments": {
+        "Instrument": [{
+            "name": "BEST BUY CO INC",
+            "id": "14334",
+            "group": "Equity",
+            "RTFO": "BBY"
+        }, {
+            "name": "TELEFONICA DE ESPA¥A, S.A.",
+            "id": "2208",
+            "group": "Equity",
+            "RTFO": "TEF.MC"
+        }, {
+            "name": "VODAFONE GROUP PLC",
+            "id": "2644",
+            "group": "Equity",
+            "RTFO": "VOD.L"
+        }]
+    }
+}

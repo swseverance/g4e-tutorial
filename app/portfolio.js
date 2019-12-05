@@ -1,5 +1,5 @@
 const RestServerUrl = 'http://localhost:22910/';
-const RestServerEndpoint = 'GetDemoPortfolio';
+const RestServerEndpoint = 'GetDemoDividend';
 const StreamName = 'T42.MarketStream.Subscribe';
 
 let detachedTabs = [];
@@ -27,13 +27,15 @@ Glue(glueConfig)
             glue: glue,
             outlook: true,
             // TUTOR_TODO Chapter 9 Task 2
-            // excel: true
+            excel: true
         };
 
         // SOLVED TUTOR_TODO Chapter 8 Task 4
         return Glue4Office(glue4OfficeOptions);
     })
     .then((g4o) => {
+        console.log('TCL: g4o', g4o)
+        window.g4o = g4o
         window.outlook = g4o.outlook;
         window.excel = g4o.excel;
     })
@@ -122,12 +124,12 @@ const setUpAppContent = () => {
     // SOLVED TUTOR_TODO chapter 4.3 Task 2
     const context = glue.windows.my().context;
     if (context.party) {
-        const preferredName = context.party.preferredName;
+        const preferredName = context.party.name;
         glue.windows.my().setTitle(preferredName);
         document.getElementById('title').textContent = preferredName;
         partyObj = context.party;
-        loadPortfolio(context.party.pId);
-        return;
+        loadPortfolio(context.party.id);
+        // return;
     }
 
     registerAgmMethod();
@@ -143,12 +145,12 @@ const registerAgmMethod = () => {
         name: 'SetParty',
         display_name: 'Set Party',
         description: 'Switches the application window to work with the specified party',
-        accepts: 'Composite: { String? pId, String? ucn } party'
+        accepts: 'Composite: { String? pId, String? ucn, String? id, String? RTFO, String? group, String? name  } party'
     };
 
     glue.agm.register(methodOptions, (args) => {
         partyObj = args.party;
-        loadPortfolio(args.party.pId);
+        loadPortfolio(args.party.id);
     });
 
 };
@@ -156,7 +158,7 @@ const registerAgmMethod = () => {
 const loadPortfolio = (portf) => {
     const serviceUrl = RestServerUrl + RestServerEndpoint;
 
-    const serviceRequest = 'xpath=//Portfolios/Portfolio[id=' + portf + ']';
+    const serviceRequest = 'xpath=//Dividends/Dividend[id=' + portf + ']';
 
     const requestStart = Date.now();
 
@@ -195,14 +197,14 @@ const loadPortfolio = (portf) => {
             // TUTOR_TODO Chapter 12 Task 2
             // Log to the console using the logger and the provided logMessage.
 
-            if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
-                console.warn('The client has no portfolio')
+            if (!parsedPortfolio.Dividends.hasOwnProperty('Dividend')) {
+                console.warn('The instrument has no dividend')
                 return;
             }
 
-            setupPortfolio(parsedPortfolio.Portfolios.Portfolio.Symbols.Symbol);
-            unsubscribeSymbolPrices();
-            subscribeSymbolPrices();
+            setupPortfolio(parsedPortfolio.Dividends.Dividend);
+            // unsubscribeSymbolPrices();
+            // subscribeSymbolPrices();
         })
         .fail(function (jqXHR, textStatus) {
             // TUTOR_TODO Chapter 12 Task 9
@@ -270,24 +272,25 @@ const addRow = (table, rowData, emptyFlag) => {
     emptyFlag = emptyFlag || true;
     const row = document.createElement('tr');
 
-    addRowCell(row, rowData.RIC || '');
-    addRowCell(row, rowData.Description || '');
-    addRowCell(row, rowData.bid || '', 'text-right');
-    addRowCell(row, rowData.ask || '', 'text-right');
+    addRowCell(row, rowData['Declaration'] || '');
+    addRowCell(row, rowData['Ex Date'] || '');
+    addRowCell(row, rowData['Record Date'] || '');
+    addRowCell(row, rowData['Curr'] || '');
+    addRowCell(row, rowData['Net Amt'] || '', 'text-right');
 
-    row.onclick = function () {
-        if (emptyFlag) {
-            removeChildNodes('methodsList');
-        }
+    // row.onclick = function () {
+    //     if (emptyFlag) {
+    //         removeChildNodes('methodsList');
+    //     }
 
-        // SOLVED TUTOR_TODO Chapter 2.3 Task 1
-        const availableMethods = glue.agm.methods().filter(m =>
-            m.objectTypes && m.objectTypes.indexOf('Instrument') !== -1);
-        addAvailableMethods(availableMethods, rowData.RIC, rowData.BPOD);
+    //     // SOLVED TUTOR_TODO Chapter 2.3 Task 1
+    //     const availableMethods = glue.agm.methods().filter(m =>
+    //         m.objectTypes && m.objectTypes.indexOf('Instrument') !== -1);
+    //     addAvailableMethods(availableMethods, rowData.RIC, rowData.BPOD);
 
-        row.setAttribute('data-toggle', 'modal');
-        row.setAttribute('data-target', '#instruments');
-    }
+    //     row.setAttribute('data-toggle', 'modal');
+    //     row.setAttribute('data-target', '#instruments');
+    // }
     row.setAttribute('id', rowData.RIC);
     table.appendChild(row);
 };
@@ -302,14 +305,32 @@ const addRowCell = (row, cellData, cssClass) => {
     row.appendChild(cell);
 };
 
-const setupPortfolio = (portfolios) => {
+const setDividendDetails = dividend => {
+    document.getElementById('RIC').textContent = dividend['RIC']
+    document.getElementById('company').textContent = dividend['Company']
+    document.getElementById('securityType').textContent = dividend['Security Type']
+    document.getElementById('distributionType').textContent = dividend['Distribution Type']
+    document.getElementById('announcedDate').textContent = dividend['Ex Date']
+    document.getElementById('exDate').textContent = dividend['Distribution Type']
+    document.getElementById('recordDate').textContent = dividend['Record Date']
+    document.getElementById('payDate').textContent = dividend['Pay Date']
+    document.getElementById('frequency').textContent = dividend['Frequency']
+    document.getElementById('grossAmount').textContent = dividend['Gross Amount']
+    document.getElementById('netAmount').textContent = dividend['Net Amount']
+    document.getElementById('description').textContent = dividend['Description']
+    document.getElementById('exchange').textContent = dividend['Exchange']
+}
+
+const setupPortfolio = (dividend) => {
     // Updating table with the new portfolio
     const table = document.getElementById('portfolioTable').getElementsByTagName('tbody')[0];
+    // set dividend details
+    setDividendDetails(dividend)
 
     // Removing all old data
     removeChildNodes('portfolioTableData');
 
-    portfolios.forEach((item) => {
+    dividend.Symbols.Symbol.forEach((item) => {
         addRow(table, item);
     });
 };
@@ -424,16 +445,19 @@ const getCurrentPortfolio = () => {
         tds.forEach((td, index) => {
             switch (index) {
                 case 0:
-                    symbol.ric = td.textContent;
+                    symbol.declaration = td.textContent;
                     break;
                 case 1:
-                    symbol.description = td.textContent;
+                    symbol.exDate = td.textContent;
                     break;
                 case 2:
-                    symbol.bid = td.textContent;
+                    symbol.recordDate = td.textContent;
                     break;
                 case 3:
-                    symbol.ask = td.textContent;
+                    symbol.curr = td.textContent;
+                    break;
+                case 4:
+                    symbol.netAmt = td.textContent;
                     break;
             }
         })
@@ -645,6 +669,7 @@ const sendPortfolioAsEmailClicked = (event) => {
         };
 
         const content = getEmailContent(client, portfolio);
+        console.log('TCL: sendPortfolioAsEmail -> content', content)
 
         // SOLVED TUTOR_TODO Chapter 8 Task 5
         outlook.newEmail(content);
@@ -658,52 +683,66 @@ const sendPortfolioAsEmailClicked = (event) => {
 const sendPortfolioToExcelClicked = (event) => {
     event.preventDefault();
 
-    const sendPortfolioToExcel = (client, portfolio) => {
+    const sendPortfolioToExcel = (dividend, portfolio) => {
 
         const fields = ['ric', 'description', 'bid', 'ask'];
 
         const config = {
             columnConfig: [{
-                fieldName: 'ric',
-                header: 'RIC'
+                fieldName: 'declaration',
+                header: 'Declaration Date'
             }, {
-                fieldName: 'description',
-                header: 'Description'
+                fieldName: 'exDate',
+                header: 'Ex Date'
             }, {
-                fieldName: 'bid',
-                header: 'Bid Price'
+                fieldName: 'recordDate',
+                header: 'Record Date'
             }, {
-                fieldName: 'ask',
-                header: 'Ask Price'
+                fieldName: 'curr',
+                header: 'Curr'
+            }, {
+                fieldName: 'netAmt',
+                header: 'Net Amt'
             }],
             data: portfolio,
             options: {
-                worksheet: client.name,
-                workbook: 'ExportedPortfolios'
+                worksheet: dividend.name,
+                workbook: 'ExportedDividends'
             }
         }
 
         const loadPortfolioFromExcel = (portfolio) => {
 
-            unsubscribeSymbolPrices();
+            // unsubscribeSymbolPrices();
 
             removeChildNodes('portfolioTableData');
             const table = document.getElementById('portfolioTable').getElementsByTagName('tbody')[0];
 
             portfolio.forEach((item) => {
-                item.RIC = item.ric;
-                item.Description = item.description;
+
+                item['Declaration'] = item.declaration;
+                item['Ex Date'] = item.exDate;
+                item['Record Date'] = item.recordDate;
+                item['Curr']  = item.curr;
+                item['Net Amt'] = item.netAmt;
                 addRow(table, item);
             })
 
-            subscribeSymbolPrices();
+            // subscribeSymbolPrices();
         };
 
         // TUTOR_TODO Chapter 9 Task 3
         // Create a new spreadsheet passing the config object, then subscribe to the new sheet's onChanged event and call loadPortfolioFromExcel with the received data.
+        console.log('TCL: sendPortfolioToExcel -> config', config)
+        window.excel.openSheet(config)
+            .then(sheet => console.log('sheet', sheet) ||
+                sheet.onChanged(data => console.log('sendPortfolioToExcel -> data', data) || loadPortfolioFromExcel(data)))
+            // .catch(err => console.log('Err: ', err))
     };
 
     const portfolio = getCurrentPortfolio();
+    console.log('TCL: sendPortfolioToExcelClicked -> portfolio', portfolio)
 
+    console.log('TCL: sendPortfolioToExcelClicked -> partyObj', partyObj)
     sendPortfolioToExcel(partyObj, portfolio);
 };

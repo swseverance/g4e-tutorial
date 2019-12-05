@@ -1,5 +1,5 @@
 const RestServerUrl = 'http://localhost:22910/';
-const RestServerEndpoint = 'Clients';
+const RestServerEndpoint = 'instruments';
 const MethodName = 'SetParty';
 
 
@@ -92,12 +92,12 @@ const setUpUi = () => {
 
 const setupClients = () => {
 
-    const addRow = (table, client) => {
+    const addRow = (table, instrument) => {
         const row = document.createElement('tr');
-        addRowCell(row, client.name || '');
-        addRowCell(row, client.pId || '');
-        addRowCell(row, client.gId || '');
-        addRowCell(row, client.accountManager || '');
+        addRowCell(row, instrument.name || '');
+        addRowCell(row, instrument.id || '');
+        addRowCell(row, instrument.group || '');
+        addRowCell(row, instrument.RTFO || '');
 
         row.onclick = () => {
 
@@ -107,8 +107,8 @@ const setupClients = () => {
             const direction = getWindowDirection();
 
             // SOLVED TUTOR_TODO Chapter 4.4 Task 3
-            openTabWindow(client, direction);
-            invokeAgMethod(client);
+            openTabWindow(instrument, direction);
+            invokeAgMethod(instrument);
 
         }
         table.appendChild(row);
@@ -126,11 +126,11 @@ const setupClients = () => {
         row.appendChild(cell);
     }
 
-    const handleClients = (clients) => {
-        const table = document.getElementById('clientsTable').getElementsByTagName('tbody')[0];
+    const handleInstruments = (instruments) => {
+        const table = document.getElementById('instrumentsTable').getElementsByTagName('tbody')[0];
 
-        clients.forEach((client) => {
-            addRow(table, client);
+        instruments.forEach((instrument) => {
+            addRow(table, instrument);
         })
     }
 
@@ -143,14 +143,14 @@ const setupClients = () => {
             method: 'GET',
             url: RestServerUrl + RestServerEndpoint
         })
-            .done((clients) => {
+            .done((instruments) => {
 
-                if (typeof clients !== 'undefined') {
-                    const parsedClients = JSON.parse(clients);
-                    const slicedClients = parsedClients.Clients.Client.slice(0, count);
+                if (typeof instruments !== 'undefined') {
+                    const parsedInstruments = JSON.parse(instruments);
+                    const slicedInstruments = parsedInstruments.Instruments.Instrument.slice(0, count);
 
                     if (typeof callback !== 'undefined' && typeof callback === 'function') {
-                        callback(slicedClients);
+                        callback(slicedInstruments);
                     }
                 }
             })
@@ -163,7 +163,7 @@ const setupClients = () => {
             });
     }
 
-    getClients(5, handleClients);
+    getClients(3, handleInstruments);
 };
 
 const registerGlueMethods = () => {
@@ -185,11 +185,11 @@ const trackTheme = () => {
     // Subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
 };
 
-const invokeAgMethod = (client) => {
+const invokeAgMethod = (instrument) => {
 
     // SOLVED TUTOR_TODO Chapter 2.2
     const invokeArgs = {
-        party: client
+        party: instrument
     };
 
     glue.agm.invoke('SetParty', invokeArgs);

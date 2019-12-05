@@ -1,0 +1,132 @@
+{
+    "Dividends": {
+        "Dividend": [
+            {
+                "id": "14334",
+                "RIC": "BBY",
+                "Company": "BEST BUY CO INC",
+                "Security Type": "Common Stock",
+                "Distribution Type": "Regular Cash",
+                "Announced Date": "11/27/19",
+                "Ex Date": "12/16/19",
+                "Record Date": "12/17/19",
+                "Pay Date": "01/07/20",
+                "Frequency": "Quarterly",
+                "Gross Amount": "0.5",
+                "Net Amount": "0.462",
+                "Bloomberg": "VOD LN Equity",
+                "Description": "VODAFONE GROUP PLC",
+                "Exchange": "NYSE",
+                "Symbols": {
+                    "Symbol": [
+                        {
+                            "Declaration": "03/07/20",
+                            "Ex Date": "01/03/20",
+                            "Record Date": "03/07/20",
+                            "Curr": "USD",
+                            "Net Amt": 0.584
+                        },
+                        {
+                            "Declaration": "04/07/20",
+                            "Ex Date": "08/09/20",
+                            "Record Date": "04/06/19",
+                            "Curr": "USD",
+                            "Net Amt": 0.563
+                        },
+                        {
+                            "Declaration": "01/07/20",
+                            "Ex Date": "02/01/19",
+                            "Record Date": "09/03/20",
+                            "Curr": "USD",
+                            "Net Amt": 0.489
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "2208",
+                "RIC": "TEF",
+                "Company": "TELEFONICA DE ESPA¥A, S.A.",
+                "Security Type": "Common Stock",
+                "Distribution Type": "Regular Cash",
+                "Announced Date": "11/27/19",
+                "Ex Date": "12/16/19",
+                "Record Date": "12/17/19",
+                "Pay Date": "01/07/20",
+                "Frequency": "Quarterly",
+                "Gross Amount": "0.5",
+                "Net Amount": "0.462",
+                "Bloomberg": "TEF SM Equity",
+                "Description": "TELEFONICA DE ESPA¥A, S.A.",
+                "Exchange": "MADBOL",
+                "Symbols": {
+                    "Symbol": [
+                        {
+                            "Declaration": "01/07/20",
+                            "Ex Date": "01/09/20",
+                            "Record Date": "04/07/20",
+                            "Curr": "EUR",
+                            "Net Amt": 0.162
+                        },
+                        {
+                            "Declaration": "04/07/20",
+                            "Ex Date": "08/09/20",
+                            "Record Date": "04/06/19",
+                            "Curr": "EUR",
+                            "Net Amt": 0.162
+                        },
+                        {
+                            "Declaration": "05/07/20",
+                            "Ex Date": "01/01/19",
+                            "Record Date": "09/02/20",
+                            "Curr": "EUR",
+                            "Net Amt": 0.162
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "2644",
+                "RIC": "VOD",
+                "Company": "VODAFONE GROUP PLC",
+                "Security Type": "Common Stock",
+                "Distribution Type": "Regular Cash",
+                "Announced Date": "11/27/19",
+                "Ex Date": "12/16/19",
+                "Record Date": "12/17/19",
+                "Pay Date": "01/07/20",
+                "Frequency": "Semi-Annual",
+                "Gross Amount": "0.5",
+                "Net Amount": "0.462",
+                "Bloomberg": "TEF SM Equity",
+                "Description": "VODAFONE GROUP PLC",
+                "Exchange": "LONBOL",
+                "Symbols": {
+                    "Symbol": [
+                        {
+                            "Declaration": "01/07/20",
+                            "Ex Date": "01/02/20",
+                            "Record Date": "07/07/20",
+                            "Curr": "EUR",
+                            "Net Amt": 0.223
+                        },
+                        {
+                            "Declaration": "04/01/20",
+                            "Ex Date": "02/09/20",
+                            "Record Date": "04/03/19",
+                            "Curr": "EUR",
+                            "Net Amt": 0.222
+                        },
+                        {
+                            "Declaration": "01/07/20",
+                            "Ex Date": "02/01/19",
+                            "Record Date": "09/03/20",
+                            "Curr": "EUR",
+                            "Net Amt": 0.234
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

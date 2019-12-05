@@ -30,23 +30,66 @@
             <div class="col-md-2">
                 <span id="glueSpan" class="label label-warning">Glue is unavailable</span>
             </div>
-            <div class="col-md-2">
-                <span id="priceSpan" class="label label-warning">Prices are unavailable</span>
-            </div>
             <div class="col-md-8">
-                <h1 id="title" class="text-center">Portfolio</h1>
+                <h1 id="title" class="text-center">Dividend</h1>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-                <form class="form-inline" action="#" method="get">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Ticker" id="ticker" />
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-primary" onclick="search(event)">Search</button>
-                    </div>
-                </form>
+            <div class="col-xs-6">
+                <div>
+                    <label for="RIC">RTFO: </label>
+                    <span type="text" disabled id="RIC">
+                </div>
+                <div>
+                    <label for="company">Company: </label>
+                    <span type="text" disabled id="company">
+                </div>
+                <div>
+                    <label for="securityType">Security Type: </label>
+                    <span type="text" disabled id="securityType">
+                </div>
+                <div>
+                    <label for="distributionType">Distribution Type: </label>
+                    <span type="text" disabled id="distributionType">
+                </div>
+                <div>
+                    <label for="announcedDate">Announced Date: </label>
+                    <span type="text" disabled id="announcedDate">
+                </div>
+                <div>
+                    <label for="exDate">Ex Date: </label>
+                    <span type="text" disabled id="exDate">
+                </div>
+                <div>
+                    <label for="recordDate">Record Date: </label>
+                    <span type="text" disabled id="recordDate">
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div>
+                    <label for="payDate">Pay Date: </label>
+                    <span type="text" disabled id="payDate">
+                </div>
+                <div>
+                    <label for="frequency">Frequency: </label>
+                    <span type="text" disabled id="frequency">
+                </div>
+                <div>
+                    <label for="grossAmount">Gross Amount: </label>
+                    <span type="text" disabled id="grossAmount">
+                </div>
+                <div>
+                    <label for="netAmount">Net Amount: </label>
+                    <span type="text" disabled id="netAmount">
+                </div>
+                <div>
+                    <label for="description">Description: </label>
+                    <span type="text" disabled id="description">
+                </div>
+                <div>
+                    <label for="exchange">Exchange: </label>
+                    <span type="text" disabled id="exchange">
+                </div>
             </div>
         </div>
         <div class="row">
@@ -54,10 +97,11 @@
                 <table id="portfolioTable" class="table table-striped table-bordered table-hover table-sm">
                     <thead>
                         <tr>
-                            <th>Symbol</th>
-                            <th>Description</th>
-                            <th class="text-right">Bid</th>
-                            <th class="text-right">Ask</th>
+                            <th>Declaration Date</th>
+                            <th>Ex Date</th>
+                            <th>Record Date</th>
+                            <th>Curr</th>
+                            <th class="text-right">Net Amt</th>
                         </tr>
                     </thead>
                     <tbody id='portfolioTableData'>
@@ -70,7 +114,7 @@
                 <!-- SOLVED TUTOR_TODO Chapter 8 Task 2 -->
                 <button class="btn btn-primary" onclick="sendPortfolioAsEmailClicked(event)">Send as e-mail</button>
                 <!-- TUTOR_TODO Chapter 9 Task 1 -->
-                <!-- <button class="btn btn-primary" onclick="sendPortfolioToExcelClicked(event)">Send to Excel</button> -->
+                <button class="btn btn-primary" onclick="sendPortfolioToExcelClicked(event)">Send to Excel</button>
             </div>
         </div>
     </div>

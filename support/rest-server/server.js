@@ -17,46 +17,54 @@ app.get("/clients", function(req, res) {
     fs.createReadStream(filename).pipe(res)
 })
 
-app.get("/GetDemoPortfolio", function(req, res) {
-    console.log(req.url)
-    var id = req.query.xpath.match(/\[id=(.*?)\]/)[1]
-    console.log("Serving portfolio for client " + id);
+app.get("/instruments", function(req, res) {
+    console.log("Serving instrument list")
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    var filename = __dirname + "\\instruments.json";
+    fs.createReadStream(filename).pipe(res)
+})
 
-    var filename = __dirname + "\\clients.json";
+app.get("/GetDemoDividend", function(req, res) {
+    console.log(req.url)
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    var id = req.query.xpath.match(/\[id=(.*?)\]/)[1]
+    console.log("Serving dividend for instrument " + id);
+
+    var filename = __dirname + "\\instruments.json";
 
     fs.readFile(filename, function(err, dataRaw) {
         //console.log(dataRaw)
-        var clients = JSON.parse(dataRaw).Clients.Client
-        var client = clients.filter(function(c) {
+        var instruments = JSON.parse(dataRaw).Instruments.Instrument
+        var instrument = instruments.filter(function(c) {
             return c.id == id || c.pId == id
         })[0];
-        var clientId;
-        if (client) {
-            clientId = client.id;
+        var instrumentId;
+        if (instrument) {
+            instrumentId = instrument.id;
         }
 
-        var porfoliosFile = __dirname + "\\portfolio.json";
+        var dividendsFile = __dirname + "\\dividend.json";
 
-        fs.readFile(porfoliosFile, function(err, dataRaw) {
+        fs.readFile(dividendsFile, function(err, dataRaw) {
 
             var data = JSON.parse(dataRaw);
 
-            var response_filtered = modify_path(data, ["Portfolios", "Portfolio"], function(a) {
-                return a.filter(function(obj) { return obj.id == clientId })[0]
+            var response_filtered = modify_path(data, ["Dividends", "Dividend"], function(a) {
+                return a.filter(function(obj) { return obj.id == instrumentId })[0]
             });
 
             if (id == 'undefined') {
-                if (response_filtered.Portfolios.Portfolio === undefined) {
+                if (response_filtered.Dividends.Dividends === undefined) {
                     var data = JSON.parse(dataRaw);
-                    response_filtered = modify_path(data, ["Portfolios", "Portfolio"], function(a) {
-                        return a[randomInt(0, data.Portfolios.Portfolio.length - 1)]
+                    response_filtered = modify_path(data, ["Dividends", "Dividend"], function(a) {
+                        return a[randomInt(0, data.Dividends.Dividends.length - 1)]
                     })
                 }
             }
 
             console.log('response', response_filtered)
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
             res.write(JSON.stringify(response_filtered))
 
