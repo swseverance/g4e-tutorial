@@ -624,11 +624,11 @@ const search = (event) => {
 const sendPortfolioAsEmailClicked = (event) => {
     event.preventDefault();
 
-    const sendPortfolioAsEmail = (client, portfolio) => {
+    const sendPortfolioAsEmail = (dividend, portfolio) => {
 
-        const getEmailContent = (client, portfolio) => {
+        const getEmailContent = (dividend, portfolio) => {
 
-            const props = ['ric', 'description', 'bid', 'ask']
+            const props = ['declaration', 'exDate', 'recordDate', 'curr', 'netAmt']
 
             const csv = props.join(", ") + "\n" +
                 portfolio.map((row) => {
@@ -651,7 +651,7 @@ const sendPortfolioAsEmailClicked = (event) => {
                     }).join("</td><td>") + "</td></tr>"
                 }).join("\n") + "\n</table>\n</body>\</html>\n";
 
-            const fileName = 'client-' + client.pId + '-portfolio.csv';
+            const fileName = dividend.RTFO + '-dividends.csv';
 
             const file = {
                 fileName: fileName,
@@ -660,19 +660,25 @@ const sendPortfolioAsEmailClicked = (event) => {
 
             const newEmail = {
                 to: 'john.doe@domain.com',
-                subject: 'Hey John, look at ' + client.name + '\'s portfolio',
+                subject: 'Hey look at ' + dividend.name + ' dividends',
                 bodyHtml: html,
-                attachments: [file]
+                attachment: file
             };
 
             return newEmail;
         };
 
-        const content = getEmailContent(client, portfolio);
-        console.log('TCL: sendPortfolioAsEmail -> content', content)
+        const content = getEmailContent(dividend, portfolio);
 
         // SOLVED TUTOR_TODO Chapter 8 Task 5
-        outlook.newEmail(content);
+        glue.agm.invoke("T42.Gmail.NewEmail", {
+            userId: "me",
+            to: content.to,
+            from: "vernon.d.mullen@gmail.com",
+            subject: content.subject,
+            content: content.bodyHtml,
+            attachment: content.attachment
+        });
     }
 
     var portfolio = getCurrentPortfolio();
