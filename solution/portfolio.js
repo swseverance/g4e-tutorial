@@ -223,7 +223,9 @@ const loadPortfolio = (portf) => {
                 parsedPortfolio = JSON.parse(portfolio);
             }
 
-            logger.info({ portfolioId: portf, portfolio: parsedPortfolio });
+            const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
+
+            logger.info(logMessage);
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty('Portfolio')) {
                 console.warn('The client has no portfolio')

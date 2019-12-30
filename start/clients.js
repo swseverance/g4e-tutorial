@@ -78,7 +78,7 @@ const setUpUi = () => {
 
         // TUTOR_TODO Chapter 4.4 Task 4
         // Use the windows API for handling frame button clicks to handle a frame button click, check the Id and open a portfolio window.
-        // Pass the result of getWindowDirection as a second argument for openWindow
+        // Pass the result of getWindowDirection as a third argument to openWindow
 
     };
 
@@ -179,7 +179,7 @@ const trackTheme = () => {
         $('#themeLink').attr('href', '../lib/themes/css/' + name);
     };
 
-    // TUTOR_TODO Chapter 10 task 1
+    // TUTOR_TODO Chapter 10 Task 1
     // Subscribe for context changes and call setTheme with either 'bootstrap-dark.min.css' or 'bootstrap.min.css'
 };
 
@@ -205,7 +205,7 @@ const openWindow = (windowName, myWin, direction) => {
 
     // TUTOR_TODO Chapter 4.2 Task 1
     // Add additional properties or modify the existing ones in the options object in order to open a portfolio window which:
-    // is mode: 'flat', cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
+    // is mode: 'html', cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
     // create a context object inside the options and pass your window's id 'glue.windows.my().id'
 
     // TUTOR_TODO Chapter 4.1 Task 3
