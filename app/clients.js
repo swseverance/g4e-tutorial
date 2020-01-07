@@ -44,7 +44,7 @@ const checkGlueConnection = () => {
     }
 
     const toggleGlueAvailable = (available) => {
-        toggleStatusLabel("glueSpan", "Glue is", available);
+        toggleStatusLabel("glueSpan", "Glue42 is", available);
     }
 
     glue.connection.connected(() => {
@@ -112,7 +112,7 @@ const setupClients = () => {
         row.onclick = () => {
 
             // TUTOR_TODO Chapter 11 Task 2
-            // Check if you are in an activity and either update the activity context or open a tab window and invoke the agm method
+            // Check if you are in an activity and either update the activity context or open a tab window and invoke the Interop method
 
             const direction = getWindowDirection();
 
@@ -120,7 +120,7 @@ const setupClients = () => {
             // Pass the result of getWindowDirection as a second argument for openTabWindow
 
             openTabWindow(client, "right");
-            invokeAgMethod(client);
+            invokeInteropMethod(client);
 
         }
         table.appendChild(row);
@@ -181,7 +181,7 @@ const setupClients = () => {
 const registerGlueMethods = () => {
 
     // TUTOR_TODO Chapter 7
-    // Register an AGM method "g42.FindWhoToCall", the handler should open the "symbolPopup.html" window.
+    // Register an Interop method "g42.FindWhoToCall", the handler should open the "symbolPopup.html" window.
 
 };
 
@@ -195,11 +195,27 @@ const trackTheme = () => {
     // Subscribe for context changes and call setTheme with either "bootstrap-dark.min.css" or "bootstrap.min.css"
 };
 
-const invokeAgMethod = (client) => {
+const invokeInteropMethod = (client) => {
 
     // TUTOR_TODO Chapter 2.2
-    // Invoke the "SetParty" AGM method passing the client object for the party argument.
+    // Invoke the "SetParty" Interop method passing the client object for the party argument.
 
+    const invocationArgs = {
+        party: client
+    }
+
+    glue.interop.invoke("SetParty", invocationArgs)
+        .then(result => {
+            if (result.all_errors.length !== 0) {
+                result.all_errors.forEach(error => {
+                    console.log(error);
+                });
+            } else {
+                console.log("Party set successfully!");
+            }
+        }).catch(error => {
+            console.log(error);
+        });
 };
 
 const getWindowDirection = () => {
