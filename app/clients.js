@@ -1,7 +1,8 @@
 const RestServerUrl = "http://localhost:22910/";
 const RestServerEndpoint = "Clients";
-const MethodName = "SetParty";
+const methodName = "SetParty";
 const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
+const portfolioTabGroupID = "PortfolioTabs";
 
 // TUTOR_TODO Chapter 1.2 Task 3
 // Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
@@ -24,7 +25,7 @@ Glue(glueConfig).then(glue => {
     trackTheme();
     console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
 }).catch(error => {
-    console.log(error.message);
+    console.error(error.message);
 });
 
 const checkGlueConnection = () => {
@@ -151,7 +152,7 @@ const setupClients = () => {
         // Start the loader here.
 
         glue.windows.my().showLoader().catch(error => {
-            console.log(error.message);
+            console.error(error.message);
         });
 
         $.ajax({
@@ -176,7 +177,7 @@ const setupClients = () => {
                 // TUTOR_TODO chapter 4.2 Task 4
                 // Stop the loader here.
                 glue.windows.my().hideLoader().catch(error => {
-                    console.log(error.message);
+                    console.error(error.message);
                 });
             });
     }
@@ -210,18 +211,23 @@ const invokeInteropMethod = (client) => {
         party: client
     }
 
-    glue.interop.invoke(MethodName, invocationArgs)
-        .then(result => {
-            if (result.all_errors.length !== 0) {
-                result.all_errors.forEach(error => {
-                    console.log(error.message);
-                });
-            } else {
-                console.log("Party set successfully!");
-            }
-        }).catch(error => {
-            console.log(error.message);
-        });
+    // check whether the method has been registered
+    const isMethodRegistered = glue.interop.methods().filter(method => method.name === methodName).length > 0 ? true : false;
+    
+    if (isMethodRegistered) {
+        glue.interop.invoke(methodName, invocationArgs)
+            .then(result => {
+                if (result.all_errors.length !== 0) {
+                    result.all_errors.forEach(error => {
+                        console.error(error.message);
+                    });
+                } else {
+                    console.log("Party set successfully!");
+                }
+            }).catch(error => {
+                console.error(error.message);
+            });
+    }
 };
 
 const getWindowDirection = () => {
@@ -268,7 +274,7 @@ const openWindow = (windowName, myWin, direction) => {
     ).then(window => {
         console.log(`Portfolio window opened with window ID: ${window.id}`);
     }).catch(error => {
-        console.log(error.message);
+        console.error(error.message);
     });
 
     // TUTOR_TODO Chapter 5 Task 1
@@ -287,16 +293,50 @@ const openTabWindow = (party, direction) => {
     // Finally, create a window using the method you are already familiar with - glue.windows.open(). But don't forget to check if the client's portfolio is already opened.
     // If that is the case you should activate() the tab.
 
-    // const options = {
-    //     mode: "tab",
-    //     tabGroupId: "MyTabGroupId",
-    //     context: {
-    //         party: party,
-    //         winId: glue.windows.my().id,
-    //     }
-    // }
+    const thisClientsWindow = glue.windows.my();
 
-    
+    // check if a Portfolio tab group exists
+    const portfolioTabs = glue.windows.list().filter(tab => {
+        if (tab.tabGroupId && tab.tabGroupId === portfolioTabGroupID) {
+            return tab;
+        }
+    });
+
+    // common Portfolio tab options
+    let tabOptions = {
+        mode: "tab",
+        tabGroupId: portfolioTabGroupID,
+        context: {
+            party: party,
+            ownerWindowID: thisClientsWindow.id,
+        }
+    }
+
+    if (portfolioTabs.length === 0) {
+        // if a Portfolio tab group does not exist, specify its position in the `tabOptions` object
+        tabOptions.relativeTo = thisClientsWindow.id;
+        tabOptions.relativeDirection = direction;
+    } else {
+        // if a Portfolio tab group already exists, check whether the tab to be created
+        // has already been opened and if so, activate it and prevent the creation of the same tab window
+        for (tab of portfolioTabs) {
+            if (tab.name.includes(party.preferredName)) {
+                tab.activate();
+                return;
+            }
+        }
+    }
+
+    // if the tab has not been already opened, create it
+    glue.windows.open(
+        `${party.preferredName} - ${portfolioTabGroupID}`,
+        portfolioAppURL, 
+        tabOptions
+    ).then(tab => {
+        console.log(`Portfolio tab opened with window ID: ${tab.id} in tab group: "${tab.tabGroupId}".`)
+    }).catch(error => {
+        console.error(error.message);
+    });
 
     // TUTOR_TODO Chapter 5 Task 2
     // Modify split the current options object into two separate objects - context and windowSettings;

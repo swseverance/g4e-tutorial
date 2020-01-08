@@ -26,7 +26,7 @@ Glue(glueConfig).then(glue => {
     trackTheme();
     console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
 }).catch(error => {
-    console.log(error.message);
+    console.error(error.message);
 });
 
 // // TUTOR_TODO Chapter 8 Task 3
@@ -121,7 +121,23 @@ const setUpAppContent = () => {
     // using the preferredName from the party object and call loadPortfolio() passing in the pId from the party object 
     // assign the received party object to partyObj, because we will need it later on.
 
-    registerInteropMethod();
+    const thisPortfolioWindow = glue.windows.my();
+    const portfolioContext = thisPortfolioWindow.context;
+
+    if (!portfolioContext.party) {
+        registerInteropMethod();
+    } else {
+        thisPortfolioWindow.setTitle(portfolioContext.party.preferredName)
+            .then(tab => {
+                console.log(`Tab title set to ${tab.title}.`);
+            }).catch(error => {
+                console.error(error.message);
+            });
+        
+        document.getElementById("title").textContent = portfolioContext.party.preferredName;
+        loadPortfolio(portfolioContext.party.pId);
+        partyObj = portfolioContext.party;
+    }
 };
 
 const registerInteropMethod = () => {
@@ -264,7 +280,7 @@ const subscribeBySymbol = (symbol, streamDataHandler) => {
                 streamDataHandler(streamData);
             });
         }).catch(error => {
-            console.log(error.message);
+            console.error(error.message);
         });
 }
 
@@ -509,7 +525,7 @@ const setUpWindowEventsListeners = () => {
     glue.windows.onWindowRemoved((window) => {
         if (window.id === ownerWindowID) {
             thisPortfolioWindow.close().catch(error => {
-                console.log(error.message);
+                console.error(error.message);
             });
         } else {
             return;
