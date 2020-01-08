@@ -142,6 +142,7 @@ const registerInteropMethod = () => {
         },
         (args) => {
             loadPortfolio(args.party.pId);
+            partyObj = args.party;
         });
 };
 
@@ -192,8 +193,8 @@ const loadPortfolio = (portf) => {
                 return;
             }
 
-            setupPortfolio(parsedPortfolio.Portfolios.Portfolio.Symbols.Symbol);
             unsubscribeSymbolPrices();
+            setupPortfolio(parsedPortfolio.Portfolios.Portfolio.Symbols.Symbol);
             subscribeSymbolPrices();
         })
         .fail(function (jqXHR, textStatus) {
@@ -226,8 +227,9 @@ const subscribeSymbolPrices = () => {
     trs.forEach((tr) => {
         const symbol = tr.getAttribute("id");
 
-        subscribeBySymbol(symbol, updateInstruments)
-    })
+        subscribeBySymbol(symbol, updateInstruments);
+    });
+    console.log("New subscriptions for portfolio prices.")
 }
 
 const unsubscribeSymbolPrices = () => {
@@ -236,9 +238,13 @@ const unsubscribeSymbolPrices = () => {
     // Traverse the saved subscriptions and close each one.
     // We need to do this, because when the portfolio changes, we need to clear the existing subscriptions and subscribe to the new symbol stream
 
+    subscriptions.forEach(subscription => {
+        subscription.close();
+    });
+    console.log("Portfolio changed, current symbol price subscriptions closed.")
 }
 
-const subscribeBySymbol = (symbol, callback) => {
+const subscribeBySymbol = (symbol, streamDataHandler) => {
 
     // TUTOR_TODO Chapter 3 Task 1
     // Subscribe to a stream called "T42.MarketStream.Subscribe";
@@ -246,6 +252,20 @@ const subscribeBySymbol = (symbol, callback) => {
     // When the promise is resolved save the created subscription so that you can later close it and subscribe to new streams (when the portfolio changes)
     // Finally subscribe to the created subscription onData event and invoke the callback passed to this function with the received streamData
 
+    const subscriptionOptions = {
+        arguments: {
+            Symbol: symbol
+        }
+    }
+    glue.interop.subscribe(StreamName, subscriptionOptions)
+        .then(subscription => {
+            subscriptions.push(subscription);
+            subscription.onData(streamData => {
+                streamDataHandler(streamData);
+            });
+        }).catch(error => {
+            console.log(error);
+        });
 }
 
 const addRow = (table, rowData, emptyFlag) => { //TODO fix emptyFlag usage - unnecessary?
@@ -296,6 +316,7 @@ const setupPortfolio = (portfolios) => {
     portfolios.forEach((item) => {
         addRow(table, item);
     });
+    console.log("New portfolio loaded.")
 };
 
 const removeChildNodes = (elementId) => {
