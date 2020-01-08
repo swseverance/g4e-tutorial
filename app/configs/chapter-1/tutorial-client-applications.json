@@ -13,7 +13,7 @@
             },
             "minHeight": 400,
             "minWidth": 600,
-            "mode": "flat",
+            "mode": "html",
             "name": "clients_window",
             "top": 50,
             "url": "http://localhost:22909/app/clients.html",

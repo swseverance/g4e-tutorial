@@ -1,12 +1,19 @@
 const RestServerUrl = "http://localhost:22910/";
 const RestServerEndpoint = "Clients";
 const MethodName = "SetParty";
-
+const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
 
 // TUTOR_TODO Chapter 1.2 Task 3
 // Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
 // When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
 // Then call the following functions:
+// checkGlueConnection();
+// setUpUi();
+// setupClients();
+// registerGlueMethods();
+// trackTheme();
+
+// Don't forget to catch any errors.
 
 Glue(glueConfig).then(glue => {
     window.glue = glue;
@@ -17,16 +24,8 @@ Glue(glueConfig).then(glue => {
     trackTheme();
     console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
 }).catch(error => {
-    console.log(error);
+    console.log(error.message);
 });
-
-// checkGlueConnection();
-// setUpUi();
-// setupClients();
-// registerGlueMethods();
-// trackTheme();
-
-// Don't forget to catch any errors.
 
 const checkGlueConnection = () => {
 
@@ -68,7 +67,7 @@ const setUpUi = () => {
 
             // TUTOR_TODO Chapter 4.1 Task 2
             // Call openWindow with a window name, current window instance and a direction.
-
+            openWindow("Portfolios", myWin, "bottom");
         }
     }
 
@@ -151,6 +150,10 @@ const setupClients = () => {
         // TUTOR_TODO chapter 4.2 Task 3
         // Start the loader here.
 
+        glue.windows.my().showLoader().catch(error => {
+            console.log(error.message);
+        });
+
         $.ajax({
             method: "GET",
             url: RestServerUrl + RestServerEndpoint
@@ -172,6 +175,9 @@ const setupClients = () => {
             .always(() => {
                 // TUTOR_TODO chapter 4.2 Task 4
                 // Stop the loader here.
+                glue.windows.my().hideLoader().catch(error => {
+                    console.log(error.message);
+                });
             });
     }
 
@@ -204,17 +210,17 @@ const invokeInteropMethod = (client) => {
         party: client
     }
 
-    glue.interop.invoke("SetParty", invocationArgs)
+    glue.interop.invoke(MethodName, invocationArgs)
         .then(result => {
             if (result.all_errors.length !== 0) {
                 result.all_errors.forEach(error => {
-                    console.log(error);
+                    console.log(error.message);
                 });
             } else {
                 console.log("Party set successfully!");
             }
         }).catch(error => {
-            console.log(error);
+            console.log(error.message);
         });
 };
 
@@ -240,6 +246,31 @@ const openWindow = (windowName, myWin, direction) => {
     // Create an options object and define mode, relativeTo and relativeDirection properties
     // Use the Windows API to open a window with the provided windowName, options object and correct URL
 
+    const windowOptions = {
+        allowClose: false,
+        allowCollapse: false,
+        allowMaximize: false,
+        allowMinimize: false,
+        minHeight: 400,
+        minWidth: 600,
+        mode: "html",
+        relativeTo: myWin.id,
+        relativeDirection: direction,
+        context: {
+            ownerWindowID: myWin.id
+        }
+    }
+
+    glue.windows.open(
+        windowName,
+        portfolioAppURL,
+        windowOptions
+    ).then(window => {
+        console.log(`Portfolio window opened with window ID: ${window.id}`);
+    }).catch(error => {
+        console.log(error.message);
+    });
+
     // TUTOR_TODO Chapter 5 Task 1
     // Modify split the current options object into two separate objects - context and windowSettings;
     // Use the Application Management API to open a portfolio instance.
@@ -264,6 +295,8 @@ const openTabWindow = (party, direction) => {
     //         winId: glue.windows.my().id,
     //     }
     // }
+
+    
 
     // TUTOR_TODO Chapter 5 Task 2
     // Modify split the current options object into two separate objects - context and windowSettings;

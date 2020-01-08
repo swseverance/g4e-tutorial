@@ -26,7 +26,7 @@ Glue(glueConfig).then(glue => {
     trackTheme();
     console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
 }).catch(error => {
-    console.log(error);
+    console.log(error.message);
 });
 
 // // TUTOR_TODO Chapter 8 Task 3
@@ -264,7 +264,7 @@ const subscribeBySymbol = (symbol, streamDataHandler) => {
                 streamDataHandler(streamData);
             });
         }).catch(error => {
-            console.log(error);
+            console.log(error.message);
         });
 }
 
@@ -503,6 +503,18 @@ const setUpWindowEventsListeners = () => {
     // Compare the closed window id with the client window id you were passed on window creation.
     // If they match - glue.windows.my().close();
 
+    const thisPortfolioWindow = glue.windows.my();
+    const ownerWindowID = thisPortfolioWindow.context.ownerWindowID;
+
+    glue.windows.onWindowRemoved((window) => {
+        if (window.id === ownerWindowID) {
+            thisPortfolioWindow.close().catch(error => {
+                console.log(error.message);
+            });
+        } else {
+            return;
+        }
+    });
 };
 
 const setUpTabControls = () => {
