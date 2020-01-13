@@ -541,6 +541,7 @@ const setUpWindowEventsListeners = () => {
     const thisPortfolioWindow = glue.windows.my();
     const clientsWindowID = thisPortfolioWindow.context.ownerWindowID;
     const clientsWindow = glue.windows.findById(clientsWindowID);
+    let isRefreshed = window.sessionStorage.getItem(thisPortfolioWindow.name + "-isRefreshed");
 
     // listen if the Clients window, owner of the Portfolio window, has been closed
     // in order to close this Portfolio window too
@@ -566,7 +567,9 @@ const setUpWindowEventsListeners = () => {
         // - glue.windows.findById() will be quite helpful here
 
         // add an Extract Tabs button when first creating the Portfolio tab
-        thisPortfolioWindow.addFrameButton(extractTabsBtn)
+        if (!isRefreshed) {
+            thisPortfolioWindow.addFrameButton(extractTabsBtn);
+        }
             
         // handle frame button clicks
         thisPortfolioWindow.onFrameButtonClicked((button) => {
@@ -577,6 +580,20 @@ const setUpWindowEventsListeners = () => {
             }
         });
 
+        // check where (relative to the Clients window) to gather the extracted tabs
+        const getWindowDirection = () => {
+        
+            const primaryMonitor = glue42gd.monitors.find(monitor => monitor.isPrimary === true);
+            const bottomNeighbors = clientsWindow.bottomNeighbours;
+            // this checks whether at least one bottom neighbor is a Portfolio window in order to snap the Portfolio tab group to the bottom if so
+            const areNeighborsPortfolios = bottomNeighbors.filter(tab => tab.name.includes(portfolioTabGroupID)).length > 0 ? true : false;
+            const availableSpaceBelow = primaryMonitor.workingAreaHeight - (clientsWindow.bounds.top + clientsWindow.bounds.height);
+        
+            // if there are no bottom neighbors (or the all neighbors are Portfolios) and there is available space, 
+            // gather the Portfolios below the Clients, otherwise - to the right
+            return (bottomNeighbors.length === 0 && availableSpaceBelow >= thisPortfolioWindow.bounds.height) || areNeighborsPortfolios ? "bottom": "right";
+        }
+
         // handle the Gather Tabs button
         const gatherTabs = () => {
             const tabsToGather = glue.windows.list().filter(tab => {
@@ -586,13 +603,22 @@ const setUpWindowEventsListeners = () => {
             });
 
             // attach all scattered tabs to the current tab
-            tabsToGather.forEach(tab => {
-                thisPortfolioWindow.attachTab(tab).then(tab => {
-                        console.log(`Tab with ID ${tab.id} was attached.`);
+            const attachPortfolioTabs = () => {
+                let promises = [];
+
+                tabsToGather.forEach(tab => {
+                    const promise = thisPortfolioWindow.attachTab(tab);
+                    promises.push(promise);
+                });
+
+                return Promise.all(promises);
+            }
+
+            attachPortfolioTabs().then(() => {
+                        console.log(`Tabs attached successfully.`);
                     }).catch(error => {
                         console.error(error.message)
                     });
-            });
 
             // snap the current tab to the Clients window
             const direction = getWindowDirection();
@@ -603,6 +629,8 @@ const setUpWindowEventsListeners = () => {
                 }).catch(error => {
                     console.error(error);
                 });
+
+            
         };
 
         // handle the Extract Tabs button
@@ -619,50 +647,20 @@ const setUpWindowEventsListeners = () => {
                 }));
         };
 
-        // check where (relative to the Clients window) to gather the extracted tabs
-        const getWindowDirection = () => {
-        
-            const primaryMonitor = glue42gd.monitors.find(monitor => monitor.isPrimary === true);
-            const bottomNeighbors = clientsWindow.bottomNeighbours;
-            const areNeighborsPortfolios = bottomNeighbors.filter(tab => tab.name.includes(portfolioTabGroupID)).length === bottomNeighbors.length ? true : false;
-            const availableSpaceBelow = primaryMonitor.workingAreaHeight - (clientsWindow.bounds.top + clientsWindow.bounds.height);
-        
-            // if there are no bottom neighbors (or the all neighbors are Portfolios) and there is available space, 
-            // gather the Portfolios below the Clients, otherwise - to the right
-            return (bottomNeighbors.length === 0 || areNeighborsPortfolios) && availableSpaceBelow >= thisPortfolioWindow.bounds.height ? "bottom": "right";
-        }
-
         // TUTOR_TODO Chapter 4.4 Task 8
         // What frame button should be displayed when the tab is created?
         // Implement the logic for each of these events - which buttons should show/hide in each scenario?
         // hint - maybe glue.windows.my().tabs.length would be useful somewhere?
 
-        // handle button changes on the window to which tabs are being attached/detached
-        thisPortfolioWindow.onWindowAttached(() => {         
-            setupFrameButtons(gatherTabsBtn, extractTabsBtn);
-        });
-
-        thisPortfolioWindow.onWindowDetached(() => {
-            if (thisPortfolioWindow.tabs.length === 2) {
-                setupFrameButtons(extractTabsBtn, gatherTabsBtn);
-            }
-        });
-
-        // !!! onAttached() DOES NOT fire when the tab is simultaneously created and 
-        // attached to a tab group via glue.windows.open() !!!
-        // This event fires only when the tab has already been created and then is attached
-        // to a tab group.
-
-        // handle button changes on the windows which are being attached/detached to another window
-        thisPortfolioWindow.onAttached(() => {
-            setupFrameButtons(gatherTabsBtn, extractTabsBtn);
-        });
-
-        thisPortfolioWindow.onDetached(() => {
-            setupFrameButtons(extractTabsBtn, gatherTabsBtn);
-        });
-
         // set up frame buttons when scattering/gathering tabs
+        const checkIfButtonExists = (buttonID) => {
+            const doesButtonExist = 
+                thisPortfolioWindow.frameButtons
+                .find(({ buttonId }) => buttonId === buttonID) !== undefined ? true : false;
+
+            return doesButtonExist;
+        }
+
         const setupFrameButtons = (buttonToRemove, buttonToAdd) => {
             let buttonToRemoveExists;
             let buttonToAddExists;
@@ -696,13 +694,40 @@ const setUpWindowEventsListeners = () => {
             }
         };
 
-        const checkIfButtonExists = (buttonID) => {
-            const doesButtonExist = 
-                thisPortfolioWindow.frameButtons
-                .find(({ buttonId }) => buttonId === buttonID) !== undefined ? true : false;
+        // handle button changes on the window to which tabs are being attached/detached
+        thisPortfolioWindow.onWindowAttached(tab => {
+            tab.addFrameButton(extractTabs);         
+            setupFrameButtons(gatherTabsBtn, extractTabsBtn);
+        });
 
-            return doesButtonExist;
-        }
+        thisPortfolioWindow.onWindowDetached(() => {
+            if (thisPortfolioWindow.tabs.length === 2) {
+                setupFrameButtons(extractTabsBtn, gatherTabsBtn);
+            }
+        });
+
+        // !!! onAttached() DOES NOT fire when the tab is simultaneously created and 
+        // attached to a tab group via glue.windows.open() !!!
+        // This event fires only when the tab has already been created and then is attached
+        // to a tab group.
+
+        // handle button changes on the windows which are being attached/detached to another window
+        thisPortfolioWindow.onAttached(() => {
+            setupFrameButtons(gatherTabsBtn, extractTabsBtn);
+        });
+
+        thisPortfolioWindow.onDetached(() => {
+            setupFrameButtons(extractTabsBtn, gatherTabsBtn);
+        });
+        
+        // handle refreshing the window to avoid the simultaneous appearance of both buttons
+        thisPortfolioWindow.onRefreshing(() => {
+            window.sessionStorage.setItem(thisPortfolioWindow.name + "-isRefreshed", true);
+        });
+
+        thisPortfolioWindow.onClosing(() => {
+            window.sessionStorage.clear();
+        })
     }
 };
 

@@ -313,10 +313,7 @@ const openTabWindow = (party, direction) => {
     // If that is the case you should activate() the tab.
 
     const thisClientsWindow = glue.windows.my();
-    // Get the bottom neighbors of the Clients window and check if they are all Portfolios.
-    // Used later to place a newly created Portfolio.
     const bottomNeighbors = thisClientsWindow.bottomNeighbours;
-    const areNeighborsPortfolios = bottomNeighbors.filter(tab => tab.name.includes(portfolioTabGroupID)).length === bottomNeighbors.length ? true : false;
 
     // check if a Portfolio tab group exists
     const portfolioTabs = glue.windows.list().filter(tab => {
@@ -330,7 +327,6 @@ const openTabWindow = (party, direction) => {
         mode: "tab",
         width: 600,
         minWidth: 600,
-        tabGroupId: portfolioTabGroupID,
         allowClose: false,
         allowCollapse: false,
         allowMaximize: false,
@@ -341,7 +337,22 @@ const openTabWindow = (party, direction) => {
         }
     }
 
+    const activateTabIfOpened = () => {
+        // if the Portfolio tab group already exists, check whether the tab to be created
+        // has already been opened and if so, activate it and prevent the creation of the same tab window
+        for (tab of portfolioTabs) {
+            if (tab.name.includes(party.preferredName)) {
+                tab.activate();
+                return;
+            }
+        }
+    }
+
     if (portfolioTabs.length === 0 || bottomNeighbors.length === 0) {
+
+        // if tab already exists, activate it and prevent a glue.windows.open() call
+        activateTabIfOpened();
+
         // if a Portfolio tab group does not exist, specify its position in the `tabOptions` object
         tabOptions.relativeTo = thisClientsWindow.id;
         tabOptions.relativeDirection = direction;
@@ -352,42 +363,29 @@ const openTabWindow = (party, direction) => {
             portfolioAppURL, 
             tabOptions
         ).then(tab => {
-            console.log(`Portfolio tab opened with window ID: ${tab.id} in tab group: "${tab.tabGroupId}".`)
+            console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
         });
     } else {
-        // if the Portfolio tab group already exists, check whether the tab to be created
-        // has already been opened and if so, activate it and prevent the creation of the same tab window
-        for (tab of portfolioTabs) {
-            if (tab.name.includes(party.preferredName)) {
-                tab.activate();
-                return;
-            }
-        }
 
-        // If a Portfolio group exists, create a Portfolio window
-        // but set the `tabGroupId` be getting it from a tab in the existing group
-        // because the `tabGroupId` property of a window object changes automatically
-        // if the window has been extracted once.
+        // if tab already exists, activate it and prevent a glue.windows.open() call
+        activateTabIfOpened();
 
-        // check if there are Portfolios to the bottom of the Clients window
-        // and if so, get the `tabGroupId` from them
-        tabOptions.tabGroupId = bottomNeighbors.length !== 0 && areNeighborsPortfolios ? bottomNeighbors[0].tabGroupId : portfolioTabs[0].tabGroupId;
-
+        // if the tab has not been already opened, create it
         glue.windows.open(
             `${party.preferredName} - ${portfolioTabGroupID}`,
             portfolioAppURL, 
             tabOptions
         ).then(tab => {
-            console.log(`Portfolio tab opened with window ID: ${tab.id} in tab group: "${tab.tabGroupId}".`)
+            bottomNeighbors[0].attachTab(tab)
+                .then(() => {
+                    console.log("Tab attached successfully.");
+                }).catch(error => console.error(error.message));
+            tab.activate();
+            console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
         }).catch(error => {
             console.error(error.message);
         });
     }
-
-   
-
-    // if the tab has not been already opened, create it
-    
 
     // TUTOR_TODO Chapter 5 Task 2
     // Modify split the current options object into two separate objects - context and windowSettings;
