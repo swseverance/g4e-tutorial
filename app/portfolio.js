@@ -5,7 +5,7 @@ const portfolioTabGroupID = "PortfolioTabs";
 
 let detachedTabs = [];
 let subscriptions = [];
-let _query;
+let searchQuery;
 let partyObj;
 
 let serviceMetricsSystem;
@@ -107,17 +107,25 @@ const initInstrumentSearch = () => {
 
     // TUTOR_TODO Chapter 6 Task 2
     // Create a search client using the supplied options;
-    // const gssOptions = {
-    //     agm: glue.agm,
-    //     defaultQueryLimit: 500,
-    //     measureLatency: false,
-    //     searchTimeoutInMillis: 10000,
-    //     debugGss: false,
-    //     debug: false
-    // };
     // Use the created search client to create a query for "Instrument";
     // Subscribe to the created query onData event and call displayResult() passing in the received entities.
 
+    const gssOptions = {
+        agm: glue.agm,
+        defaultQueryLimit: 500,
+        measureLatency: false,
+        searchTimeoutInMillis: 10000,
+        debugGss: false,
+        debug: false
+    };
+    
+    const searchClient = new gssClientSearch.create(gssOptions);
+
+    searchQuery = searchClient.createQuery("Instrument");
+
+    searchQuery.onData(data => {
+        displayResult(data);
+    });
 };
 
 const trackTheme = () => {
@@ -743,10 +751,12 @@ const setUpWindowEventsListeners = () => {
 
 const search = (event) => {
     event.preventDefault();
-    var searchValue = document.getElementById("ticker").value;
+    const searchValue = document.getElementById("ticker").value;
 
     // TUTOR_TODO Chapter 6 Task 3
     // Use the created query search function and pass in the searchValue;
+
+    searchQuery.search(searchValue);
 };
 
 const sendPortfolioAsEmailClicked = (event) => {
