@@ -1,0 +1,19 @@
+{
+    "name": "Clients",
+    "title": "Clients",
+    "type": "window",
+    "caption": "A Demo showing clients.",
+    "icon": "http://localhost:22909/resources/icons/tick42.ico",
+    "ignoreSavedLayout": true,
+    "details": {
+        "mode": "html",
+        "name": "clients_window",
+        "url": "http://localhost:22909/app/clients.html",
+        "height": 400,
+        "width": 600,
+        "left": 500,
+        "top": 50,
+        "minHeight": 400,
+        "minWidth": 600
+    }
+}

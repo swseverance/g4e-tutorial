@@ -146,7 +146,7 @@ const setUpAppContent = () => {
         // depending on what client the user has selected in the Clients window
         registerInteropMethod();
     } else {
-        thisPortfolioWindow.setTitle(portfolioContext.party.preferredName)
+        thisPortfolioWindow.setTitle(`${portfolioContext.party.preferredName} - Portfolio`)
             .then(tab => {
                 console.log(`Tab title set to ${tab.title}.`);
             }).catch(error => {
@@ -597,7 +597,7 @@ const setUpWindowEventsListeners = () => {
         // handle the Gather Tabs button
         const gatherTabs = () => {
             const tabsToGather = glue.windows.list().filter(tab => {
-                if (tab.name.includes(portfolioTabGroupID)) {
+                if (tab.title.includes(" - Portfolio")) {
                     return tab;
                 }
             });
@@ -615,7 +615,7 @@ const setUpWindowEventsListeners = () => {
             }
 
             attachPortfolioTabs().then(() => {
-                        console.log(`Tabs attached successfully.`);
+                        console.log("Tabs attached successfully.");
                     }).catch(error => {
                         console.error(error.message)
                     });
@@ -695,12 +695,17 @@ const setUpWindowEventsListeners = () => {
         };
 
         // handle button changes on the window to which tabs are being attached/detached
-        thisPortfolioWindow.onWindowAttached(() => {       
-            setupFrameButtons(gatherTabsBtn, extractTabsBtn);
+        thisPortfolioWindow.onWindowAttached(() => {
+            if (thisPortfolioWindow.frameButtons[0].buttonId &&
+                thisPortfolioWindow.frameButtons[0].buttonId === gatherTabsBtn.buttonId) {
+                setupFrameButtons(gatherTabsBtn, extractTabsBtn);
+            }       
         });
 
         thisPortfolioWindow.onWindowDetached(() => {
-            if (thisPortfolioWindow.tabs.length === 2) {
+            if (thisPortfolioWindow.tabs.length === 2 &&
+                thisPortfolioWindow.frameButtons[0].buttonId &&
+                thisPortfolioWindow.frameButtons[0].buttonId === extractTabsBtn.buttonId) {
                 setupFrameButtons(extractTabsBtn, gatherTabsBtn);
             }
         });
@@ -712,11 +717,17 @@ const setUpWindowEventsListeners = () => {
 
         // handle button changes on the windows which are being attached/detached to another window
         thisPortfolioWindow.onAttached(() => {
-            setupFrameButtons(gatherTabsBtn, extractTabsBtn);
+            if (thisPortfolioWindow.frameButtons[0].buttonId &&
+                thisPortfolioWindow.frameButtons[0].buttonId === gatherTabsBtn.buttonId) {
+                setupFrameButtons(gatherTabsBtn, extractTabsBtn);
+            }
         });
 
         thisPortfolioWindow.onDetached(() => {
-            setupFrameButtons(extractTabsBtn, gatherTabsBtn);
+            if (thisPortfolioWindow.frameButtons[0].buttonId &&
+                thisPortfolioWindow.frameButtons[0].buttonId === extractTabsBtn.buttonId) {
+                setupFrameButtons(extractTabsBtn, gatherTabsBtn);
+            }
         });
         
         // handle refreshing the window to avoid the simultaneous appearance of both buttons

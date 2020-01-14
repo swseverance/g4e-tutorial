@@ -1,0 +1,25 @@
+{
+    "name": "Portfolio",
+    "title": "Portfolio",
+    "type": "window",
+    "caption": "A Demo showing clients portfolio.",
+    "hidden": true,
+    "icon": "http://localhost:22909/resources/icons/tick42.ico",
+    "ignoreSavedLayout": true,
+    "details": {
+        "mode": "html",
+        "name": "portfolio_window",
+        "url": "http://localhost:22909/app/portfolio.html",
+        "allowClose": false,
+        "allowCollapse": false,
+        "allowMaximize": false,
+        "allowMinimize": false,
+        "height": 400,
+        "width": 600,
+        "left": 500,
+        "top": 50,
+        "minHeight": 400,
+        "minWidth": 600,
+        "maxHeight": 400
+    }
+}

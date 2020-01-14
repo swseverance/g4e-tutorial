@@ -1,9 +1,10 @@
 const RestServerUrl = "http://localhost:22910/";
 const RestServerEndpoint = "Clients";
 const methodName = "SetParty";
-const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
+// const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
 const portfolioTabGroupID = "PortfolioTabs";
 const portfolioWindowHeight = 400;
+const portfolioAppName = "Portfolio";
 
 // TUTOR_TODO Chapter 1.2 Task 3
 // Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
@@ -76,7 +77,7 @@ const setUpUi = () => {
 
         // TUTOR_TODO Chapter 4.4 Task 1
         // Use the windows API to create a new frame button.
-        
+
         const buttonOptions = {
             buttonId: "portfolio-btn",
             tooltip: "Open a portfolio",
@@ -101,7 +102,7 @@ const setUpUi = () => {
         thisClientsWindow.onFrameButtonClicked((button) => {
             if (button.buttonId === "portfolio-btn") {
                 const direction = getWindowDirection();
-                openWindow("Portfolios", thisClientsWindow, direction);
+                openWindow(portfolioAppName, thisClientsWindow, direction);
             }
         })
     };
@@ -225,7 +226,7 @@ const invokeInteropMethod = (client) => {
 
     // check whether the method has been registered
     const isMethodRegistered = glue.interop.methods().filter(method => method.name === methodName).length > 0 ? true : false;
-    
+
     if (isMethodRegistered) {
         glue.interop.invoke(methodName, invocationArgs)
             .then(result => {
@@ -257,7 +258,7 @@ const getWindowDirection = () => {
     const availableSpaceBelow = primaryMonitor.workingAreaHeight - (thisClientsWindow.bounds.top + thisClientsWindow.bounds.height);
 
     // if there are no bottom heighbors and there is available space, open the Portfolio below the Clients, otherwise - to the right
-    return bottomNeighbors.length === 0 && availableSpaceBelow >= portfolioWindowHeight ? "bottom": "right";
+    return bottomNeighbors.length === 0 && availableSpaceBelow >= portfolioWindowHeight ? "bottom" : "right";
 }
 
 const openWindow = (windowName, currentWindow, direction) => {
@@ -271,34 +272,35 @@ const openWindow = (windowName, currentWindow, direction) => {
     // Create an options object and define mode, relativeTo and relativeDirection properties
     // Use the Windows API to open a window with the provided windowName, options object and correct URL
 
-    const windowOptions = {
-        allowClose: false,
-        allowCollapse: false,
-        allowMaximize: false,
-        allowMinimize: false,
-        minHeight: 400,
-        minWidth: 600,
-        mode: "html",
-        relativeTo: currentWindow.id,
-        relativeDirection: direction,
-        context: {
-            ownerWindowID: currentWindow.id
-        }
-    }
-
-    glue.windows.open(
-        windowName,
-        portfolioAppURL,
-        windowOptions
-    ).then(window => {
-        console.log(`Portfolio window opened with window ID: ${window.id}`);
-    }).catch(error => {
-        console.error(error.message);
-    });
+    // glue.windows.open(
+    //     windowName,
+    //     portfolioAppURL,
+    //     windowOptions
+    // ).then(window => {
+    //     console.log(`Portfolio window opened with window ID: ${window.id}`);
+    // }).catch(error => {
+    //     console.error(error.message);
+    // });
 
     // TUTOR_TODO Chapter 5 Task 1
     // Modify split the current options object into two separate objects - context and windowSettings;
     // Use the Application Management API to open a portfolio instance.
+
+    // Options for placing the generic Portfolio window.
+    const windowOptions = {
+        relativeTo: currentWindow.id,
+        relativeDirection: direction
+    }
+
+    // Context for the generic Portfolio window.
+    const context = {
+        ownerWindowID: currentWindow.id
+    }
+
+    // Create a generic Portfolio window.
+    glue.appManager.application(windowName).start(context, windowOptions)
+        .then(() => console.log(`${windowName} application started successfully.`))
+        .catch(error => console.error(error.message));
 };
 
 const openTabWindow = (party, direction) => {
@@ -312,82 +314,101 @@ const openTabWindow = (party, direction) => {
     // Finally, create a window using the method you are already familiar with - glue.windows.open(). But don't forget to check if the client's portfolio is already opened.
     // If that is the case you should activate() the tab.
 
-    const thisClientsWindow = glue.windows.my();
-    const bottomNeighbors = thisClientsWindow.bottomNeighbours;
+    // glue.windows.open(
+    //     `${party.preferredName} - ${portfolioTabGroupID}`,
+    //     portfolioAppURL, 
+    //     tabOptions
+    // ).then(tab => {
+    //     console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
+    // });
 
-    // check if a Portfolio tab group exists
-    const portfolioTabs = glue.windows.list().filter(tab => {
-        if (tab.name.includes(portfolioTabGroupID)) {
-            return tab;
-        }
-    });
-
-    // common Portfolio tab options
-    let tabOptions = {
-        mode: "tab",
-        width: 600,
-        minWidth: 600,
-        allowClose: false,
-        allowCollapse: false,
-        allowMaximize: false,
-        allowMinimize: false,
-        context: {
-            party: party,
-            ownerWindowID: thisClientsWindow.id,
-        }
-    }
-
-    const activateTabIfOpened = () => {
-        // if the Portfolio tab group already exists, check whether the tab to be created
-        // has already been opened and if so, activate it and prevent the creation of the same tab window
-        for (tab of portfolioTabs) {
-            if (tab.name.includes(party.preferredName)) {
-                tab.activate();
-                return;
-            }
-        }
-    }
-
-    if (portfolioTabs.length === 0) {
-
-        // if a Portfolio tab group does not exist, specify its position in the `tabOptions` object
-        tabOptions.relativeTo = thisClientsWindow.id;
-        tabOptions.relativeDirection = direction;
-
-        // create a Portfolio window
-        glue.windows.open(
-            `${party.preferredName} - ${portfolioTabGroupID}`,
-            portfolioAppURL, 
-            tabOptions
-        ).then(tab => {
-            console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
-        });
-    } else {
-
-        // if tab already exists, activate it and prevent a glue.windows.open() call
-        activateTabIfOpened();
-
-        // if the tab has not been already opened, create it and attach it to the first
-        // Portfolio instance in the `portfolioTabs` collection
-        glue.windows.open(
-            `${party.preferredName} - ${portfolioTabGroupID}`,
-            portfolioAppURL, 
-            tabOptions
-        ).then(tab => {
-            portfolioTabs[0].attachTab(tab)
-                .then(() => {
-                    console.log("Tab attached successfully.");
-                }).catch(error => console.error(error.message));
-            tab.activate();
-            console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
-        }).catch(error => {
-            console.error(error.message);
-        });
-    }
+    // glue.windows.open(
+    //     `${party.preferredName} - ${portfolioTabGroupID}`,
+    //     portfolioAppURL, 
+    //     tabOptions
+    // ).then(tab => {
+    //     portfolioTabs[0].attachTab(tab)
+    //         .then(() => {
+    //             console.log("Tab attached successfully.");
+    //         }).catch(error => console.error(error.message));
+    //     tab.activate();
+    //     console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
+    // }).catch(error => {
+    //     console.error(error.message);
+    // });
 
     // TUTOR_TODO Chapter 5 Task 2
     // Modify split the current options object into two separate objects - context and windowSettings;
     // Use the Application Management API to open a portfolio tab instance;
     // Note that using the Application Management API your window gets a default name, so you can't reuse the filter condition to check for open tabs so you need to get creative. What else is unique to the tabs that we can filter on?
 
+    const thisClientsWindow = glue.windows.my();
+
+    // Common Portfolio tab options.
+    let tabOptions = {
+        mode: "tab"
+    };
+
+    // Portfolio context containing the selected client and the owner Clients window.
+    const context = {
+        party: party,
+        ownerWindowID: thisClientsWindow.id,
+    }
+
+    // Check whether Portfolio tabs exist.
+    const portfolioTabs = glue.windows.list().filter(tab => {
+        if (tab.title.includes(" - Portfolio")) {
+            return tab;
+        }
+    });
+
+    if (portfolioTabs.length === 0) {
+
+        // Specify the position of the Portfolio window if no Portfolio windows
+        // have been opened yet.
+        tabOptions.relativeTo = thisClientsWindow.id;
+        tabOptions.relativeDirection = direction;
+
+        // Create a Portfolio window.
+        glue.appManager.application(portfolioAppName).start(context, tabOptions)
+            .then(instance => console.log(`Portfolio application with instance ID ${instance.id} started successfully.`))
+            .catch(error => console.error(error.message));
+    } else {
+
+        let isTabOpened = false;
+
+        // If any Portfolio windows have already been opened, check whether the tab to be created
+        // is among them and if so, activate it and prevent the creation of the same tab window.
+        for (tab of portfolioTabs) {
+            if (tab.title.includes(party.preferredName)) {
+                tab.activate();
+                isTabOpened = true;
+                break;
+            }
+        };
+       
+        if (!isTabOpened) {
+
+            // Since we cannot rely on the `tabGroupId` property being constant, 
+            // because it changes automatically every time the tab is dragged out of the group,
+            // we are forced to first start the application and then attach the window to an
+            // already existing portfolio tab.
+            // To avoid showing the window to the user and then repositioning it,
+            // we can start it hidden and then set it to visible just before we attach it.
+            tabOptions.hidden = true;
+
+            // If the tab has not been already opened, create it and attach it to the first
+            // Portfolio instance from the `portfolioTabs` collection
+            glue.appManager.application(portfolioAppName).start(context, tabOptions)
+                .then(app => {
+                    const tab = app.window;
+                    tab.setVisible().then(tab => {
+                        portfolioTabs[0].attachTab(tab)
+                            .then(() => {
+                                tab.activate();
+                            });
+                    })
+                });
+        };
+    }
 };
