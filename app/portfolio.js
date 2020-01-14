@@ -695,8 +695,7 @@ const setUpWindowEventsListeners = () => {
         };
 
         // handle button changes on the window to which tabs are being attached/detached
-        thisPortfolioWindow.onWindowAttached(tab => {
-            tab.addFrameButton(extractTabs);         
+        thisPortfolioWindow.onWindowAttached(() => {       
             setupFrameButtons(gatherTabsBtn, extractTabsBtn);
         });
 
@@ -726,7 +725,7 @@ const setUpWindowEventsListeners = () => {
         });
 
         thisPortfolioWindow.onClosing(() => {
-            window.sessionStorage.clear();
+            window.sessionStorage.removeItem(thisPortfolioWindow.name + "-isRefreshed");
         })
     }
 };

@@ -348,10 +348,7 @@ const openTabWindow = (party, direction) => {
         }
     }
 
-    if (portfolioTabs.length === 0 || bottomNeighbors.length === 0) {
-
-        // if tab already exists, activate it and prevent a glue.windows.open() call
-        activateTabIfOpened();
+    if (portfolioTabs.length === 0) {
 
         // if a Portfolio tab group does not exist, specify its position in the `tabOptions` object
         tabOptions.relativeTo = thisClientsWindow.id;
@@ -370,13 +367,14 @@ const openTabWindow = (party, direction) => {
         // if tab already exists, activate it and prevent a glue.windows.open() call
         activateTabIfOpened();
 
-        // if the tab has not been already opened, create it
+        // if the tab has not been already opened, create it and attach it to the first
+        // Portfolio instance in the `portfolioTabs` collection
         glue.windows.open(
             `${party.preferredName} - ${portfolioTabGroupID}`,
             portfolioAppURL, 
             tabOptions
         ).then(tab => {
-            bottomNeighbors[0].attachTab(tab)
+            portfolioTabs[0].attachTab(tab)
                 .then(() => {
                     console.log("Tab attached successfully.");
                 }).catch(error => console.error(error.message));
