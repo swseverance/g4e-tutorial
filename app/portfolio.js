@@ -73,17 +73,29 @@ const instrumentService = () => {
     // TUTOR_TODO Chapter 12 Task 1
     // Create sub-logger.
 
+    logger = glue.logger.subLogger("portfolio-logger");
+
     // TUTOR_TODO Chapter 12 Task 3
     // Create a metrics instance, a sub-system and set the state to GREEN.
+
+    serviceMetricsSystem = glue.metrics.subSystem("PortfolioMetrics", "Metrics describing the Portfolio app state.");
+
+    serviceMetricsSystem.setState(0, "Portfolio app initialized.")
 
     // TUTOR_TODO Chapter 12 Task 4
     // Create an error count metric.
 
+    serviceErrorCount = serviceMetricsSystem.countMetric("RequestErrorCount", 0);
+
     // TUTOR_TODO Chapter 12 Task 5
     // Create a composite error metric.
 
+    lastServiceError = serviceMetricsSystem.objectMetric("LastServiceError", {});
+
     // TUTOR_TODO Chapter 12 Task 6
     // Create a TimeSpan metric.
+
+    serviceLatency = serviceMetricsSystem.timespanMetric("LatencyMetric", 0);
 };
 
 const onInitializeApp = () => {
@@ -227,6 +239,8 @@ const loadPortfolio = (portf) => {
     // TUTOR_TODO Chapter 12 Task 7
     // Start the latency metric.
 
+    serviceLatency.start();
+
     const ajaxOptions = {
         method: "GET",
         url: serviceUrl,
@@ -238,16 +252,22 @@ const loadPortfolio = (portf) => {
             // TUTOR_TODO Chapter 12 Task 8
             // Stop the latency metric.
 
+            serviceLatency.stop();
+
             const elapsedMillis = Date.now() - requestStart;
 
             if (elapsedMillis >= 1000) {
-                const message = "Service at " + serviceUrl + " is lagging";
+                const message = "Service at " + serviceUrl + " is lagging.";
                 // TUTOR_TODO Chapter 12 Task 10
                 // Set system state to AMBER and pass the created message.
+
+                serviceMetricsSystem.setState(50, message);
 
             } else {
                 // TUTOR_TODO Chapter 12 Task 11
                 // Set the system state to GREEN.
+                serviceMetricsSystem.setState(0, "Portfolio received, service is normal.");
+
             }
 
             let parsedPortfolio;
@@ -256,8 +276,11 @@ const loadPortfolio = (portf) => {
             }
 
             const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
+
             // TUTOR_TODO Chapter 12 Task 2
             // Log to the console using the logger and the provided logMessage.
+
+            logger.info(JSON.stringify(logMessage));
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty("Portfolio")) {
                 console.warn("The client has no portfolio")
@@ -272,8 +295,12 @@ const loadPortfolio = (portf) => {
             // TUTOR_TODO Chapter 12 Task 9
             // Stop the latency metric.
 
+            serviceLatency.stop();
+
             // TUTOR_TODO Chapter 12 Task 12
             // Increment the error count.
+
+            serviceErrorCount.increment();
 
             const errorMessage = "Service at " + serviceUrl + " failed at " + serviceRequest + " with " + textStatus;
 
@@ -287,8 +314,12 @@ const loadPortfolio = (portf) => {
             // TUTOR_TODO Chapter 12 Task 13
             // Capture the error with the composite metric and use the provided errorOptions object.
 
+            lastServiceError.update(errorOptions);
+
             // TUTOR_TODO Chapter 12 Task 14
             // Set the system state to RED and pass the provided error message.
+
+            serviceMetricsSystem.setState(100, errorMessage);
         })
 }
 
