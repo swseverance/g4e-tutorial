@@ -37,6 +37,7 @@ const extractTabsBtn = {
 
 Glue(glueConfig).then(glue => {
     window.glue = glue;
+    initiateG4O();
     instrumentService();
     onInitializeApp();
     initInstrumentSearch();
@@ -46,19 +47,27 @@ Glue(glueConfig).then(glue => {
     console.error(error.message);
 });
 
-// // TUTOR_TODO Chapter 8 Task 3
-// // const glue4OfficeOptions = {
-// //     glue: glue,
-// //     outlook: true,
-// //        // TUTOR_TODO Chapter 9 Task 2
-// //        // excel: true
-// // };
+const initiateG4O = () => {
+    // TUTOR_TODO Chapter 8 Task 3
+    const glue4OfficeOptions = {
+        glue: glue,
+        outlook: true,
+        // TUTOR_TODO Chapter 9 Task 2
+        // excel: true
+    };
 
-// // TUTOR_TODO Chapter 8 Task 4
-// // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
+    // TUTOR_TODO Chapter 8 Task 4
+    // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
+    // Don't forget to catch any errors.
 
-// Don't forget to catch any errors.
-
+    Glue4Office(glue4OfficeOptions)
+        .then(g4o => {
+            window.g4o = g4o;
+        })
+        .catch(error => {
+            console.error(error.message);
+        });
+}
 
 const instrumentService = () => {
 
@@ -118,7 +127,7 @@ const initInstrumentSearch = () => {
         debugGss: false,
         debug: false
     };
-    
+
     const searchClient = new gssClientSearch.create(gssOptions);
 
     searchQuery = searchClient.createQuery("Instrument");
@@ -578,7 +587,7 @@ const setUpWindowEventsListeners = () => {
         if (!isRefreshed) {
             thisPortfolioWindow.addFrameButton(extractTabsBtn);
         }
-            
+
         // handle frame button clicks
         thisPortfolioWindow.onFrameButtonClicked((button) => {
             switch (button.buttonId) {
@@ -590,16 +599,16 @@ const setUpWindowEventsListeners = () => {
 
         // check where (relative to the Clients window) to gather the extracted tabs
         const getWindowDirection = () => {
-        
+
             const primaryMonitor = glue42gd.monitors.find(monitor => monitor.isPrimary === true);
             const bottomNeighbors = clientsWindow.bottomNeighbours;
             // this checks whether at least one bottom neighbor is a Portfolio window in order to snap the Portfolio tab group to the bottom if so
             const areNeighborsPortfolios = bottomNeighbors.filter(tab => tab.name.includes(portfolioTabGroupID)).length > 0 ? true : false;
             const availableSpaceBelow = primaryMonitor.workingAreaHeight - (clientsWindow.bounds.top + clientsWindow.bounds.height);
-        
+
             // if there are no bottom neighbors (or the all neighbors are Portfolios) and there is available space, 
             // gather the Portfolios below the Clients, otherwise - to the right
-            return (bottomNeighbors.length === 0 && availableSpaceBelow >= thisPortfolioWindow.bounds.height) || areNeighborsPortfolios ? "bottom": "right";
+            return (bottomNeighbors.length === 0 && availableSpaceBelow >= thisPortfolioWindow.bounds.height) || areNeighborsPortfolios ? "bottom" : "right";
         }
 
         // handle the Gather Tabs button
@@ -623,10 +632,10 @@ const setUpWindowEventsListeners = () => {
             }
 
             attachPortfolioTabs().then(() => {
-                        console.log("Tabs attached successfully.");
-                    }).catch(error => {
-                        console.error(error.message)
-                    });
+                console.log("Tabs attached successfully.");
+            }).catch(error => {
+                console.error(error.message)
+            });
 
             // snap the current tab to the Clients window
             const direction = getWindowDirection();
@@ -638,7 +647,7 @@ const setUpWindowEventsListeners = () => {
                     console.error(error);
                 });
 
-            
+
         };
 
         // handle the Extract Tabs button
@@ -649,10 +658,10 @@ const setUpWindowEventsListeners = () => {
             const tabsToExtract = thisPortfolioWindow.tabs;
 
             tabsToExtract.forEach(tab => tab.detachTab().then(() => {
-                    console.log("The tab was detached.")
-                }).catch(error => {
-                    console.error(error.message)
-                }));
+                console.log("The tab was detached.")
+            }).catch(error => {
+                console.error(error.message)
+            }));
         };
 
         // TUTOR_TODO Chapter 4.4 Task 8
@@ -662,9 +671,9 @@ const setUpWindowEventsListeners = () => {
 
         // set up frame buttons when scattering/gathering tabs
         const checkIfButtonExists = (buttonID) => {
-            const doesButtonExist = 
+            const doesButtonExist =
                 thisPortfolioWindow.frameButtons
-                .find(({ buttonId }) => buttonId === buttonID) !== undefined ? true : false;
+                    .find(({ buttonId }) => buttonId === buttonID) !== undefined ? true : false;
 
             return doesButtonExist;
         }
@@ -707,7 +716,7 @@ const setUpWindowEventsListeners = () => {
             if (thisPortfolioWindow.frameButtons[0].buttonId &&
                 thisPortfolioWindow.frameButtons[0].buttonId === gatherTabsBtn.buttonId) {
                 setupFrameButtons(gatherTabsBtn, extractTabsBtn);
-            }       
+            }
         });
 
         thisPortfolioWindow.onWindowDetached(() => {
@@ -737,7 +746,7 @@ const setUpWindowEventsListeners = () => {
                 setupFrameButtons(extractTabsBtn, gatherTabsBtn);
             }
         });
-        
+
         // handle refreshing the window to avoid the simultaneous appearance of both buttons
         thisPortfolioWindow.onRefreshing(() => {
             window.sessionStorage.setItem(thisPortfolioWindow.name + "-isRefreshed", true);
@@ -810,6 +819,10 @@ const sendPortfolioAsEmailClicked = (event) => {
 
         // TUTOR_TODO Chapter 8 Task 5
         // Create a new email by passing the content object above.
+
+        g4o.outlook.newEmail(content)
+            .then(() => console.log("Email template created."))
+            .catch(error => console.error(error.message));
     }
 
     var portfolio = getCurrentPortfolio();
