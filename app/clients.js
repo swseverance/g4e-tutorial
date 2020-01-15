@@ -1,6 +1,12 @@
 const RestServerUrl = "http://localhost:22910/";
 const RestServerEndpoint = "Clients";
-const methodName = "SetParty";
+
+const partyHandlerName = "SetParty";
+
+const notificationWindowName = "Call Clients";
+const notificationWindowURL = "http://localhost:22909/app/symbolPopup.html";
+const notificationHandlerName = "g42.FindWhoToCall";
+
 // const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
 const portfolioTabGroupID = "PortfolioTabs";
 const portfolioWindowHeight = 400;
@@ -23,7 +29,7 @@ Glue(glueConfig).then(glue => {
     checkGlueConnection();
     setUpUi();
     setupClients();
-    registerGlueMethods();
+    registerInteropMethods();
     trackTheme();
     console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
 }).catch(error => {
@@ -198,11 +204,30 @@ const setupClients = () => {
     getClients(5, handleClients);
 };
 
-const registerGlueMethods = () => {
+const registerInteropMethods = () => {
 
     // TUTOR_TODO Chapter 7
     // Register an Interop method "g42.FindWhoToCall", the handler should open the "symbolPopup.html" window.
 
+    // Notifications handler method.
+    const notificationHandler = (args) => {
+        glue.windows.open(
+            notificationWindowName,
+            notificationWindowURL,
+            {
+                top: 100,
+                left: 100,
+                context: {
+                    symbol: args.symbol
+                }
+            }
+        )
+        .then(notification => console.log(`Notification with ID ${notification.id} shown.`))
+        .catch(error => console.error(error.message));
+    };
+
+    // Register the notifications handler method.
+    glue.interop.register(notificationHandlerName, notificationHandler);
 };
 
 const trackTheme = () => {
@@ -225,10 +250,10 @@ const invokeInteropMethod = (client) => {
     }
 
     // check whether the method has been registered
-    const isMethodRegistered = glue.interop.methods().filter(method => method.name === methodName).length > 0 ? true : false;
+    const isMethodRegistered = glue.interop.methods().filter(method => method.name === partyHandlerName).length > 0 ? true : false;
 
     if (isMethodRegistered) {
-        glue.interop.invoke(methodName, invocationArgs)
+        glue.interop.invoke(partyHandlerName, invocationArgs)
             .then(result => {
                 if (result.all_errors.length !== 0) {
                     result.all_errors.forEach(error => {
