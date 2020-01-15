@@ -53,7 +53,7 @@ const initiateG4O = () => {
         glue: glue,
         outlook: true,
         // TUTOR_TODO Chapter 9 Task 2
-        // excel: true
+        excel: true
     };
 
     // TUTOR_TODO Chapter 8 Task 4
@@ -876,6 +876,26 @@ const sendPortfolioToExcelClicked = (event) => {
 
         // TUTOR_TODO Chapter 9 Task 3
         // Create a new spreadsheet passing the config object, then subscribe to the new sheet onChanged event and call loadPortfolioFromExcel with the received data.
+
+        g4o.excel.openSheet(config)
+            .then(sheet => {
+                
+                const handleSheetChanges = (data, errorHandler, doneHandler, delta) => {
+                    
+                    loadPortfolioFromExcel(data);
+
+                    delta.forEach(item => {
+                        console.log(item);
+                    });
+                    
+                    doneHandler();
+                };
+
+                sheet.onChanged(handleSheetChanges);
+
+                console.log(`New Excel Sheet with name ${sheet.name} opened.`)
+            })
+            .catch(error => console.error(error.message));
     };
 
     const portfolio = getCurrentPortfolio();
