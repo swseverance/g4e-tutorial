@@ -14,12 +14,12 @@
         "allowCollapse": false,
         "allowMaximize": false,
         "allowMinimize": false,
-        "height": 400,
-        "width": 600,
+        "height": 361,
+        "width": 586,
         "left": 500,
         "top": 50,
-        "minHeight": 400,
-        "minWidth": 600,
-        "maxHeight": 400
+        "minHeight": 361,
+        "minWidth": 586,
+        "maxHeight": 361
     }
 }

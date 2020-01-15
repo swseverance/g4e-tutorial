@@ -4,13 +4,15 @@ const RestServerEndpoint = "Clients";
 const partyHandlerName = "SetParty";
 
 const notificationWindowName = "Call Clients";
-const notificationWindowURL = "http://localhost:22909/app/symbolPopup.html";
+const notificationWindowURL = "http://localhost:22909/app/symbol-popup.html";
 const notificationHandlerName = "g42.FindWhoToCall";
 
 // const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
 const portfolioTabGroupID = "PortfolioTabs";
 const portfolioWindowHeight = 400;
 const portfolioAppName = "Portfolio";
+
+let isInActivity;
 
 // TUTOR_TODO Chapter 1.2 Task 3
 // Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
@@ -26,6 +28,7 @@ const portfolioAppName = "Portfolio";
 
 Glue(glueConfig).then(glue => {
     window.glue = glue;
+    isInActivity = glue.activities.inActivity;
     checkGlueConnection();
     setUpUi();
     setupClients();
@@ -107,16 +110,32 @@ const setUpUi = () => {
 
         thisClientsWindow.onFrameButtonClicked((button) => {
             if (button.buttonId === "portfolio-btn") {
-                const direction = getWindowDirection();
-                openWindow(portfolioAppName, thisClientsWindow, direction);
+
+                let isWindowOpen = false;
+
+                glue.windows.list().forEach(win => {
+                    if (win.title === "Portfolio" && win.context.ownerWindowID === thisClientsWindow.id) {
+                        isWindowOpen = true;
+                    }
+                });
+
+                if (!isWindowOpen) {
+                    const direction = getWindowDirection();
+                    openWindow(portfolioAppName, thisClientsWindow, direction);
+                } else {
+                    return;
+                }
             }
         })
     };
 
     // TUTOR_TODO Chapter 11 Task 1
     // Check if you are in an activity and setup the frame buttons and events only if you are NOT
-    setUpPortfolioFrameButton();
-    setUpFrameButtonClick();
+
+    if (!isInActivity) {
+        setUpPortfolioFrameButton();
+        setUpFrameButtonClick();
+    }
 };
 
 const setupClients = () => {
@@ -133,15 +152,26 @@ const setupClients = () => {
             // TUTOR_TODO Chapter 11 Task 2
             // Check if you are in an activity and either update the activity context or open a tab window and invoke the Interop method
 
-            const direction = getWindowDirection();
+            if (isInActivity) {
 
-            // TUTOR_TODO Chapter 4.4 Task 3
-            // Pass the result of getWindowDirection as a second argument for openTabWindow
+                const context = {
+                    party: client
+                }
 
-            openTabWindow(client, direction);
-            invokeInteropMethod(client);
+                glue.activities.my.updateContext(context);
 
+            } else {
+
+                const direction = getWindowDirection();
+
+                // TUTOR_TODO Chapter 4.4 Task 3
+                // Pass the result of getWindowDirection as a second argument for openTabWindow
+
+                openTabWindow(client, direction);
+                invokeInteropMethod(client);
+            }
         }
+
         table.appendChild(row);
     }
 
@@ -222,8 +252,8 @@ const registerInteropMethods = () => {
                 }
             }
         )
-        .then(notification => console.log(`Notification with ID ${notification.id} shown.`))
-        .catch(error => console.error(error.message));
+            .then(notification => console.log(`Notification with ID ${notification.id} shown.`))
+            .catch(error => console.error(error.message));
     };
 
     // Register the notifications handler method.
@@ -240,7 +270,7 @@ const trackTheme = () => {
     // Subscribe for context changes and call setTheme with either "bootstrap-dark.min.css" or "bootstrap.min.css"
 
     glue.contexts.subscribe("theme", (context) => {
-        
+
         let themeName = context.name;
 
         themeName === "dark" ? setTheme("bootstrap-dark.min.css") : setTheme("bootstrap.min.css");
@@ -252,26 +282,39 @@ const invokeInteropMethod = (client) => {
     // TUTOR_TODO Chapter 2.2
     // Invoke the "SetParty" Interop method passing the client object for the party argument.
 
+    const thisClientsWindow = glue.windows.my();
+
     const invocationArgs = {
         party: client
     }
 
-    // check whether the method has been registered
-    const isMethodRegistered = glue.interop.methods().filter(method => method.name === partyHandlerName).length > 0 ? true : false;
+    // Check whether the method is registered.
+    const method = glue.interop.methods().find(method => method.name === partyHandlerName);
+    //Get all Portfolio windows offering it.
+    const servers = method ? method.getServers() : undefined;
 
-    if (isMethodRegistered) {
-        glue.interop.invoke(partyHandlerName, invocationArgs)
-            .then(result => {
-                if (result.all_errors.length !== 0) {
-                    result.all_errors.forEach(error => {
+    // Target the method registered only by the Portfolio window which belongs to `thisClientsWindow`.
+    if (servers) {
+        for (server of servers) {
+            const portfolioWindow = glue.windows.findById(server.windowId);
+
+            if (portfolioWindow.context.ownerWindowID === thisClientsWindow.id) {
+                glue.interop.invoke(partyHandlerName, invocationArgs, server)
+                    .then(result => {
+                        if (result.all_errors.length !== 0) {
+                            result.all_errors.forEach(error => {
+                                console.error(error.message);
+                            });
+                        } else {
+                            console.log("Party set successfully!");
+                        }
+                    }).catch(error => {
                         console.error(error.message);
                     });
-                } else {
-                    console.log("Party set successfully!");
-                }
-            }).catch(error => {
-                console.error(error.message);
-            });
+                break;
+            }
+
+        }
     }
 };
 
@@ -320,6 +363,7 @@ const openWindow = (windowName, currentWindow, direction) => {
 
     // Options for placing the generic Portfolio window.
     const windowOptions = {
+        height: portfolioWindowHeight,
         relativeTo: currentWindow.id,
         relativeDirection: direction
     }
@@ -389,7 +433,7 @@ const openTabWindow = (party, direction) => {
 
     // Check whether Portfolio tabs exist.
     const portfolioTabs = glue.windows.list().filter(tab => {
-        if (tab.title.includes(" - Portfolio")) {
+        if (tab.title.includes(" - Portfolio") && tab.context.ownerWindowID === thisClientsWindow.id) {
             return tab;
         }
     });
@@ -407,19 +451,19 @@ const openTabWindow = (party, direction) => {
             .catch(error => console.error(error.message));
     } else {
 
-        let isTabOpened = false;
+        let isTabOpen = false;
 
         // If any Portfolio windows have already been opened, check whether the tab to be created
         // is among them and if so, activate it and prevent the creation of the same tab window.
         for (tab of portfolioTabs) {
             if (tab.title.includes(party.preferredName)) {
                 tab.activate();
-                isTabOpened = true;
+                isTabOpen = true;
                 break;
             }
         };
-       
-        if (!isTabOpened) {
+
+        if (!isTabOpen) {
 
             // Since we cannot rely on the `tabGroupId` property being constant, 
             // because it changes automatically every time the tab is dragged out of the group,

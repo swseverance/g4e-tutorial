@@ -3,7 +3,6 @@ const RestServerEndpoint = "GetDemoPortfolio";
 const StreamName = "T42.MarketStream.Subscribe";
 const portfolioTabGroupID = "PortfolioTabs";
 
-let detachedTabs = [];
 let subscriptions = [];
 let searchQuery;
 let partyObj;
@@ -146,7 +145,7 @@ const trackTheme = () => {
     // Subscribe for context changes and call setTheme with either "bootstrap-dark.min.css" or "bootstrap.min.css"
 
     glue.contexts.subscribe("theme", (context) => {
-        
+
         let themeName = context.name;
 
         themeName === "dark" ? setTheme("bootstrap-dark.min.css") : setTheme("bootstrap.min.css");
@@ -193,16 +192,29 @@ const registerInteropMethod = () => {
     // in the callback - call loadPortfolio passing the pId received as a parameter.
     // assign the received party object to partyObj, because we will need it later on.
 
-    glue.interop.register({
-        name: "SetParty",
-        displayName: "Set Party",
-        description: "Updates the application window to work with the specified party.",
-        accepts: "composite party"
-    },
-        (args) => {
-            loadPortfolio(args.party.pId);
-            partyObj = args.party;
-        });
+    if (glue.activities.inActivity) {
+
+        const activityContextHandler = (context) => {
+            if (context.party) {
+                loadPortfolio(context.party.pId);
+                partyObj = context.party;
+            }
+        }
+
+        glue.activities.my.onContextChanged(activityContextHandler);
+        
+    } else {
+        glue.interop.register({
+            name: "SetParty",
+            displayName: "Set Party",
+            description: "Updates the application window to work with the specified party.",
+            accepts: "composite party"
+        },
+            (args) => {
+                loadPortfolio(args.party.pId);
+                partyObj = args.party;
+            });
+    }
 };
 
 const loadPortfolio = (portf) => {
@@ -621,7 +633,7 @@ const setUpWindowEventsListeners = () => {
         // handle the Gather Tabs button
         const gatherTabs = () => {
             const tabsToGather = glue.windows.list().filter(tab => {
-                if (tab.title.includes(" - Portfolio")) {
+                if (tab.title.includes(" - Portfolio") && tab.context.ownerWindowID === clientsWindowID) {
                     return tab;
                 }
             });
@@ -653,8 +665,6 @@ const setUpWindowEventsListeners = () => {
                 }).catch(error => {
                     console.error(error);
                 });
-
-
         };
 
         // handle the Extract Tabs button

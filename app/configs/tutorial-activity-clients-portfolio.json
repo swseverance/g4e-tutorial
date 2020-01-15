@@ -1,0 +1,94 @@
+[
+    {
+        "title": "Clients, Portfolios & Details",
+        "type": "activity",
+        "name": "clients-portfolio-details",
+        "icon": "http://localhost:22909/resources/icons/tick42.ico",
+        "caption": "A Demo activity application with Clients, Portfolios and Client Details.",
+        "details": {
+            "layout": {
+                "mode": "pixels"
+            },
+            "owner": {
+                "type": "clients",
+                "name": "clients_window",
+                "left": 100,
+                "top": 100,
+                "width": 600,
+                "height": 450
+            },
+            "windows": [    
+                {
+                    "type": "portfolio",
+                    "name": "portfolio_window",
+                    "left": 700,
+                    "top": 100,
+                    "width": 600,
+                    "height": 450
+                },
+                {
+                    "type": "clientdetails",
+                    "name": "client_details_window",
+                    "left": 100,
+                    "top": 550,
+                    "width": 1204,
+                    "height": 120
+                }
+            ]
+        }
+    },
+    {
+        "title": "Clients",
+        "type": "window",
+        "name": "clients_window",
+        "hidden": true,
+        "details": {
+            "url": "http://localhost:22909/app/clients.html",
+            "mode": "html",
+            "allowClose": false,
+            "allowCollapse": false,
+            "allowMaximize": false,
+            "allowMinimize": false
+        },
+        "activityTarget": {
+            "enabled": true,
+            "windowType": "clients"  
+        }                               
+    },
+    {
+        "title": "Portfolio",
+        "type": "window",
+        "name": "portfolio_window",
+        "hidden": true,
+        "details": {
+            "url": "http://localhost:22909/app/portfolio.html",
+            "mode": "html",
+            "allowClose": false,
+            "allowCollapse": false,
+            "allowMaximize": false,
+            "allowMinimize": false
+        },
+        "activityTarget": {
+            "enabled": true,
+            "windowType": "portfolio"
+        }
+    },
+    {
+        "title": "Client Details",
+        "type": "window",
+        "name": "client_details_window",
+        "hidden": true,
+        "details": {
+            "url": "http://localhost:22909/app/client-details.html",
+            "mode": "html",
+            "allowClose": false,
+            "allowCollapse": false,
+            "allowMaximize": false,
+            "allowMinimize": false
+        },
+        "activityTarget": {
+            "enabled": true,
+            "windowType": "clientdetails"
+        }
+    }
+]
