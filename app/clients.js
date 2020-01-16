@@ -7,42 +7,34 @@ const notificationWindowName = "Call Clients";
 const notificationWindowURL = "http://localhost:22909/app/symbol-popup.html";
 const notificationHandlerName = "g42.FindWhoToCall";
 
-// const portfolioAppURL = "http://localhost:22909/app/portfolio.html";
-const portfolioTabGroupID = "PortfolioTabs";
-const portfolioWindowHeight = 400;
+const portfolioDefaultHeight = 400;
 const portfolioAppName = "Portfolio";
 
+let thisClientsWindow;
 let isInActivity;
 
-// TUTOR_TODO Chapter 1.2 Task 3
-// Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
-// When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
-// Then call the following functions:
-// checkGlueConnection();
-// setUpUi();
-// setupClients();
-// registerGlueMethods();
-// trackTheme();
-
-// Don't forget to catch any errors.
-
-Glue(glueConfig).then(glue => {
-    window.glue = glue;
-    isInActivity = glue.activities.inActivity;
-    checkGlueConnection();
-    setUpUi();
-    setupClients();
-    registerInteropMethods();
-    trackTheme();
-    console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
-}).catch(error => {
-    console.error(error.message);
-});
+Glue(glueConfig)
+    .then(glue => {
+        window.glue = glue;
+        isInActivity = glue.activities.inActivity;
+        thisClientsWindow = glue.windows.my();
+        checkGlueConnection();
+        setUpUi();
+        setupClients();
+        registerInteropMethods();
+        trackTheme();
+        console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
+    })
+    .catch(error => {
+        console.error(error.message);
+    });
 
 const checkGlueConnection = () => {
 
     const toggleStatusLabel = (elementId, text, available) => {
+
         const span = document.getElementById(elementId);
+
         if (available) {
             span.classList.remove("label-warning");
             span.classList.add("label-success");
@@ -51,12 +43,12 @@ const checkGlueConnection = () => {
             span.classList.remove("label-success");
             span.classList.add("label-warning");
             span.textContent = text + " unavailable";
-        }
-    }
+        };
+    };
 
     const toggleGlueAvailable = (available) => {
         toggleStatusLabel("glueSpan", "Glue42 is", available);
-    }
+    };
 
     glue.connection.connected(() => {
         toggleGlueAvailable(true);
@@ -69,23 +61,7 @@ const checkGlueConnection = () => {
 
 const setUpUi = () => {
 
-    const thisClientsWindow = glue.windows.my();
-    // const portfolioButton = document.getElementById("portfolioBtn");
-
-    // if (portfolioButton) {
-
-    //     portfolioButton.onclick = () => {
-
-    //         // TUTOR_TODO Chapter 4.1 Task 2
-    //         // Call openWindow with a window name, current window instance and a direction.
-    //         openWindow("Portfolios", thisClientsWindow, "bottom");
-    //     }
-    // }
-
     const setUpPortfolioFrameButton = () => {
-
-        // TUTOR_TODO Chapter 4.4 Task 1
-        // Use the windows API to create a new frame button.
 
         const buttonOptions = {
             buttonId: "portfolio-btn",
@@ -95,19 +71,15 @@ const setUpUi = () => {
         };
 
         thisClientsWindow.addFrameButton(buttonOptions)
-            .then(win => {
+            .then(() => {
                 console.log("Frame button successfully added.");
-            }).catch(error => {
+            })
+            .catch(error => {
                 console.error(error.message);
             });
     };
 
     const setUpFrameButtonClick = () => {
-
-        // TUTOR_TODO Chapter 4.4 Task 4
-        // Use the windows API for handling frame button clicks to handle a frame button click, check the Id and open a portfolio window.
-        // Pass the result of getWindowDirection as a third argument to openWindow
-
         thisClientsWindow.onFrameButtonClicked((button) => {
             if (button.buttonId === "portfolio-btn") {
 
@@ -116,7 +88,7 @@ const setUpUi = () => {
                 glue.windows.list().forEach(win => {
                     if (win.title === "Portfolio" && win.context.ownerWindowID === thisClientsWindow.id) {
                         isWindowOpen = true;
-                    }
+                    };
                 });
 
                 if (!isWindowOpen) {
@@ -124,24 +96,23 @@ const setUpUi = () => {
                     openWindow(portfolioAppName, thisClientsWindow, direction);
                 } else {
                     return;
-                }
-            }
-        })
+                };
+            };
+        });
     };
-
-    // TUTOR_TODO Chapter 11 Task 1
-    // Check if you are in an activity and setup the frame buttons and events only if you are NOT
 
     if (!isInActivity) {
         setUpPortfolioFrameButton();
         setUpFrameButtonClick();
-    }
+    };
 };
 
 const setupClients = () => {
 
     const addRow = (table, client) => {
+
         const row = document.createElement("tr");
+
         addRowCell(row, client.name || "");
         addRowCell(row, client.pId || "");
         addRowCell(row, client.gId || "");
@@ -149,31 +120,24 @@ const setupClients = () => {
 
         row.onclick = () => {
 
-            // TUTOR_TODO Chapter 11 Task 2
-            // Check if you are in an activity and either update the activity context or open a tab window and invoke the Interop method
-
             if (isInActivity) {
 
                 const context = {
                     party: client
-                }
+                };
 
                 glue.activities.my.updateContext(context);
-
             } else {
 
                 const direction = getWindowDirection();
 
-                // TUTOR_TODO Chapter 4.4 Task 3
-                // Pass the result of getWindowDirection as a second argument for openTabWindow
-
                 openTabWindow(client, direction);
                 invokeInteropMethod(client);
-            }
-        }
+            };
+        };
 
         table.appendChild(row);
-    }
+    };
 
     const addRowCell = (row, cellData, cssClass) => {
 
@@ -183,22 +147,21 @@ const setupClients = () => {
 
         if (cssClass) {
             cell.className = cssClass;
-        }
+        };
+
         row.appendChild(cell);
-    }
+    };
 
     const handleClients = (clients) => {
+
         const table = document.getElementById("clientsTable").getElementsByTagName("tbody")[0];
 
         clients.forEach((client) => {
             addRow(table, client);
-        })
-    }
+        });
+    };
 
     const getClients = (count, callback) => {
-
-        // TUTOR_TODO chapter 4.2 Task 3
-        // Start the loader here.
 
         glue.windows.my().showLoader().catch(error => {
             console.error(error.message);
@@ -208,36 +171,31 @@ const setupClients = () => {
             method: "GET",
             url: RestServerUrl + RestServerEndpoint
         })
-            .done((clients) => {
+        .done((clients) => {
 
-                if (typeof clients !== "undefined") {
-                    const parsedClients = JSON.parse(clients);
-                    const slicedClients = parsedClients.Clients.Client.slice(0, count);
+            if (typeof clients !== "undefined") {
+                const parsedClients = JSON.parse(clients);
+                const slicedClients = parsedClients.Clients.Client.slice(0, count);
 
-                    if (typeof callback !== "undefined" && typeof callback === "function") {
-                        callback(slicedClients);
-                    }
-                }
-            })
-            .fail((jqXHR, textStatus) => {
-                console.error("Request failed: " + textStatus);
-            })
-            .always(() => {
-                // TUTOR_TODO chapter 4.2 Task 4
-                // Stop the loader here.
-                glue.windows.my().hideLoader().catch(error => {
-                    console.error(error.message);
-                });
+                if (typeof callback !== "undefined" && typeof callback === "function") {
+                    callback(slicedClients);
+                };
+            };
+        })
+        .fail((jqXHR, textStatus) => {
+            console.error("Request failed: " + textStatus);
+        })
+        .always(() => {
+            glue.windows.my().hideLoader().catch(error => {
+                console.error(error.message);
             });
-    }
+        });
+    };
 
     getClients(5, handleClients);
 };
 
 const registerInteropMethods = () => {
-
-    // TUTOR_TODO Chapter 7
-    // Register an Interop method "g42.FindWhoToCall", the handler should open the "symbolPopup.html" window.
 
     // Notifications handler method.
     const notificationHandler = (args) => {
@@ -250,8 +208,7 @@ const registerInteropMethods = () => {
                 context: {
                     symbol: args.symbol
                 }
-            }
-        )
+            })
             .then(notification => console.log(`Notification with ID ${notification.id} shown.`))
             .catch(error => console.error(error.message));
     };
@@ -266,9 +223,6 @@ const trackTheme = () => {
         $("#themeLink").attr("href", "../lib/themes/css/" + name);
     };
 
-    // TUTOR_TODO Chapter 10 Task 1
-    // Subscribe for context changes and call setTheme with either "bootstrap-dark.min.css" or "bootstrap.min.css"
-
     glue.contexts.subscribe("theme", (context) => {
 
         let themeName = context.name;
@@ -279,23 +233,20 @@ const trackTheme = () => {
 
 const invokeInteropMethod = (client) => {
 
-    // TUTOR_TODO Chapter 2.2
-    // Invoke the "SetParty" Interop method passing the client object for the party argument.
-
-    const thisClientsWindow = glue.windows.my();
-
     const invocationArgs = {
         party: client
-    }
+    };
 
     // Check whether the method is registered.
     const method = glue.interop.methods().find(method => method.name === partyHandlerName);
+
     //Get all Portfolio windows offering it.
     const servers = method ? method.getServers() : undefined;
 
     // Target the method registered only by the Portfolio window which belongs to `thisClientsWindow`.
     if (servers) {
         for (server of servers) {
+
             const portfolioWindow = glue.windows.findById(server.windowId);
 
             if (portfolioWindow.context.ownerWindowID === thisClientsWindow.id) {
@@ -307,120 +258,53 @@ const invokeInteropMethod = (client) => {
                             });
                         } else {
                             console.log("Party set successfully!");
-                        }
-                    }).catch(error => {
+                        };
+                    })
+                    .catch(error => {
                         console.error(error.message);
                     });
                 break;
-            }
-
-        }
-    }
+            };
+        };
+    };
 };
 
 const getWindowDirection = () => {
 
-    // TUTOR_TODO Chapter 4.4 Task 2
-    // Get the primary monitor;
-    // Get the bottom neightbours;
-    // Get the working area height;
-    // Calculate the window bottom;
-    // Pass "bottom" if there is enough space for a portfolio window, else pass right.
-
-    const thisClientsWindow = glue.windows.my();
     const primaryMonitor = glue42gd.monitors.find(monitor => monitor.isPrimary === true);
     const bottomNeighbors = thisClientsWindow.bottomNeighbours;
     const availableSpaceBelow = primaryMonitor.workingAreaHeight - (thisClientsWindow.bounds.top + thisClientsWindow.bounds.height);
 
-    // if there are no bottom heighbors and there is available space, open the Portfolio below the Clients, otherwise - to the right
-    return bottomNeighbors.length === 0 && availableSpaceBelow >= portfolioWindowHeight ? "bottom" : "right";
+    // If there are no bottom neighbors and there is available space, open the Portfolio below the Clients, otherwise - to the right.
+    return bottomNeighbors.length === 0 && availableSpaceBelow >= portfolioDefaultHeight ? "bottom" : "right";
 }
 
 const openWindow = (windowName, currentWindow, direction) => {
 
-    // TUTOR_TODO Chapter 4.2 Task 1
-    // Add additional properties or modify the existing ones in the options object in order to open a portfolio window which:
-    // is mode: "html", cannot be minimized, maximized, collapsed or closed, has minimum height 400 and minimum width 600
-    // create a context object inside the options and pass your window id "glue.windows.my().id"
-
-    // TUTOR_TODO Chapter 4.1 Task 3
-    // Create an options object and define mode, relativeTo and relativeDirection properties
-    // Use the Windows API to open a window with the provided windowName, options object and correct URL
-
-    // glue.windows.open(
-    //     windowName,
-    //     portfolioAppURL,
-    //     windowOptions
-    // ).then(window => {
-    //     console.log(`Portfolio window opened with window ID: ${window.id}`);
-    // }).catch(error => {
-    //     console.error(error.message);
-    // });
-
-    // TUTOR_TODO Chapter 5 Task 1
-    // Modify split the current options object into two separate objects - context and windowSettings;
-    // Use the Application Management API to open a portfolio instance.
-
     // Options for placing the generic Portfolio window.
     const windowOptions = {
-        height: portfolioWindowHeight,
         relativeTo: currentWindow.id,
         relativeDirection: direction
-    }
+    };
 
     // Context for the generic Portfolio window.
     const context = {
         ownerWindowID: currentWindow.id
-    }
+    };
 
     // Create a generic Portfolio window.
     glue.appManager.application(windowName).start(context, windowOptions)
-        .then(() => console.log(`${windowName} application started successfully.`))
-        .catch(error => console.error(error.message));
+        .then(() => {
+            console.log(`${windowName} application started successfully.`)
+        })
+        .catch(error => {
+            console.error(error.message)
+        });
 };
 
 const openTabWindow = (party, direction) => {
 
-    // TUTOR_TODO Chapter 4.3 Task 1
-    // Implement the functionality to open and stack tab windows;
-    // Use the provided options object to create the tab;
-    // First check if there is a tab frame created already (maybe by checking if there is a window whose name contains "PortfolioTabs"?);
-    // If there aren't any tabs, add the relativeTo and relativeDirection keys to the object.
-    // Note: you only need those for the first tab - the one that creates the frame, subsequent tabs should not specify them.
-    // Finally, create a window using the method you are already familiar with - glue.windows.open(). But don't forget to check if the client's portfolio is already opened.
-    // If that is the case you should activate() the tab.
-
-    // glue.windows.open(
-    //     `${party.preferredName} - ${portfolioTabGroupID}`,
-    //     portfolioAppURL, 
-    //     tabOptions
-    // ).then(tab => {
-    //     console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
-    // });
-
-    // glue.windows.open(
-    //     `${party.preferredName} - ${portfolioTabGroupID}`,
-    //     portfolioAppURL, 
-    //     tabOptions
-    // ).then(tab => {
-    //     portfolioTabs[0].attachTab(tab)
-    //         .then(() => {
-    //             console.log("Tab attached successfully.");
-    //         }).catch(error => console.error(error.message));
-    //     tab.activate();
-    //     console.log(`Portfolio tab opened with window ID: ${tab.id}.`)
-    // }).catch(error => {
-    //     console.error(error.message);
-    // });
-
-    // TUTOR_TODO Chapter 5 Task 2
-    // Modify split the current options object into two separate objects - context and windowSettings;
-    // Use the Application Management API to open a portfolio tab instance;
-    // Note that using the Application Management API your window gets a default name, so you can't reuse the filter condition to check for open tabs so you need to get creative. What else is unique to the tabs that we can filter on?
-
-    const thisClientsWindow = glue.windows.my();
-
-    // Common Portfolio tab options.
+    // Portfolio tab options.
     let tabOptions = {
         mode: "tab"
     };
@@ -429,13 +313,13 @@ const openTabWindow = (party, direction) => {
     const context = {
         party: party,
         ownerWindowID: thisClientsWindow.id,
-    }
+    };
 
     // Check whether Portfolio tabs exist.
     const portfolioTabs = glue.windows.list().filter(tab => {
         if (tab.title.includes(" - Portfolio") && tab.context.ownerWindowID === thisClientsWindow.id) {
             return tab;
-        }
+        };
     });
 
     if (portfolioTabs.length === 0) {
@@ -447,20 +331,24 @@ const openTabWindow = (party, direction) => {
 
         // Create a Portfolio window.
         glue.appManager.application(portfolioAppName).start(context, tabOptions)
-            .then(instance => console.log(`Portfolio application with instance ID ${instance.id} started successfully.`))
-            .catch(error => console.error(error.message));
+            .then(instance => {
+                console.log(`Portfolio application with instance ID ${instance.id} started successfully.`)
+            })
+            .catch(error => {
+                console.error(error.message)
+            });
     } else {
 
         let isTabOpen = false;
 
         // If any Portfolio windows have already been opened, check whether the tab to be created
-        // is among them and if so, activate it and prevent the creation of the same tab window.
+        // is among them, and if so, activate it and prevent the creation of the same tab window.
         for (tab of portfolioTabs) {
             if (tab.title.includes(party.preferredName)) {
                 tab.activate();
                 isTabOpen = true;
                 break;
-            }
+            };
         };
 
         if (!isTabOpen) {
@@ -468,7 +356,12 @@ const openTabWindow = (party, direction) => {
             // Since we cannot rely on the `tabGroupId` property being constant, 
             // because it changes automatically every time the tab is dragged out of the group,
             // we are forced to first start the application and then attach the window to an
-            // already existing portfolio tab.
+            // already existing portfolio tab. 
+            // Avoiding the use of the `tabGroupId` is necessary if you want 
+            // to handle cases where the user extracts the tabs,
+            // then closes some of them, or opens new ones, or groups several of them, etc.,
+            // and after all these manipulations wants to group all currently existing Portfolio tabs back together.
+
             // To avoid showing the window to the user and then repositioning it,
             // we can start it hidden and then set it to visible just before we attach it.
             tabOptions.hidden = true;
@@ -478,12 +371,22 @@ const openTabWindow = (party, direction) => {
             glue.appManager.application(portfolioAppName).start(context, tabOptions)
                 .then(app => {
                     const tab = app.window;
-                    tab.setVisible().then(tab => {
-                        portfolioTabs[0].attachTab(tab)
-                            .then(() => {
-                                tab.activate();
-                            });
-                    })
+                    tab.setVisible()
+                        .then(tab => {
+                            portfolioTabs[0].attachTab(tab)
+                                .then(() => { 
+                                    tab.activate(); 
+                                })
+                                .catch(error => {
+                                    console.error(error.message);
+                                });
+                        })
+                        .catch(error => {
+                            console.error(error.message);
+                        });
+                })
+                .catch(error => {
+                    console.error(error.message);
                 });
         };
     }

@@ -1,7 +1,6 @@
 const RestServerUrl = "http://localhost:22910/";
 const RestServerEndpoint = "GetDemoPortfolio";
-const StreamName = "T42.MarketStream.Subscribe";
-const portfolioTabGroupID = "PortfolioTabs";
+const symbolPricesStreamName = "T42.MarketStream.Subscribe";
 
 let subscriptions = [];
 let searchQuery;
@@ -13,8 +12,6 @@ let lastServiceError;
 let serviceLatency;
 let logger;
 
-// TUTOR_TODO Chapter 4.4 Task 6
-// We have prepared for you the config objects for both buttons.
 const gatherTabsBtn = {
     buttonId: "gatherTabs",
     tooltip: "Gather all tabs",
@@ -29,35 +26,27 @@ const extractTabsBtn = {
     imageBase64: "iVBORw0KGgoAAAANSUhEUgAAAIAAAABjCAYAAABT7gjnAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjM2NDE2QTIxQTkyODExRTY4QUY2RTYzRjNEM0ZFRTJBIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjM2NDE2QTIyQTkyODExRTY4QUY2RTYzRjNEM0ZFRTJBIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MzY0MTZBMUZBOTI4MTFFNjhBRjZFNjNGM0QzRkVFMkEiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MzY0MTZBMjBBOTI4MTFFNjhBRjZFNjNGM0QzRkVFMkEiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7pl9TZAAAEm0lEQVR42uydW08aQRiGnXHDIRViaClNuCgJralpjIXEi/4B/7fXpmurpiSgiRdthdBKcQ2nwk4HgxWJWA6z7Hwz73vljbvMvM93GlaXCSHWIOW621Sm+wfl8CoA9++jSozBAACQEQAAIAAA1kMgAAAkAAAkAAAUekkAAJZnAwBgOQQAwPKSAAAszwYAwHIIAIDlJQEAWJ4NAIDlEDiTN/E8r3RxcdHpdrtRnQC5urqq7e/vf5Q/RgGBuucM2N1X19L4r61WK5/JZCK6rVqa39/Y2PgeiURyJFwSwmdSAd9GyfVvI7xer7uJRGJbR/Nd1/2eSqX6VMynVhLYYDD4xTlP6bjCk5OTo52dnSI1U4ZPBK0gAyjJBkxo+lBgrVY7khmpqFu0jfZrxf4GB4F2APi+v9br9c5jsdgbHczW0WmVEGg1BjYajb7c81oI5ouR3/6D3aRl/r91kARAjp7tzc3N9vr6+qvVNuz3phM0fOkGUQsAzs/Pb3K53DDdJlcYJcIw0xeCIHQAyuWyl8/nhwdSz3RLj4ZAILRtAmXab8nIH0IYpzAzExfTCoBqtfpHjnk9mYE3YHx4EIQCwHDUk/rJOU/D/HBBcOb9zWazOXAc52yZu8fj8ecBmi9G8ztsfjo42EIAdDqdgUzd73TufBncnxkCbtiCoDn3jMN8u8VhvoVhf9/3ky8BMH+BPRv1SIx6BoD5CrI+h/l2zv+UAYD589X7Jx8k5YQXBM0S8uy2z5t6LuJQ8x9nPMulfMoZAJGvIOWTBQCpX03Kp1oCQkv9I+7E2AazWWAN6fuIue/pEIn+tSD3887kCdPYyPBFLulTMJ8KAMqjfyJCyX55OLaOhRdgzV8Hj7cQY3WS9Egxb72nCIBQESVjYU7e9GVTvjUZYMx4borp84541HuApaJ/ZLyJI55ScQK0L5IaTTwuDGRNumaARTt/U8+JA1sXxybZU++NA2BVm0R1xKNaAsSs5pvY6K0aaE418k0zP6xsxjXciFnMR8o3FID/dv/Lnn2jgaVfAmC+qQDMcPiDI13DpwBmQ+Tr1MByzTZmWrSYlPa1WotOAIgnmj6kfEtKgJGpX+czC90zgAmpX+s1aAPAIwMAIxzxjMoaHA03DY2erVOAiSMfAIAAwCwtQKFQ6CL6Z9LAOABkA9g8ODjowfyn1ev1LlzXrRoHgOz/oslkMgqLp2v4XqdIJPI6m82+MLEEDP9ZNACYouPj48/pdLpg9BgIPaquTPn1YrGYNf4cAHoo3/drl5eXIkjzMQZqKs/zTjnnL2W9D7wsAgDNVC6XPyUSife2nQNAcr4/PDysbG1trfRdiegBNJAQ4nelUrnZ29tb+bsSAUDI6nQ6ZxKApIz8UA7BAEDIaT8Wi4VahtEDhDzthf0BAIDlAgAAAAIAEACA7NTcY2Amk4mUSqUGtk6Jbra3tzdJATBU2B8aQgmAAAAEACAAAAEAq6T6zTkAgJiur687AMBieZ73TeX1GN7GRUv9fv+H4zhZlRkAf45FRF+kVJqPEkBIruue7u7uflB9XTZRAVAONFS73T6Lx+Nvg7j2XwEGACbouxHl2VRVAAAAAElFTkSuQmCC"
 };
 
-// TUTOR_TODO Chapter 1.2 Task 4
-// Call the Glue factory function and pass in the `glueConfig` object, which is registered by `tick42-glue-config.js`
-// When the promise is resolved, attach the received glue instance to `window` so it can be globally accessible
-// Then add all of the following code, leave the code under TUTOR_TODO Chapter 8 commented as you will need it later on:
-
-Glue(glueConfig).then(glue => {
-    window.glue = glue;
-    initiateG4O();
-    instrumentService();
-    onInitializeApp();
-    initInstrumentSearch();
-    trackTheme();
-    console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
-}).catch(error => {
-    console.error(error.message);
-});
+Glue(glueConfig)
+    .then(glue => {
+        window.glue = glue;
+        initiateG4O();
+        instrumentService();
+        onInitializeApp();
+        initInstrumentSearch();
+        trackTheme();
+        console.log(`Glue42 is initialized - Glue42 JavaScript v.${glue.version}`);
+    })
+    .catch(error => {
+        console.error(error.message);
+    });
 
 const initiateG4O = () => {
-    // TUTOR_TODO Chapter 8 Task 3
+
     const glue4OfficeOptions = {
         glue: glue,
         outlook: true,
-        // TUTOR_TODO Chapter 9 Task 2
         excel: true
     };
-
-    // TUTOR_TODO Chapter 8 Task 4
-    // Initiate Glue4Office with the supplied glue4OfficeOptions then assign the returned g4o object to the window in order to be globally accessible.
-    // Don't forget to catch any errors.
 
     Glue4Office(glue4OfficeOptions)
         .then(g4o => {
@@ -66,35 +55,26 @@ const initiateG4O = () => {
         .catch(error => {
             console.error(error.message);
         });
-}
+};
 
 const instrumentService = () => {
 
-    // TUTOR_TODO Chapter 12 Task 1
-    // Create sub-logger.
-
+    // Create a logging service.
     logger = glue.logger.subLogger("portfolio-logger");
 
-    // TUTOR_TODO Chapter 12 Task 3
-    // Create a metrics instance, a sub-system and set the state to GREEN.
-
+    // Create a metrics sub-system to store the metrics.
     serviceMetricsSystem = glue.metrics.subSystem("PortfolioMetrics", "Metrics describing the Portfolio app state.");
 
+    // Set initial system state.
     serviceMetricsSystem.setState(0, "Portfolio app initialized.")
 
-    // TUTOR_TODO Chapter 12 Task 4
-    // Create an error count metric.
-
+    // Metric for counting the failed AJAX requests.
     serviceErrorCount = serviceMetricsSystem.countMetric("RequestErrorCount", 0);
 
-    // TUTOR_TODO Chapter 12 Task 5
-    // Create a composite error metric.
+    // Composite metric for holding the last recorded error.
+    lastServiceError = serviceMetricsSystem.objectMetric("LastServiceError", { lastError: {} });
 
-    lastServiceError = serviceMetricsSystem.objectMetric("LastServiceError", {});
-
-    // TUTOR_TODO Chapter 12 Task 6
-    // Create a TimeSpan metric.
-
+    // Metric to track request latency.
     serviceLatency = serviceMetricsSystem.timespanMetric("LatencyMetric", 0);
 };
 
@@ -115,7 +95,7 @@ const onInitializeApp = () => {
                 alert(args.instrument.bpod);
             });
 
-    }
+    };
 
     setUpAppContent();
     setUpStreamIndicator();
@@ -125,13 +105,8 @@ const onInitializeApp = () => {
 
 const initInstrumentSearch = () => {
 
-    // TUTOR_TODO Chapter 6 Task 2
-    // Create a search client using the supplied options;
-    // Use the created search client to create a query for "Instrument";
-    // Subscribe to the created query onData event and call displayResult() passing in the received entities.
-
     const gssOptions = {
-        agm: glue.agm,
+        agm: glue.interop,
         defaultQueryLimit: 500,
         measureLatency: false,
         searchTimeoutInMillis: 10000,
@@ -139,22 +114,23 @@ const initInstrumentSearch = () => {
         debug: false
     };
 
+    // Create a new search client.
     const searchClient = new gssClientSearch.create(gssOptions);
 
+    // Create a new search query for the entity of interest.
     searchQuery = searchClient.createQuery("Instrument");
 
+    // Subscribe for the event which fires when data is received.
     searchQuery.onData(data => {
         displayResult(data);
     });
 };
 
 const trackTheme = () => {
+
     const setTheme = (name) => {
         $("#themeLink").attr("href", "../lib/themes/css/" + name);
-    }
-
-    // TUTOR_TODO Chapter 10 Task 2
-    // Subscribe for context changes and call setTheme with either "bootstrap-dark.min.css" or "bootstrap.min.css"
+    };
 
     glue.contexts.subscribe("theme", (context) => {
 
@@ -166,19 +142,13 @@ const trackTheme = () => {
 
 const setUpAppContent = () => {
 
-    // TUTOR_TODO chapter 4.3 Task 2
-    // Check whether the current window context contains the attribute "party";
-    // If doesn't, then go ahead and register the Interop method, otherwise the title of the tab and the window, 
-    // using the preferredName from the party object and call loadPortfolio() passing in the pId from the party object 
-    // assign the received party object to partyObj, because we will need it later on.
-
     const thisPortfolioWindow = glue.windows.my();
     const portfolioContext = thisPortfolioWindow.context;
 
     if (!portfolioContext.party) {
-        // if this is a generic Portfolio window (no `party` in the context)
+        // If this is a generic Portfolio window (no `party` in the context),
         // register an Interop method which changes the portfolio in the Portfolio window
-        // depending on what client the user has selected in the Clients window
+        // depending on what client the user has selected in the Clients window.
         registerInteropMethod();
     } else {
         thisPortfolioWindow.setTitle(`${portfolioContext.party.preferredName} - Portfolio`)
@@ -191,19 +161,14 @@ const setUpAppContent = () => {
         document.getElementById("title").textContent = portfolioContext.party.preferredName;
         loadPortfolio(portfolioContext.party.pId);
         partyObj = portfolioContext.party;
-    }
+    };
 };
 
 const registerInteropMethod = () => {
 
-    // TUTOR_TODO Chapter 11 Task 3
-    // Register the Interop method only if you are not in activity, otherwise listen for activity context changes and call loadPortfolio
-
-    // TUTOR_TODO Chapter 2.1
-    // Register an Interop method "SetParty", which accepts a composite argument "party" with optional strings pId and salesForceId
-    // in the callback - call loadPortfolio passing the pId received as a parameter.
-    // assign the received party object to partyObj, because we will need it later on.
-
+    // If the Portfolio app is in an Activity, use the Activity context
+    // to load the portfolio of the selected client.
+    // If not, register the Interop method for setting the correct portfolio.
     if (glue.activities.inActivity) {
 
         const activityContextHandler = (context) => {
@@ -214,7 +179,6 @@ const registerInteropMethod = () => {
         }
 
         glue.activities.my.onContextChanged(activityContextHandler);
-        
     } else {
         glue.interop.register({
             name: "SetParty",
@@ -226,19 +190,16 @@ const registerInteropMethod = () => {
                 loadPortfolio(args.party.pId);
                 partyObj = args.party;
             });
-    }
+    };
 };
 
 const loadPortfolio = (portf) => {
+
     const serviceUrl = RestServerUrl + RestServerEndpoint;
-
     const serviceRequest = "xpath=//Portfolios/Portfolio[id=" + portf + "]";
-
     const requestStart = Date.now();
 
-    // TUTOR_TODO Chapter 12 Task 7
-    // Start the latency metric.
-
+    // Start measuring request latency.
     serviceLatency.start();
 
     const ajaxOptions = {
@@ -249,41 +210,35 @@ const loadPortfolio = (portf) => {
 
     $.ajax(ajaxOptions)
         .done((portfolio) => {
-            // TUTOR_TODO Chapter 12 Task 8
-            // Stop the latency metric.
-
+            
+            // Stop measuting request latency.
             serviceLatency.stop();
 
             const elapsedMillis = Date.now() - requestStart;
 
             if (elapsedMillis >= 1000) {
                 const message = "Service at " + serviceUrl + " is lagging.";
-                // TUTOR_TODO Chapter 12 Task 10
-                // Set system state to AMBER and pass the created message.
-
+                
+                // Set system to state to AMBER if the service is slow.
                 serviceMetricsSystem.setState(50, message);
 
             } else {
-                // TUTOR_TODO Chapter 12 Task 11
-                // Set the system state to GREEN.
+                // Set the system state to GREEN if everything is normal.
                 serviceMetricsSystem.setState(0, "Portfolio received, service is normal.");
-
-            }
+            };
 
             let parsedPortfolio;
+
             if (typeof portfolio !== "undefined") {
                 parsedPortfolio = JSON.parse(portfolio);
-            }
+            };
 
             const logMessage = { portfolioId: portf, portfolio: parsedPortfolio };
-
-            // TUTOR_TODO Chapter 12 Task 2
-            // Log to the console using the logger and the provided logMessage.
 
             logger.info(JSON.stringify(logMessage));
 
             if (!parsedPortfolio.Portfolios.hasOwnProperty("Portfolio")) {
-                console.warn("The client has no portfolio")
+                console.warn("The client has no portfolio.")
                 return;
             }
 
@@ -292,14 +247,11 @@ const loadPortfolio = (portf) => {
             subscribeSymbolPrices();
         })
         .fail(function (jqXHR, textStatus) {
-            // TUTOR_TODO Chapter 12 Task 9
-            // Stop the latency metric.
 
+            // Stop measuring request latency.
             serviceLatency.stop();
 
-            // TUTOR_TODO Chapter 12 Task 12
-            // Increment the error count.
-
+            // Increment the request failure count metric.
             serviceErrorCount.increment();
 
             const errorMessage = "Service at " + serviceUrl + " failed at " + serviceRequest + " with " + textStatus;
@@ -311,19 +263,16 @@ const loadPortfolio = (portf) => {
                 stackTrace: ""
             };
 
-            // TUTOR_TODO Chapter 12 Task 13
-            // Capture the error with the composite metric and use the provided errorOptions object.
+            // Capture the error by updating the composite metric with the last recorded error.
+            lastServiceError.update({ lastError: errorOptions });
 
-            lastServiceError.update(errorOptions);
-
-            // TUTOR_TODO Chapter 12 Task 14
-            // Set the system state to RED and pass the provided error message.
-
+            // Set the system state to RED when a request fails.
             serviceMetricsSystem.setState(100, errorMessage);
-        })
-}
+        });
+};
 
 const subscribeSymbolPrices = () => {
+
     const trs = document.querySelectorAll("#portfolioTableData tr");
 
     trs.forEach((tr) => {
@@ -331,47 +280,42 @@ const subscribeSymbolPrices = () => {
 
         subscribeBySymbol(symbol, updateInstruments);
     });
-    console.log("New subscriptions for portfolio prices.")
-}
+
+    console.log("New subscriptions for portfolio prices.");
+};
 
 const unsubscribeSymbolPrices = () => {
-
-    // TUTOR_TODO Chapter 3 Task 2
-    // Traverse the saved subscriptions and close each one.
-    // We need to do this, because when the portfolio changes, we need to clear the existing subscriptions and subscribe to the new symbol stream
 
     subscriptions.forEach(subscription => {
         subscription.close();
     });
-    console.log("Portfolio changed, current symbol price subscriptions closed.")
-}
+
+    console.log("Portfolio changed, current symbol price subscriptions closed.");
+};
 
 const subscribeBySymbol = (symbol, streamDataHandler) => {
-
-    // TUTOR_TODO Chapter 3 Task 1
-    // Subscribe to a stream called "T42.MarketStream.Subscribe";
-    // As a second parameter pass an options object with an `arguments` property, which has a property "Symbol" and assign to it the symbol variable passed to this function
-    // When the promise is resolved save the created subscription so that you can later close it and subscribe to new streams (when the portfolio changes)
-    // Finally subscribe to the created subscription onData event and invoke the callback passed to this function with the received streamData
 
     const subscriptionOptions = {
         arguments: {
             Symbol: symbol
         }
-    }
-    glue.interop.subscribe(StreamName, subscriptionOptions)
+    };
+
+    // Subscribe to the stream providing the symbol prices.
+    glue.interop.subscribe(symbolPricesStreamName, subscriptionOptions)
         .then(subscription => {
             subscriptions.push(subscription);
             subscription.onData(streamData => {
                 streamDataHandler(streamData);
             });
-        }).catch(error => {
+        })
+        .catch(error => {
             console.error(error.message);
         });
-}
+};
 
-const addRow = (table, rowData, emptyFlag) => { //TODO fix emptyFlag usage - unnecessary?
-    emptyFlag = emptyFlag || true;
+const addRow = (table, rowData) => {
+    
     const row = document.createElement("tr");
 
     addRowCell(row, rowData.RIC || "");
@@ -380,17 +324,12 @@ const addRow = (table, rowData, emptyFlag) => { //TODO fix emptyFlag usage - unn
     addRowCell(row, rowData.ask || "", "text-right");
 
     row.onclick = function () {
-        if (emptyFlag) {
-            removeChildNodes("methodsList");
-        }
-
-        // TUTOR_TODO Chapter 2.3 Task 1
-        // Discover all registered methods with objectType "Instrument";
-        // Invoke addAvailableMethods(*discovered methods*, rowData.RIC, rowData.BPOD);
+        
+        removeChildNodes("methodsList");
 
         const availableInstrumentMethods = glue.interop.methods({ objectTypes: ["Instrument"] });
-        addAvailableMethods(availableInstrumentMethods, rowData.RIC, rowData.BPOD);
 
+        addAvailableMethods(availableInstrumentMethods, rowData.RIC, rowData.BPOD);
         row.setAttribute("data-toggle", "modal");
         row.setAttribute("data-target", "#instruments");
     }
@@ -399,7 +338,9 @@ const addRow = (table, rowData, emptyFlag) => { //TODO fix emptyFlag usage - unn
 };
 
 const addRowCell = (row, cellData, cssClass) => {
-    var cell = document.createElement("td");
+
+    const cell = document.createElement("td");
+
     cell.innerText = cellData;
 
     if (cssClass) {
@@ -409,19 +350,22 @@ const addRowCell = (row, cellData, cssClass) => {
 };
 
 const setupPortfolio = (portfolios) => {
-    // Updating table with the new portfolio
+
+    // Updating table with the new portfolio.
     const table = document.getElementById("portfolioTable").getElementsByTagName("tbody")[0];
 
-    // Removing all old data
+    // Removing all old data.
     removeChildNodes("portfolioTableData");
 
     portfolios.forEach((item) => {
         addRow(table, item);
     });
+
     console.log("New portfolio loaded.")
 };
 
 const removeChildNodes = (elementId) => {
+
     const methodsList = document.getElementById(elementId);
 
     while (methodsList && methodsList.firstChild) {
@@ -430,13 +374,14 @@ const removeChildNodes = (elementId) => {
 };
 
 const updateInstruments = (streamData) => {
+
     const data = JSON.parse(streamData.data.data)[0];
     const symbol = data.name;
     const prices = data.image || data.update;
 
     if (!symbol || !prices) {
         return
-    }
+    };
 
     const bid = prices.BID;
     const ask = prices.ASK;
@@ -447,14 +392,17 @@ const updateInstruments = (streamData) => {
         const symbolRows = symbolRow.getElementsByTagName("td");
         symbolRows[2].innerHTML = bid || 0;
         symbolRows[3].innerHTML = ask || 0;
-    }
+    };
 };
 
 const addAvailableMethods = (methods, symbol, bpod) => {
+
     const methodsList = document.getElementById("methodsList");
 
     methods.forEach((method) => {
+
         const button = document.createElement("button");
+
         button.className = "btn btn-default";
         button.setAttribute("type", "button");
         button.setAttribute("data-toggle", "tooltip");
@@ -472,26 +420,23 @@ const addAvailableMethods = (methods, symbol, bpod) => {
             };
 
             invokeInteropMethodByName(method.name, options);
-        }
+        };
 
         methodsList.appendChild(button);
-    })
+    });
 
-    // Enable tooltip
+    // Enable tooltip.
     $(function () {
         $("[data-toggle=\"tooltip\"]").tooltip()
-    })
+    });
 };
 
 const invokeInteropMethodByName = (methodName, params) => {
-
-    // TUTOR_TODO Chapter 2.3 Task 2
-    // Invoke the Interop method with the passed methodName and passed params
-
     glue.interop.invoke(methodName, params);
 };
 
 const displayResult = (result) => {
+
     removeChildNodes("resultInstrumentTbl");
 
     const resultInstrumentTbl = document.getElementById("resultInstrumentTbl");
@@ -514,7 +459,7 @@ const addTickerRow = (table, item) => {
     row.onclick = () => {
         addRow(portfolioTableDataTbl, item);
         $("#searchResult").modal("hide");
-    }
+    };
 
     table.appendChild(row);
 
@@ -522,10 +467,12 @@ const addTickerRow = (table, item) => {
 };
 
 const getCurrentPortfolio = () => {
+
     const portfolio = [];
     const portfolioTableRows = document.querySelectorAll("#portfolioTableData tr");
 
     portfolioTableRows.forEach((row) => {
+
         const symbol = {};
         const tds = row.childNodes;
 
@@ -543,8 +490,9 @@ const getCurrentPortfolio = () => {
                 case 3:
                     symbol.ask = td.textContent;
                     break;
-            }
-        })
+            };
+        });
+
         portfolio.push(symbol);
     });
 
@@ -558,19 +506,20 @@ const setUpStreamIndicator = () => {
     };
 
     glue.interop.methodAdded((method) => {
-        if (method.name === StreamName && method.supportsStreaming) {
+        if (method.name === symbolPricesStreamName && method.supportsStreaming) {
             toggleStreamAvailable(true);
-        }
+        };
     });
 
     glue.interop.methodRemoved((method) => {
-        if (method.name === StreamName && method.supportsStreaming) {
+        if (method.name === symbolPricesStreamName && method.supportsStreaming) {
             toggleStreamAvailable(false);
-        }
+        };
     });
 };
 
 const setUpGlueIndicator = () => {
+
     const toggleGlueAvailable = (available) => {
         toggleStatusLabel("glueSpan", "Glue42 is", available);
     };
@@ -585,6 +534,7 @@ const setUpGlueIndicator = () => {
 };
 
 const toggleStatusLabel = (elementId, text, available) => {
+
     const span = document.getElementById(elementId);
 
     if (available) {
@@ -595,129 +545,141 @@ const toggleStatusLabel = (elementId, text, available) => {
         span.classList.remove("label-success");
         span.classList.add("label-warning");
         span.textContent = text + " unavailable";
-    }
+    };
 };
 
 const setUpWindowEventsListeners = () => {
-
-    // TUTOR_TODO Chapter 4.2 Task 2
-    // Subscribe to the onWindowRemoved event and implement the handler;
-    // Compare the closed window id with the client window id you were passed on window creation.
-    // If they match - glue.windows.my().close();
 
     const thisPortfolioWindow = glue.windows.my();
     const clientsWindowID = thisPortfolioWindow.context.ownerWindowID;
     const clientsWindow = glue.windows.findById(clientsWindowID);
     let isRefreshed = window.sessionStorage.getItem(thisPortfolioWindow.name + "-isRefreshed");
 
-    // listen if the Clients window, owner of the Portfolio window, has been closed
-    // in order to close this Portfolio window too
+    // Listen for the event whether the Clients window, owner of the Portfolio window, 
+    // has been closed in order to close this Portfolio window too.
     glue.windows.onWindowRemoved((window) => {
         if (window.id === clientsWindowID) {
-            thisPortfolioWindow.close().catch(error => {
-                console.error(error.message);
-            });
+            thisPortfolioWindow.close()
+                .catch(error => {
+                    console.error(error.message);
+                });
         } else {
             return;
-        }
+        };
     });
 
     // TAB CONTROLS
-    // setup and handle frame buttons if this Portfolio window is a tab
+
+    // Setup and handle frame buttons if this Portfolio window is a tab.
     if (thisPortfolioWindow.mode !== "tab") {
         return;
     } else {
-        // TUTOR_TODO Chapter 4.4 Task 7
-        // Implement the frame button click events:
-        // - Which button was clicked?
-        // - How are we going to remember the tabs we detached?
-        // - glue.windows.findById() will be quite helpful here
 
-        // add an Extract Tabs button when first creating the Portfolio tab
+        // Add an Extract Tabs button when first creating the Portfolio tab.
+        // Check whether the window has just been refreshed
+        // in order to preserve the current frame button state.
         if (!isRefreshed) {
             thisPortfolioWindow.addFrameButton(extractTabsBtn);
-        }
+        };
 
-        // handle frame button clicks
+        // Handle frame button clicks.
         thisPortfolioWindow.onFrameButtonClicked((button) => {
             switch (button.buttonId) {
-                case "gatherTabs": gatherTabs(); break;
-                case "extractTabs": extractTabs(); break;
+
+                case "gatherTabs": 
+                    gatherTabs(); 
+                    break;
+
+                case "extractTabs": 
+                    extractTabs(); 
+                    break;
+
                 default: break;
-            }
+            };
         });
 
-        // check where (relative to the Clients window) to gather the extracted tabs
+        // Check where (relative to the Clients window) to gather the extracted tabs.
         const getWindowDirection = () => {
 
             const primaryMonitor = glue42gd.monitors.find(monitor => monitor.isPrimary === true);
             const bottomNeighbors = clientsWindow.bottomNeighbours;
-            // this checks whether at least one bottom neighbor is a Portfolio window in order to snap the Portfolio tab group to the bottom if so
-            const areNeighborsPortfolios = bottomNeighbors.filter(tab => tab.name.includes(portfolioTabGroupID)).length > 0 ? true : false;
+            // This checks whether at least one bottom neighbor is a Portfolio window in order to snap the Portfolio tab group to the bottom if so.
+            const areNeighborsPortfolios = bottomNeighbors.filter(tab => tab.title.includes(" - Portfolio")).length > 0 ? true : false;
             const availableSpaceBelow = primaryMonitor.workingAreaHeight - (clientsWindow.bounds.top + clientsWindow.bounds.height);
 
-            // if there are no bottom neighbors (or the all neighbors are Portfolios) and there is available space, 
-            // gather the Portfolios below the Clients, otherwise - to the right
+            // If there are no bottom neighbors and there is available space, or if the bottom neighbors are Portfolios 
+            // gather the Portfolios below the Clients, otherwise - to the right.
             return (bottomNeighbors.length === 0 && availableSpaceBelow >= thisPortfolioWindow.bounds.height) || areNeighborsPortfolios ? "bottom" : "right";
         }
 
-        // handle the Gather Tabs button
+        // Handle the Gather Tabs button
         const gatherTabs = () => {
+
+            // Find all currently open Portfolio tabs which belong to the Clients window
+            // that is the owner of the current tab.
+            // This is necessary if the user is running multiple instances of the Clients application.
             const tabsToGather = glue.windows.list().filter(tab => {
                 if (tab.title.includes(" - Portfolio") && tab.context.ownerWindowID === clientsWindowID) {
                     return tab;
-                }
+                };
             });
 
-            // attach all scattered tabs to the current tab
+            // Attach all scattered tabs to the current tab.
             const attachPortfolioTabs = () => {
+
                 let promises = [];
 
                 tabsToGather.forEach(tab => {
+
                     const promise = thisPortfolioWindow.attachTab(tab);
+
                     promises.push(promise);
                 });
 
                 return Promise.all(promises);
             }
 
-            attachPortfolioTabs().then(() => {
-                console.log("Tabs attached successfully.");
-            }).catch(error => {
-                console.error(error.message)
-            });
+            attachPortfolioTabs()
+                .then(() => {
+                    console.log("Tabs attached successfully.");
+                })
+                .catch(error => {
+                    console.error(error.message);
+                });
 
-            // snap the current tab to the Clients window
+            // Snap the current tab to the Clients window.
             const direction = getWindowDirection();
 
             thisPortfolioWindow.snap(clientsWindow, direction)
                 .then(() => {
-                    console.log(`Portfolio window with ID ${thisPortfolioWindow.id} was snapped to the Clients window.`)
-                }).catch(error => {
+                    console.log(`Portfolio window with ID ${thisPortfolioWindow.id} was snapped to the Clients window.`);
+                })
+                .catch(error => {
                     console.error(error);
                 });
         };
 
-        // handle the Extract Tabs button
+        // Handle the Extract Tabs button
         const extractTabs = () => {
-            // This way we will always have the current number of tabs from the Portfolio tab group
-            // even if the user at the time of pressing the Gather Tabs button has previously extracted them,
-            // closed some of them, or opened new ones, combined some of them, etc.
+
+            // Get the tabs attached only to the current Portfolio tab.
+            // This is in case the user has extracted the Portfolio tabs
+            // and then has closed some of them, or opened new ones, or grouped several of them in another group, etc.
             const tabsToExtract = thisPortfolioWindow.tabs;
 
-            tabsToExtract.forEach(tab => tab.detachTab().then(() => {
-                console.log("The tab was detached.")
-            }).catch(error => {
-                console.error(error.message)
-            }));
+            tabsToExtract
+                .forEach(tab => {
+                    tab.detachTab()
+                            .then(() => {
+                                console.log("The tab was detached.")
+                            })
+                            .catch(error => {
+                                console.error(error.message)
+                            })
+                        }
+                );
         };
 
-        // TUTOR_TODO Chapter 4.4 Task 8
-        // What frame button should be displayed when the tab is created?
-        // Implement the logic for each of these events - which buttons should show/hide in each scenario?
-        // hint - maybe glue.windows.my().tabs.length would be useful somewhere?
-
-        // set up frame buttons when scattering/gathering tabs
         const checkIfButtonExists = (buttonID) => {
             const doesButtonExist =
                 thisPortfolioWindow.frameButtons
@@ -725,8 +687,10 @@ const setUpWindowEventsListeners = () => {
 
             return doesButtonExist;
         }
-
+        
+        // Set up frame buttons on the Portfolio tabs when scattering/gathering tabs.
         const setupFrameButtons = (buttonToRemove, buttonToAdd) => {
+
             let buttonToRemoveExists;
             let buttonToAddExists;
 
@@ -738,11 +702,12 @@ const setUpWindowEventsListeners = () => {
                     thisPortfolioWindow.removeFrameButton(buttonToRemove.buttonId)
                         .then(() => {
                             console.log(`${buttonToRemove.buttonId} button successfully removed.`);
-                        }).catch(error => {
+                        })
+                        .catch(error => {
                             console.error(error.message);
                         });
-                }
-            }
+                };
+            };
 
             if (buttonToAdd && typeof buttonToAdd === "object") {
 
@@ -752,19 +717,20 @@ const setUpWindowEventsListeners = () => {
                     thisPortfolioWindow.addFrameButton(buttonToAdd)
                         .then(() => {
                             console.log(`${buttonToAdd.buttonId} button successfully added.`);
-                        }).catch(error => {
+                        })
+                        .catch(error => {
                             console.error(error.message);
                         });
-                }
-            }
+                };
+            };
         };
 
-        // handle button changes on the window to which tabs are being attached/detached
+        // Handle button changes for the window to which tabs are being attached/detached.
         thisPortfolioWindow.onWindowAttached(() => {
             if (thisPortfolioWindow.frameButtons[0].buttonId &&
                 thisPortfolioWindow.frameButtons[0].buttonId === gatherTabsBtn.buttonId) {
                 setupFrameButtons(gatherTabsBtn, extractTabsBtn);
-            }
+            };
         });
 
         thisPortfolioWindow.onWindowDetached(() => {
@@ -772,7 +738,7 @@ const setUpWindowEventsListeners = () => {
                 thisPortfolioWindow.frameButtons[0].buttonId &&
                 thisPortfolioWindow.frameButtons[0].buttonId === extractTabsBtn.buttonId) {
                 setupFrameButtons(extractTabsBtn, gatherTabsBtn);
-            }
+            };
         });
 
         // !!! onAttached() DOES NOT fire when the tab is simultaneously created and 
@@ -780,50 +746,51 @@ const setUpWindowEventsListeners = () => {
         // This event fires only when the tab has already been created and then is attached
         // to a tab group.
 
-        // handle button changes on the windows which are being attached/detached to another window
+        // handle button changes for the window which is being attached/detached to another window
         thisPortfolioWindow.onAttached(() => {
             if (thisPortfolioWindow.frameButtons[0].buttonId &&
                 thisPortfolioWindow.frameButtons[0].buttonId === gatherTabsBtn.buttonId) {
                 setupFrameButtons(gatherTabsBtn, extractTabsBtn);
-            }
+            };
         });
 
         thisPortfolioWindow.onDetached(() => {
             if (thisPortfolioWindow.frameButtons[0].buttonId &&
                 thisPortfolioWindow.frameButtons[0].buttonId === extractTabsBtn.buttonId) {
                 setupFrameButtons(extractTabsBtn, gatherTabsBtn);
-            }
+            };
         });
 
-        // handle refreshing the window to avoid the simultaneous appearance of both buttons
+        // Handle refreshing the window to avoid the simultaneous appearance of both buttons,
+        // or unnecessary creation of the same button.
         thisPortfolioWindow.onRefreshing(() => {
             window.sessionStorage.setItem(thisPortfolioWindow.name + "-isRefreshed", true);
         });
 
         thisPortfolioWindow.onClosing(() => {
             window.sessionStorage.removeItem(thisPortfolioWindow.name + "-isRefreshed");
-        })
-    }
+        });
+    };
 };
 
 const search = (event) => {
-    event.preventDefault();
-    const searchValue = document.getElementById("ticker").value;
 
-    // TUTOR_TODO Chapter 6 Task 3
-    // Use the created query search function and pass in the searchValue;
+    event.preventDefault();
+
+    const searchValue = document.getElementById("ticker").value;
 
     searchQuery.search(searchValue);
 };
 
 const sendPortfolioAsEmailClicked = (event) => {
+
     event.preventDefault();
 
     const sendPortfolioAsEmail = (client, portfolio) => {
 
         const getEmailContent = (client, portfolio) => {
 
-            const props = ["ric", "description", "bid", "ask"]
+            const props = ["ric", "description", "bid", "ask"];
 
             const csv = props.join(", ") + "\n" +
                 portfolio.map((row) => {
@@ -832,7 +799,7 @@ const sendPortfolioAsEmailClicked = (event) => {
 
                         if (index === 1) {
                             value = "\"" + value + "\""
-                        }
+                        };
 
                         return value;
                     }).join(", ")
@@ -865,25 +832,25 @@ const sendPortfolioAsEmailClicked = (event) => {
 
         const content = getEmailContent(client, portfolio);
 
-        // TUTOR_TODO Chapter 8 Task 5
-        // Create a new email by passing the content object above.
-
         g4o.outlook.newEmail(content)
-            .then(() => console.log("Email template created."))
-            .catch(error => console.error(error.message));
-    }
+            .then(() => {
+                console.log("Email template created.")
+            })
+            .catch(error => {
+                console.error(error.message)
+            });
+    };
 
-    var portfolio = getCurrentPortfolio();
+    const portfolio = getCurrentPortfolio();
 
     sendPortfolioAsEmail(partyObj, portfolio);
 };
 
 const sendPortfolioToExcelClicked = (event) => {
+
     event.preventDefault();
 
     const sendPortfolioToExcel = (client, portfolio) => {
-
-        const fields = ["ric", "description", "bid", "ask"];
 
         const config = {
             columnConfig: [{
@@ -904,26 +871,24 @@ const sendPortfolioToExcelClicked = (event) => {
                 worksheet: client.name,
                 workbook: "ExportedPortfolios"
             }
-        }
+        };
 
         const loadPortfolioFromExcel = (portfolio) => {
 
             unsubscribeSymbolPrices();
 
             removeChildNodes("portfolioTableData");
+
             const table = document.getElementById("portfolioTable").getElementsByTagName("tbody")[0];
 
             portfolio.forEach((item) => {
                 item.RIC = item.ric;
                 item.Description = item.description;
                 addRow(table, item);
-            })
+            });
 
             subscribeSymbolPrices();
         };
-
-        // TUTOR_TODO Chapter 9 Task 3
-        // Create a new spreadsheet passing the config object, then subscribe to the new sheet onChanged event and call loadPortfolioFromExcel with the received data.
 
         g4o.excel.openSheet(config)
             .then(sheet => {
@@ -943,7 +908,9 @@ const sendPortfolioToExcelClicked = (event) => {
 
                 console.log(`New Excel Sheet with name ${sheet.name} opened.`)
             })
-            .catch(error => console.error(error.message));
+            .catch(error => {
+                console.error(error.message)
+            });
     };
 
     const portfolio = getCurrentPortfolio();
