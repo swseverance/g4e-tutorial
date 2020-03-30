@@ -26,7 +26,7 @@
     "datatables.net-jqui": "^1.10.10",
     "font-awesome": "^4.4.0",
     "http-server": "^0.8.5",
-    "jquery": "^2.1.4",
+    "jquery": "^3.4.1",
     "jquery-ui": "^1.10.5",
     "js-logger": "^1.2.0",
     "lodash": "^4.10.0",
