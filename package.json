@@ -4,7 +4,7 @@
   "description": "GLUE for JavaScript Tutorial",
   "scripts": {
     "start": "node node_modules/npm-run-all/bin/npm-run-all/index.js --parallel http-server rest-server",
-    "http-server": "node node_modules/http-server/bin/http-server . -p 22909 -a 127.0.0.1 -s",
+    "http-server": "node node_modules/http-server/bin/http-server . -p 22909 -a 127.0.0.1 -s -c-1",
     "rest-server": "node support/rest-server/server.js 22910"
   },
   "author": "",
